@@ -65,7 +65,14 @@ h1 span{color:var(--destaque);font-style:italic}
 .abrir span{transition:transform .2s}
 
 .vazio{grid-column:1/-1;text-align:center;padding:48px 16px;color:var(--apagado)}
-footer{border-top:1px solid var(--borda);padding:24px 0 36px;text-align:center;font-size:.88rem;color:var(--apagado)}
+footer{border-top:1px solid var(--tinta);padding:36px 0 40px;text-align:center;font-size:.88rem;color:var(--apagado)}
+.autor-rotulo{font-size:.72rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--destaque)}
+.autor-nome{font-family:"Fraunces",Georgia,serif;font-weight:600;font-style:italic;font-size:1.6rem;color:var(--tinta);margin:4px 0 12px}
+.autor-links{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px 14px;margin-bottom:22px}
+.autor-links a{color:var(--tinta);text-decoration:none;font-weight:500;border-bottom:1.5px solid var(--destaque);padding-bottom:1px;transition:color .2s}
+.autor-links a:hover{color:var(--destaque)}
+.autor-links b{color:var(--destaque);font-weight:400;font-size:.6rem}
+.rodape-site{font-size:.8rem}
 
 @media (max-width:520px){header{padding:40px 0 24px}.grade{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}.faixa-trilho{animation:none}}
@@ -95,7 +102,18 @@ footer{border-top:1px solid var(--borda);padding:24px 0 36px;text-align:center;f
 </div>
 
 <footer>
-  <div class="wrap">Prática Filosófica · materiais interativos para a sala de aula</div>
+  <div class="wrap">
+    <p class="autor-rotulo">Criado por</p>
+    <p class="autor-nome">Artur Merlin</p>
+    <nav class="autor-links" aria-label="Contatos do autor">
+      <a href="https://www.instagram.com/arturmerlins/" target="_blank" rel="noopener">Instagram</a>
+      <b aria-hidden="true">●</b>
+      <a href="http://lattes.cnpq.br/4544860184760544" target="_blank" rel="noopener">Currículo Lattes</a>
+      <b aria-hidden="true">●</b>
+      <a href="mailto:artur.merlins@gmail.com">artur.merlins@gmail.com</a>
+    </nav>
+    <p class="rodape-site">Prática Filosófica · materiais interativos para a sala de aula</p>
+  </div>
 </footer>
 
 <script>
