@@ -1,0 +1,965 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Peleja de Cordel 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400;1,7..72,600;1,7..72,700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: coluna única de painéis de couro sobre um cenário armorial vivo (sol girando, aves, cantadores, tropa e jangada). Escuro por padrão, troca para papel de feira. */
+:root{
+  --fundo:#1C1008; --fundo2:#2E1806; --painel:rgba(36,22,9,.92); --campo:#2A1B0B;
+  --tinta:#EBDAB0; --apagado:#C1AB80; --fio:#5C4221;
+  --ocre:#D08A4A; --ouro:#E6B85A; --sangue:#8B1A1A; --acao-fg:#F7E9C6;
+  --mote:#EE8366; --p1:#E6B85A; --p2:#93B6E2;
+  --ok:#9BCB8A; --perto:#F08A3C; --longe:#EE6B5B;
+  --figura:#C4783A; --cen-op:.2;
+  --display:"Alfa Slab One","Rockwell",Georgia,serif;
+  --texto:"Literata",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+:root[data-theme="light"]{
+  --fundo:#E9D9B4; --fundo2:#F4E9CC; --painel:rgba(248,240,220,.93); --campo:#FFF9EA;
+  --tinta:#23160A; --apagado:#654F31; --fio:#C2A877;
+  --ocre:#A3561C; --ouro:#85590A; --sangue:#8B1A1A; --acao-fg:#FBF1D8;
+  --mote:#9B1C1C; --p1:#9A5A08; --p2:#2C5A8C;
+  --ok:#2F6B3A; --perto:#B4590E; --longe:#A3231B;
+  --figura:#6B3E16; --cen-op:.14;
+  color-scheme:light;
+}
+
+*{box-sizing:border-box}
+html{background:var(--fundo)}
+body{background:radial-gradient(ellipse 120% 70% at 50% 0%,var(--fundo2),var(--fundo) 70%) fixed;background-color:var(--fundo);color:var(--tinta);font-family:var(--texto);font-size:16px;line-height:1.55;min-height:100vh}
+
+/* ---------- cenário armorial ---------- */
+.cenario{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;color:var(--figura);opacity:var(--cen-op);--corte:var(--fundo)}
+.cenario svg{display:block;width:100%;height:auto;fill:currentColor;overflow:visible}
+.cenario .c-sol{position:absolute;top:-80px;right:-80px;width:340px;animation:girar 90s linear infinite}
+.nucleo{transform-box:view-box;transform-origin:140px 140px;animation:girar 45s linear infinite reverse}
+.c-aves{position:absolute;left:0;top:11vh;width:170px;animation:voar 80s linear infinite}
+.c-aves.a2{top:33vh;width:110px;animation-duration:105s;animation-delay:-48s}
+.c-aves .bob{animation:bob 6s ease-in-out infinite alternate}
+.c-cant{position:absolute;bottom:22vh;width:112px;transform-origin:50% 100%;animation:balanca 7s ease-in-out infinite alternate}
+.c-cant.e{left:1.2vw}
+.c-cant.d{right:1.2vw;animation-delay:-3.5s}
+.c-cant.d svg{transform:scaleX(-1)}
+.c-chao{position:absolute;left:0;right:36vw;bottom:24px;height:2px;background:currentColor}
+.c-mand{position:absolute;bottom:25px;width:70px}
+.c-mand.m1{left:3vw}.c-mand.m2{left:44vw;width:52px}
+.c-tropa{position:absolute;bottom:22px;left:0;width:240px;animation:tropa 120s linear infinite}
+.c-tropa .trote{animation:bob2 1.8s ease-in-out infinite alternate}
+.c-mar{position:absolute;right:0;bottom:0;width:36vw;height:42px;overflow:hidden}
+.c-mar .ondas{position:absolute;bottom:4px;left:0;width:200%;height:34px;animation:ondas 36s linear infinite}
+.c-jang{position:absolute;right:9vw;bottom:14px;width:130px;transform-origin:50% 90%;animation:boia 5s ease-in-out infinite alternate}
+@keyframes girar{to{transform:rotate(360deg)}}
+@keyframes voar{from{transform:translateX(-220px)}to{transform:translateX(calc(100vw + 40px))}}
+@keyframes bob{from{transform:translateY(-8px)}to{transform:translateY(8px)}}
+@keyframes bob2{from{transform:translateY(0)}to{transform:translateY(-3px)}}
+@keyframes balanca{from{transform:rotate(-2.5deg)}to{transform:rotate(2.5deg)}}
+@keyframes tropa{0%{transform:translateX(-270px);opacity:0}6%{opacity:1}88%{opacity:1}100%{transform:translateX(56vw);opacity:0}}
+@keyframes ondas{to{transform:translateX(-50%)}}
+@keyframes boia{from{transform:rotate(-3deg)}to{transform:rotate(3deg) translateY(-4px)}}
+@media (max-width:700px){
+  .c-cant{width:68px;bottom:30vh}.cenario .c-sol{width:230px;top:-70px;right:-90px}
+  .c-mar{width:48vw}.c-jang{width:84px;right:4vw}.c-chao{right:48vw}.c-tropa{width:160px}.c-mand.m2{display:none}
+}
+
+/* lua no escuro, sol no claro */
+.cenario .c-lua{position:absolute;top:-70px;right:-70px;width:330px}
+.anel{transform-box:view-box;transform-origin:140px 140px;animation:girar 120s linear infinite}
+.cenario .c-sol,.emblema .sol-gira{display:none}
+:root[data-theme="light"] .cenario .c-sol,:root[data-theme="light"] .emblema .sol-gira{display:block}
+:root[data-theme="light"] .cenario .c-lua,:root[data-theme="light"] .emblema .lua-gira,:root[data-theme="light"] .c-est{display:none}
+.emblema .lua-gira{position:absolute;inset:0;width:100%;height:100%;color:var(--ouro);overflow:visible;--corte:var(--fundo)}
+.cenario .c-est{position:absolute;width:20px;animation:pisca 5s ease-in-out infinite alternate}
+@keyframes pisca{from{opacity:.35;transform:scale(.8) rotate(0)}to{opacity:1;transform:scale(1.1) rotate(22deg)}}
+/* notas do repente */
+.notas{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.nota{position:absolute;font-size:1.6rem;line-height:1;color:var(--ouro);opacity:0;font-family:"Segoe UI Symbol","DejaVu Sans","Noto Sans Symbols",sans-serif}
+
+/* ---------- estrutura ---------- */
+.wrap{position:relative;z-index:1;max-width:48rem;margin:0 auto;padding-inline:16px;padding-block:1.5rem 6rem;display:flex;flex-direction:column;gap:1.4rem}
+.topo{display:grid;grid-template-columns:auto 1fr;gap:1.2rem 1.4rem;align-items:center;position:relative;padding-top:.6rem}
+.emblema{position:relative;width:8.5rem;aspect-ratio:1;max-width:100%}
+.emblema .sol-gira{position:absolute;inset:0;width:100%;height:100%;color:var(--ouro);animation:girar 60s linear infinite;overflow:visible}
+.emblema .cacto{position:absolute;left:24%;top:20%;width:52%;height:auto;color:var(--ocre);--corte:var(--fundo);fill:currentColor}
+.olho{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ocre);margin:0}
+.topo h1{font-family:var(--display);font-weight:400;font-size:clamp(2.4rem,9vw,3.8rem);line-height:.92;margin:.3rem 0 0;color:var(--tinta);text-wrap:balance}
+.topo h1 span{color:var(--ocre);display:block}
+.topo .sub{margin:.7rem 0 0;color:var(--apagado);font-style:italic;max-width:32rem}
+.topo-acoes{position:absolute;top:0;right:0;display:flex;gap:.4rem;flex-wrap:wrap;justify-content:flex-end}
+.tema.perigo{border-color:var(--sangue);background:var(--sangue);color:var(--acao-fg)}
+.tema{font:inherit;font-size:.82rem;cursor:pointer;background:var(--painel);color:var(--tinta);border:1px solid var(--fio);border-radius:2px;padding:.3rem .7rem}
+.tema:hover{border-color:var(--ocre)}
+@media (max-width:520px){.topo{grid-template-columns:1fr}.emblema{width:6.5rem}.topo-acoes{position:static;justify-self:start;order:-1;justify-content:flex-start}}
+
+.divisor{display:flex;align-items:center;justify-content:center;gap:1rem;color:var(--ocre);font-size:1rem;letter-spacing:.4em;padding-block:.4rem}
+.divisor::before,.divisor::after{content:"";flex:1;max-width:180px;height:1px;background:linear-gradient(to right,transparent,var(--ocre))}
+.divisor::after{background:linear-gradient(to left,transparent,var(--ocre))}
+
+.painel{position:relative;background:var(--painel);border:1px solid var(--fio);border-radius:2px;padding:1.6rem clamp(1rem,4vw,1.9rem);display:flex;flex-direction:column;gap:1.5rem}
+.painel::before,.painel::after{content:"✦";position:absolute;top:.35rem;color:var(--ocre);font-size:.75rem;line-height:1}
+.painel::before{left:.55rem}.painel::after{right:.55rem}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(1.6rem,5vw,2rem);margin:0;line-height:1.05;color:var(--tinta)}
+h2 small{display:block;font-family:var(--texto);font-style:italic;font-size:.95rem;color:var(--apagado);margin-top:.35rem}
+
+/* passos de instrução */
+.passo{display:grid;grid-template-columns:2.4rem minmax(0,1fr);column-gap:.9rem;row-gap:.55rem;align-items:start}
+.passo .n{grid-row:1/span 2;width:2.2rem;height:2.2rem;display:grid;place-items:center;position:relative;font-family:var(--display);font-size:1rem;color:var(--fundo);margin-top:-.15rem}
+.passo .n::before{content:"";position:absolute;inset:4px;background:var(--ocre);transform:rotate(45deg);box-shadow:0 0 0 2px var(--painel),0 0 0 3px var(--ocre)}
+.passo .n span{position:relative}
+.passo .t{font-family:var(--display);font-weight:400;font-size:1.18rem;line-height:1.2;color:var(--ouro);margin:0}
+.passo .conteudo{grid-column:2;display:flex;flex-direction:column;gap:.55rem;min-width:0}
+.dica{font-size:.9rem;color:var(--apagado);margin:0}
+.sublabel{font-size:.85rem;color:var(--apagado);font-style:italic}
+.linha2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.linha2 label{display:flex;flex-direction:column;gap:.3rem;min-width:0}
+@media (max-width:480px){.linha2{grid-template-columns:1fr}}
+
+input[type=text]{font:inherit;color:var(--tinta);background:var(--campo);border:1.5px solid var(--fio);border-radius:2px;padding:.55rem .7rem;width:100%;min-width:0}
+input[type=text]::placeholder{color:var(--apagado);opacity:.8}
+input[type=text]:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--ouro);outline-offset:2px}
+
+.seg{display:flex;flex-wrap:wrap;gap:.45rem}
+.seg button,.btn{font:inherit;font-size:.95rem;cursor:pointer;border:1.5px solid var(--fio);background:var(--campo);color:var(--tinta);border-radius:2px;padding:.48rem .9rem;line-height:1.3}
+.seg button:hover,.btn:hover{border-color:var(--ocre)}
+.seg button[aria-pressed="true"]{background:var(--ocre);border-color:var(--ocre);color:var(--fundo);font-weight:600}
+.btn.cheio{background:var(--sangue);border-color:var(--sangue);color:var(--acao-fg);font-weight:600}
+.btn.cheio:hover{filter:brightness(1.15)}
+
+.mote{background:var(--campo);border:1.5px solid var(--ouro);border-radius:2px;padding:1.1rem 1.1rem 1rem;display:flex;flex-direction:column;gap:.75rem;position:relative;margin-top:.4rem}
+.mote .versos{font-size:1.2rem;font-style:italic;color:var(--mote);font-weight:600;line-height:1.45}
+.mote .acoes{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+.mote label{display:flex;flex-direction:column;gap:.3rem}
+.selo{position:absolute;top:-.75rem;left:.9rem;background:var(--sangue);color:var(--acao-fg);font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;padding:.15rem .55rem;border-radius:1px}
+
+details{border-top:1px dashed var(--fio);padding-top:.8rem}
+summary{cursor:pointer;color:var(--ouro);font-family:var(--display);font-size:1rem}
+.exemplo{margin:.8rem 0 0;display:grid;grid-template-columns:auto 1fr;column-gap:.8rem;font-size:.97rem;font-style:italic}
+.exemplo span:nth-child(odd){font-family:var(--mono);font-style:normal;font-size:.75rem;color:var(--apagado);padding-top:.25rem}
+.exemplo .m{color:var(--mote);font-weight:600}
+
+/* estrofes */
+.topo-peleja{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;flex-wrap:wrap}
+.legenda{display:flex;flex-wrap:wrap;gap:.4rem 1rem;font-size:.82rem;color:var(--apagado)}
+.legenda i{font-style:normal;font-family:var(--mono);font-size:.75rem;padding:0 .35rem;border:1px solid;border-radius:2px;margin-right:.3rem}
+.estrofes{display:flex;flex-direction:column;gap:1.4rem}
+.estrofe{background:var(--campo);border:1.5px solid var(--fio);border-radius:2px;padding:1rem 1rem .8rem}
+.estrofe.ativa{border-color:var(--ouro);box-shadow:5px 5px 0 var(--ocre)}
+.cab{display:flex;justify-content:space-between;align-items:center;gap:.6rem;flex-wrap:wrap;margin-bottom:.6rem}
+.cab h3{font-family:var(--display);font-weight:400;font-size:1.15rem;margin:0;color:var(--tinta)}
+.cab h3 small{font-family:var(--texto);font-style:italic;font-size:.95rem;color:var(--apagado)}
+.cab .acoes-est{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}
+.estado{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;padding:.15rem .5rem;border-radius:2px;border:1px solid var(--fio);color:var(--apagado);white-space:nowrap}
+.estado.vez{border-color:var(--mote);color:var(--mote)}
+.estado.feita{border-color:var(--ok);color:var(--ok)}
+.mini{font:inherit;font-size:.8rem;cursor:pointer;background:transparent;color:var(--ouro);border:1px solid var(--ouro);border-radius:2px;padding:.18rem .6rem}
+.mini:hover{background:color-mix(in srgb,var(--ouro) 14%,transparent)}
+.mini.ok{color:var(--ok);border-color:var(--ok)}
+
+.verso{display:grid;grid-template-columns:2.4rem minmax(0,1fr) 2.6rem;gap:.5rem;align-items:start;padding:.25rem 0}
+.num{font-family:var(--mono);font-size:.75rem;color:var(--apagado);padding-top:.55rem;display:flex;gap:.25rem}
+.num b{color:var(--tinta);font-weight:500}
+.corpo{min-width:0;display:flex;flex-direction:column}
+.corpo input[type=text]{border:none;border-bottom:1.5px solid var(--fio);border-radius:0;background:transparent;padding:.4rem .1rem}
+.corpo input[type=text]:focus-visible{outline:none;border-bottom-color:var(--ouro)}
+.corpo .fixo{padding:.4rem .1rem;color:var(--mote);font-style:italic;font-weight:600;border-bottom:1.5px solid transparent;overflow-wrap:anywhere}
+.rimahint{font-size:.78rem;color:var(--apagado);min-height:1.1em;padding:.15rem .1rem 0}
+.rimahint.bate{color:var(--ok)}.rimahint.nao{color:var(--longe)}
+.sil{font-family:var(--mono);font-size:.8rem;font-variant-numeric:tabular-nums;text-align:center;margin-top:.45rem;padding:.1rem 0;border-radius:2px;border:1px solid var(--fio);color:var(--apagado)}
+.sil.ok{border-color:var(--ok);color:var(--ok)}.sil.perto{border-color:var(--perto);color:var(--perto)}.sil.longe{border-color:var(--longe);color:var(--longe)}
+.sep{height:0;border-top:1px dashed var(--fio);margin:.35rem 0 .35rem 2.9rem}
+.verso.d0 .corpo{border-left:3px solid var(--p1);padding-left:.5rem}
+.verso.d1 .corpo{border-left:3px solid var(--p2);padding-left:.5rem}
+.verso.d0 input::placeholder{color:var(--p1);opacity:.8}
+.verso.d1 input::placeholder{color:var(--p2);opacity:.8}
+.donos{display:flex;flex-wrap:wrap;gap:.4rem;margin:0 0 .6rem}
+.donos button{font:inherit;font-size:.82rem;cursor:pointer;background:transparent;border:1.5px solid;border-radius:2px;padding:.2rem .55rem;display:flex;gap:.35rem;align-items:baseline}
+.donos button b{font-family:var(--mono);font-weight:500}
+.donos button.d0{color:var(--p1)}.donos button.d1{color:var(--p2)}
+.donos .dica{align-self:center;font-size:.8rem}
+
+/* capa e prévia */
+.capas{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.6rem}
+@media (max-width:560px){.capas{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.capas button{font:inherit;font-size:.82rem;cursor:pointer;background:#FFFCF3;color:#1A1208;border:2px solid var(--fio);border-radius:2px;padding:.45rem .45rem .35rem;display:flex;flex-direction:column;gap:.3rem;align-items:center;--corte:#FFFCF3}
+.capas button svg{width:100%;height:auto;fill:#1A1208;color:#1A1208}
+.capas button[aria-pressed="true"]{border-color:var(--ouro);box-shadow:0 0 0 2px var(--ouro)}
+.paginas{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1.1rem}
+.paginas figure{margin:0;display:flex;flex-direction:column;gap:.4rem}
+.paginas figcaption{font-family:var(--mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--apagado);text-align:center}
+.paginas .pag{box-shadow:0 2px 0 var(--fio),0 10px 24px rgba(0,0,0,.35)}
+.barra{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center}
+.aviso{font-size:.88rem;color:var(--ok)}
+.nota-imp{border-left:3px solid var(--ocre);padding:.2rem 0 .2rem .8rem}
+textarea.copia{position:absolute;left:-9999px}
+
+@media (prefers-reduced-motion:reduce){
+  .cenario *,.emblema *,.sol-gira,.nucleo{animation:none!important}
+}
+</style>
+
+<div id="sprite" aria-hidden="true"></div>
+
+<div class="cenario" aria-hidden="true">
+  <svg class="c-sol" viewBox="0 0 280 280"><use href="#sol-raios" width="280" height="280"/><g class="nucleo"><use href="#sol-nucleo" width="280" height="280"/></g></svg>
+  <div class="c-aves"><div class="bob"><svg viewBox="0 0 160 70"><use href="#ave" x="0" y="22" width="60" height="30"/><use href="#ave" x="72" y="0" width="48" height="24"/><use href="#ave" x="104" y="40" width="40" height="20"/></svg></div></div>
+  <div class="c-aves a2"><div class="bob"><svg viewBox="0 0 120 50"><use href="#ave" x="0" y="10" width="50" height="25"/><use href="#ave" x="64" y="0" width="40" height="20"/></svg></div></div>
+  <svg class="c-lua" viewBox="0 0 280 280"><use href="#lua" width="280" height="280"/><g class="anel"><use href="#lua-anel" width="280" height="280"/></g></svg>
+  <svg class="c-est" style="top:6vh;left:8vw;width:22px" viewBox="0 0 40 40"><use href="#estrela" width="40" height="40"/></svg>
+  <svg class="c-est" style="top:20vh;left:30vw;width:14px;animation-delay:-2s" viewBox="0 0 40 40"><use href="#estrela" width="40" height="40"/></svg>
+  <svg class="c-est" style="top:9vh;left:56vw;width:18px;animation-delay:-3.5s" viewBox="0 0 40 40"><use href="#estrela" width="40" height="40"/></svg>
+  <svg class="c-est" style="top:44vh;right:12vw;width:16px;animation-delay:-1s" viewBox="0 0 40 40"><use href="#estrela" width="40" height="40"/></svg>
+  <svg class="c-est" style="top:52vh;left:5vw;width:12px;animation-delay:-4s" viewBox="0 0 40 40"><use href="#estrela" width="40" height="40"/></svg>
+  <svg class="c-est" style="top:34vh;right:30vw;width:10px;animation-delay:-2.7s" viewBox="0 0 40 40"><use href="#estrela" width="40" height="40"/></svg>
+  <div class="c-cant e"><svg viewBox="0 0 80 130"><use href="#pandeirista" width="80" height="130"/></svg></div>
+  <div class="c-cant d"><svg viewBox="0 0 80 130"><use href="#cantador" width="80" height="130"/></svg></div>
+  <div class="c-chao"></div>
+  <div class="c-mand m1"><svg viewBox="0 0 80 100"><use href="#mandacaru" width="80" height="100"/></svg></div>
+  <div class="c-mand m2"><svg viewBox="0 0 80 100"><use href="#mandacaru" width="80" height="100"/></svg></div>
+  <div class="c-tropa"><div class="trote"><svg viewBox="0 0 280 110"><use href="#vaqueiro" width="140" height="110"/><g transform="translate(276,30) scale(-1,1)"><use href="#boi" width="120" height="80"/></g></svg></div></div>
+  <div class="c-mar"><svg class="ondas" viewBox="0 0 800 34" preserveAspectRatio="none"><path d="M0 10 Q25 2 50 10 T100 10 T150 10 T200 10 T250 10 T300 10 T350 10 T400 10 T450 10 T500 10 T550 10 T600 10 T650 10 T700 10 T750 10 T800 10 M0 24 Q25 16 50 24 T100 24 T150 24 T200 24 T250 24 T300 24 T350 24 T400 24 T450 24 T500 24 T550 24 T600 24 T650 24 T700 24 T750 24 T800 24" fill="none" stroke="currentColor" stroke-width="3"/></svg></div>
+  <div class="c-jang"><svg viewBox="0 0 120 100"><use href="#jangada" width="120" height="100"/></svg></div>
+</div>
+
+<div class="wrap">
+  <header class="topo">
+    <div class="emblema" aria-hidden="true">
+      <svg class="sol-gira" viewBox="0 0 280 280"><use href="#sol-raios" width="280" height="280"/><g class="nucleo"><use href="#sol-nucleo" width="280" height="280" opacity=".35"/></g></svg>
+      <svg class="lua-gira" viewBox="0 0 280 280"><use href="#lua" x="90" y="34" width="150" height="150" opacity=".55"/><g class="anel"><use href="#lua-anel" width="280" height="280"/></g></svg>
+      <svg class="cacto" viewBox="0 0 80 100"><use href="#mandacaru" width="80" height="100"/></svg>
+    </div>
+    <div>
+      <p class="olho">A tecnologia reivindicando a poesia popular</p>
+      <h1>Peleja <span>de Cordel</span></h1>
+      <p class="sub">Dois poetas, um mote e as décimas indo e voltando. No fim, a peleja vira folheto de feira, com capa e tudo, pronto para imprimir.</p>
+    </div>
+    <div class="topo-acoes"><button type="button" class="tema" id="tema">☀ Tema claro</button><button type="button" class="tema" id="limparTopo">Limpar tudo</button></div>
+  </header>
+
+  <div class="divisor" aria-hidden="true">✦ ◆ ✦</div>
+
+  <section class="painel" aria-labelledby="t-arrumacao">
+    <h2 id="t-arrumacao">Arrumação<small>Combinem tudo antes de começar a rimar.</small></h2>
+
+    <div class="passo">
+      <div class="n"><span>1</span></div>
+      <p class="t">Métrica do verso</p>
+      <div class="conteudo">
+        <div class="seg" role="group" aria-label="Métrica">
+          <button type="button" id="m7" data-m="7">Sete sílabas</button>
+          <button type="button" id="m11" data-m="11">Onze sílabas</button>
+        </div>
+        <p class="dica" id="dicaMetrica"></p>
+      </div>
+    </div>
+
+    <div class="passo">
+      <div class="n"><span>2</span></div>
+      <p class="t">Os poetas da dupla</p>
+      <div class="conteudo">
+        <div class="linha2">
+          <label><span class="sublabel">Poeta 1, quem abre</span><input type="text" id="p1" placeholder="Nome"></label>
+          <label><span class="sublabel">Poeta 2, quem responde</span><input type="text" id="p2" placeholder="Nome"></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="passo">
+      <div class="n"><span>3</span></div>
+      <p class="t">Como a dupla divide</p>
+      <div class="conteudo">
+        <div class="seg" role="group" aria-label="Divisão do trabalho">
+          <button type="button" id="dvInteira" data-d="inteira">Uma estrofe para cada</button>
+          <button type="button" id="dvRimas" data-d="rimas">Rimas divididas na estrofe</button>
+        </div>
+        <p class="dica" id="dicaDivisao"></p>
+      </div>
+    </div>
+
+    <div class="passo">
+      <div class="n"><span>4</span></div>
+      <p class="t">Quantas estrofes</p>
+      <div class="conteudo">
+        <div class="seg" role="group" aria-label="Número de estrofes">
+          <button type="button" id="n2" data-n="2">2</button>
+          <button type="button" id="n4" data-n="4">4</button>
+          <button type="button" id="n6" data-n="6">6</button>
+          <button type="button" id="n8" data-n="8">8</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="passo">
+      <div class="n"><span>5</span></div>
+      <p class="t">De onde vem o mote</p>
+      <div class="conteudo">
+        <div class="seg" role="group" aria-label="Origem do mote">
+          <button type="button" id="moSorteio" data-o="sorteio">Sortear um mote</button>
+          <button type="button" id="moProprio" data-o="proprio">Escrever o nosso</button>
+        </div>
+        <div class="mote" id="caixaSorteio">
+          <span class="selo">Mote</span>
+          <div class="versos" id="moteSorteado"></div>
+          <div class="acoes"><button type="button" class="btn" id="sortear">Sortear outro</button><span class="dica">O mote fecha toda estrofe e trava as rimas dos versos 6, 7 e 8.</span></div>
+        </div>
+        <div class="mote" id="caixaProprio" hidden>
+          <span class="selo">Mote</span>
+          <label><span class="sublabel">Verso 9 do mote <span id="s9"></span></span><input type="text" id="mp1" placeholder="Primeiro verso do mote"></label>
+          <label><span class="sublabel">Verso 10 do mote <span id="s10"></span></span><input type="text" id="mp2" placeholder="Segundo verso do mote"></label>
+        </div>
+      </div>
+    </div>
+
+    <details>
+      <summary>Como se monta a décima</summary>
+      <p class="dica" style="margin-top:.7rem">Rimas no esquema ABBAACCDDC. Os versos 9 e 10 são o mote. O verso 8 rima com o 9, e os versos 6 e 7 rimam com o 10. Exemplo em sete sílabas:</p>
+      <div class="exemplo">
+        <span>1 A</span><span>Eu não tenho terra boa</span>
+        <span>2 B</span><span>nem dinheiro no bolsinho</span>
+        <span>3 B</span><span>mas aprendi direitinho</span>
+        <span>4 A</span><span>e que a leitura abençoa</span>
+        <span>5 A</span><span>quem semeia e quem perdoa.</span>
+        <span>6 C</span><span>O lápis vira um arado,</span>
+        <span>7 C</span><span>o caderno é meu cercado,</span>
+        <span>8 D</span><span>toda rima é bem cuidada:</span>
+        <span>9 D</span><span class="m">A palavra é minha enxada</span>
+        <span>10 C</span><span class="m">e o papel é meu roçado.</span>
+      </div>
+    </details>
+  </section>
+
+  <div class="divisor" aria-hidden="true">◆ ✦ ◆</div>
+
+  <section class="painel" aria-labelledby="t-peleja">
+    <div class="topo-peleja">
+      <h2 id="t-peleja">A peleja<small>Cada verso mostra as sílabas e se a rima bateu.</small></h2>
+      <div class="legenda"><span><i style="color:var(--ok)">7</i>métrica certa</span><span><i style="color:var(--perto)">8</i>sobra ou falta 1</span><span><i style="color:var(--longe)">10</i>fora</span></div>
+    </div>
+    <p class="dica">A contagem vai até a última sílaba forte e junta vogais entre palavras (sinalefa). É uma ajuda aproximada: na dúvida, vale o ouvido de quem declama.</p>
+    <div class="estrofes" id="estrofes"></div>
+  </section>
+
+  <div class="divisor" aria-hidden="true">✦ ◆ ✦</div>
+
+  <section class="painel" aria-labelledby="t-folheto">
+    <h2 id="t-folheto">O folheto<small>A peleja vira cordel de feira: capa, estrofes e contracapa.</small></h2>
+
+    <div class="passo">
+      <div class="n"><span>✦</span></div>
+      <p class="t">Tipo de folheto</p>
+      <div class="conteudo">
+        <div class="seg" role="group" aria-label="Tipo de folheto">
+          <button type="button" id="mdIlustrado" data-md="ilustrado">Ilustrado</button>
+          <button type="button" id="mdDesenhar" data-md="desenhar">Para desenhar depois</button>
+        </div>
+        <p class="dica" id="dicaModo"></p>
+      </div>
+    </div>
+
+    <div class="passo">
+      <div class="n"><span>✦</span></div>
+      <p class="t">Título do cordel</p>
+      <div class="conteudo"><input type="text" id="titulo" placeholder="Ex.: Peleja da escola com o sertão" aria-label="Título do cordel"></div>
+    </div>
+
+    <div class="passo" id="passoCapa">
+      <div class="n"><span>✦</span></div>
+      <p class="t">Xilogravura da capa</p>
+      <div class="conteudo"><div class="capas" id="capas" role="group" aria-label="Imagem da capa"></div></div>
+    </div>
+
+    <div class="paginas" id="paginas"></div>
+
+    <p class="dica nota-imp">O folheto sai em folhas A4 deitadas, com duas páginas por lado. Imprima frente e verso virando na borda curta, empilhe as folhas na ordem e dobre ao meio.</p>
+    <div class="barra">
+      <button type="button" class="btn cheio" id="imprimir">Imprimir o folheto</button>
+      <button type="button" class="btn" id="copiar">Copiar o cordel</button>
+      <button type="button" class="btn" id="limpar">Limpar tudo</button>
+      <span class="aviso" id="aviso" aria-live="polite"></span>
+    </div>
+  </section>
+</div>
+
+<script>
+/* ================= figuras (xilogravura) ================= */
+const SPRITE=`<svg width="0" height="0" style="position:absolute" xmlns="http://www.w3.org/2000/svg">
+<symbol id="ave" viewBox="0 0 60 30">
+ <path d="M27 15Q22 4 8 2Q16 8 21 16Z"/><path d="M33 14Q40 3 54 1Q46 9 37 15Z"/>
+ <path d="M20 16Q28 11 38 12L42 10Q46 10 47 13L44 14Q41 19 30 19Q24 19 19 21L11 22L15 18L10 14Z"/>
+ <path d="M13 6Q19 9 23 14M47 4Q41 8 37 12M24 16Q31 14 38 15" fill="none" style="stroke:var(--corte)" stroke-width=".9"/>
+</symbol>
+<symbol id="mandacaru" viewBox="0 0 80 100">
+ <path d="M35 98V28c0-7 10-7 10 0v70zM14 72V44c0-6 9-6 9 0v20h12v8zM66 60V34c0-6-9-6-9 0v18H45v8z"/>
+ <path d="M40 32V96M18.5 48V67M61.5 38V56" fill="none" style="stroke:var(--corte)" stroke-width="1.3" stroke-dasharray="3 2"/>
+</symbol>
+<symbol id="jangada" viewBox="0 0 120 100">
+ <path d="M56 8V72L102 70Q88 38 56 8Z"/>
+ <path d="M62 22V69M70 31V69M78 41V69M86 52V69" fill="none" style="stroke:var(--corte)" stroke-width="1.2"/>
+ <rect x="52" y="6" width="3.5" height="72"/>
+ <path d="M8 76H106L100 84H14Z"/>
+ <path d="M30 77V83M50 77V83M70 77V83M90 77V83" fill="none" style="stroke:var(--corte)" stroke-width="1.2"/>
+ <circle cx="30" cy="57" r="4.5"/><path d="M21 55Q30 44 39 55Z"/><path d="M26 62H34L36 76H24Z"/>
+ <path d="M33 64L45 59L46 62L34 68Z"/><path d="M43 52L22 94" stroke="currentColor" stroke-width="2.6" fill="none"/>
+ <path d="M0 90Q10 85 20 90T40 90T60 90T80 90T100 90T120 90M6 97Q16 92 26 97T46 97T66 97T86 97T106 97" fill="none" stroke="currentColor" stroke-width="2.4"/>
+</symbol>
+<symbol id="vaqueiro" viewBox="0 0 140 110">
+ <ellipse cx="68" cy="62" rx="30" ry="13"/>
+ <path d="M88 56L104 30L114 34L100 64Z"/><path d="M104 28L112 22L128 38L124 45L110 38Z"/><path d="M106 28L108 18L112 26Z"/>
+ <path d="M44 66L38 96L43 97L50 70Z"/><path d="M54 70L54 98L59 98L60 72Z"/><path d="M84 70L92 96L97 95L90 68Z"/><path d="M92 66L104 90L108 87L97 63Z"/>
+ <path d="M40 58Q26 60 22 82Q30 68 42 64Z"/>
+ <path d="M62 50L74 50L76 26L64 26Z"/><circle cx="70" cy="20" r="5.5"/>
+ <path d="M56 17Q70 25 84 17Q82 11 76 11Q74 3 70 3Q66 3 64 11Q58 11 56 17Z"/>
+ <path d="M66 50L74 50L79 72L73 74Z"/><path d="M74 30L96 44L94 47L72 35Z"/>
+ <path d="M98 40L105 33M95 46L102 38M48 60Q68 54 88 60M69 30V48" fill="none" style="stroke:var(--corte)" stroke-width="1.2"/>
+</symbol>
+<symbol id="boi" viewBox="0 0 120 80">
+ <path d="M30 30Q58 20 92 28Q104 32 102 46Q100 56 90 56L34 56Q26 52 26 42Z"/><path d="M34 30Q40 18 50 26Z"/>
+ <path d="M31 30L16 32L8 46L14 52L22 48L33 42Z"/>
+ <path d="M18 33Q6 26 4 15M24 31Q27 19 37 15" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/>
+ <rect x="36" y="54" width="5" height="22"/><rect x="46" y="54" width="5" height="22"/><rect x="82" y="54" width="5" height="22"/><rect x="92" y="52" width="5" height="24"/>
+ <path d="M101 36Q113 44 108 62" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="108" cy="63" r="2.6"/>
+ <path d="M40 34Q60 30 88 36M42 46Q62 42 90 48" fill="none" style="stroke:var(--corte)" stroke-width="1.2"/>
+ <circle cx="16" cy="40" r="1.6" style="fill:var(--corte)"/>
+</symbol>
+<symbol id="cantador" viewBox="0 0 80 130">
+ <path d="M18 22Q40 29 62 22Q57 16 51 16Q49 5 40 5Q31 5 29 16Q23 16 18 22Z"/>
+ <circle cx="40" cy="29" r="7"/>
+ <path d="M27 38H53L58 84H22Z"/>
+ <path d="M24 84H38L37 122H28Z"/><path d="M42 84H56L53 122H43Z"/>
+ <path d="M22 121H38V127H20Z"/><path d="M43 121H55L60 127H43Z"/>
+ <path d="M33 44V82M47 44V82M40 86V120" fill="none" style="stroke:var(--corte)" stroke-width="1"/>
+ <g transform="rotate(38 38 62)">
+  <g style="stroke:var(--corte)" stroke-width="1.4"><circle cx="38" cy="72" r="11"/><circle cx="38" cy="57" r="8.5"/><rect x="36" y="18" width="4" height="34"/><rect x="34.5" y="11" width="7" height="9" rx="1"/></g>
+  <circle cx="38" cy="64" r="3.2" style="fill:var(--corte)"/>
+  <path d="M37 22V80M39 22V80" fill="none" style="stroke:var(--corte)" stroke-width=".5"/>
+ </g>
+ <path d="M27 40L22 58L30 70L34 66L28 56L32 42Z"/><path d="M50 39L56 46L58 43L53 37Z"/>
+</symbol>
+<symbol id="sol-raios" viewBox="0 0 280 280">
+ <g fill="none" stroke="currentColor" stroke-width="2.4">
+  <polygon points="140,10 148,50 132,50"/><polygon points="140,270 148,230 132,230"/><polygon points="10,140 50,148 50,132"/><polygon points="270,140 230,148 230,132"/>
+  <polygon points="49,49 72,86 35,72"/><polygon points="231,49 208,86 245,72"/><polygon points="49,231 72,194 35,208"/><polygon points="231,231 208,194 245,208"/>
+  <polygon points="140,65 155,80 140,95 125,80"/><polygon points="140,185 155,200 140,215 125,200"/><polygon points="65,140 80,155 95,140 80,125"/><polygon points="185,140 200,155 215,140 200,125"/>
+  <polygon points="88,88 103,103 88,118 73,103"/><polygon points="192,88 207,103 192,118 177,103"/><polygon points="88,192 103,207 88,222 73,207"/><polygon points="192,192 207,207 192,222 177,207"/>
+  <circle cx="140" cy="140" r="122" stroke-dasharray="5 7"/><circle cx="140" cy="140" r="131" stroke-width="1.2" stroke-dasharray="2 12"/>
+ </g>
+</symbol>
+<symbol id="sol-nucleo" viewBox="0 0 280 280">
+ <circle cx="140" cy="140" r="45" fill="none" stroke="currentColor" stroke-width="2.4"/>
+ <circle cx="140" cy="140" r="38" fill="currentColor" fill-opacity=".22" stroke="currentColor" stroke-width="1.4"/>
+ <path d="M105 140H175M140 105V175" stroke="currentColor" stroke-width="2.4"/>
+ <polygon points="140,112 155,127 140,142 125,127" fill="currentColor" fill-opacity=".3" stroke="currentColor" stroke-width="1.6"/>
+ <polygon points="140,138 155,153 140,168 125,153" fill="currentColor" fill-opacity=".3" stroke="currentColor" stroke-width="1.6"/>
+ <circle cx="140" cy="140" r="9" fill="currentColor"/><circle cx="140" cy="140" r="4" style="fill:var(--corte)"/>
+</symbol>
+</svg>`;
+function estrelaPts(cx,cy,R,r,n){const p=[];for(let k=0;k<2*n;k++){const a=Math.PI*k/n-Math.PI/2,rr=k%2?r:R;p.push((cx+Math.cos(a)*rr).toFixed(1)+","+(cy+Math.sin(a)*rr).toFixed(1));}return p.join(" ");}
+function anelLua(){let s=`<g fill="none" stroke="currentColor"><circle cx="140" cy="140" r="100" stroke-width="2.2" stroke-dasharray="6 6"/><circle cx="140" cy="140" r="132" stroke-width="1.2" stroke-dasharray="2 10"/></g>`;
+  for(let k=0;k<8;k++){const a=k*Math.PI/4,x=140+Math.cos(a)*118,y=140+Math.sin(a)*118;s+=`<polygon points="${estrelaPts(x,y,12,4,4)}"/>`;
+    const b=a+Math.PI/8,x2=140+Math.cos(b)*100,y2=140+Math.sin(b)*100;s+=`<path d="M${(x2).toFixed(1)} ${(y2-5).toFixed(1)}l5 5l-5 5l-5-5z"/>`;}
+  return s;}
+const SPRITE2=`<svg width="0" height="0" style="position:absolute" xmlns="http://www.w3.org/2000/svg">
+<symbol id="estrela" viewBox="0 0 40 40"><polygon points="${estrelaPts(20,20,19,7,8)}"/><circle cx="20" cy="20" r="3.4" style="fill:var(--corte)"/></symbol>
+<symbol id="lua" viewBox="0 0 280 280">
+ <path d="M136.6 78.1A62 62 0 1 0 194.9 168.8A54 54 0 0 1 136.6 78.1Z"/>
+ <path d="M98 118l5 6l-5 6l-5-6z" style="fill:var(--corte)"/>
+ <path d="M90 150Q99 156 108 149M86 100l4 3M84 176l5-2M112 194l2-5" fill="none" style="stroke:var(--corte)" stroke-width="2.4" stroke-linecap="round"/>
+</symbol>
+<symbol id="lua-anel" viewBox="0 0 280 280">${anelLua()}</symbol>
+<symbol id="pandeirista" viewBox="0 0 80 130">
+ <path d="M18 22Q40 29 62 22Q57 16 51 16Q49 5 40 5Q31 5 29 16Q23 16 18 22Z"/>
+ <circle cx="40" cy="29" r="7"/>
+ <path d="M27 38H53L58 84H22Z"/>
+ <path d="M24 84H38L37 122H28Z"/><path d="M42 84H56L53 122H43Z"/>
+ <path d="M22 121H38V127H20Z"/><path d="M43 121H55L60 127H43Z"/>
+ <path d="M33 44V82M47 44V82M40 86V120" fill="none" style="stroke:var(--corte)" stroke-width="1"/>
+ <path d="M51 40L60 30L64 34L55 45Z"/>
+ <path d="M29 40L40 50L56 36L59 39L41 57L26 46Z"/>
+ <circle cx="65" cy="24" r="12.5" style="stroke:var(--corte)" stroke-width="1.4"/>
+ <circle cx="65" cy="24" r="8.5" fill="none" style="stroke:var(--corte)" stroke-width=".8"/>
+ <g style="fill:var(--corte)"><rect x="63.5" y="11.6" width="3" height="2" rx=".6"/><rect x="63.5" y="34.4" width="3" height="2" rx=".6"/><rect x="52.6" y="23" width="2" height="3" rx=".6"/><rect x="75.4" y="23" width="2" height="3" rx=".6"/></g>
+</symbol>
+<symbol id="bode" viewBox="0 0 100 80">
+ <path d="M20 30Q50 22 74 28L78 46Q74 54 64 54L28 54Q18 50 18 40Z"/>
+ <path d="M70 28L80 15L91 20L97 31L91 33L85 28L78 44Z"/>
+ <path d="M82 16Q76 3 64 5Q73 8 78 18Z"/><path d="M85 19L95 16L89 24Z"/><path d="M90 32L92 42L86 34Z"/>
+ <rect x="26" y="52" width="4.5" height="22"/><rect x="35" y="52" width="4.5" height="22"/><rect x="61" y="52" width="4.5" height="22"/><rect x="70" y="50" width="4.5" height="24"/>
+ <path d="M20 33L11 22L18 35Z"/>
+ <path d="M28 36Q48 31 70 36M30 44Q50 40 68 44M44 48l2 5M54 48l2 5" fill="none" style="stroke:var(--corte)" stroke-width="1.2"/>
+ <circle cx="87" cy="23" r="1.5" style="fill:var(--corte)"/>
+</symbol>
+<symbol id="arvore" viewBox="0 0 60 100">
+ <path d="M27 100L27 52L14 34L10 22L14 21L18 31L29 46L30 18L26 8L30 7L34 17L35 44L46 28L54 22L56 25L48 32L37 54L36 100Z"/>
+ <path d="M29 62l5-3M29 72l5-3M29 82l5-3M29 92l5-3M31 30l3-2M20 34l3-1" fill="none" style="stroke:var(--corte)" stroke-width="1.3"/>
+</symbol>
+<symbol id="lobisomem" viewBox="0 0 100 120">
+ <path d="M34 112L30 92L24 84L30 80L26 70L34 68L32 58L40 56L42 46L50 44L52 36L58 30L60 10L68 24L72 6L76 26L94 14L96 20L84 34L80 44L76 52L80 64L74 70L78 86L72 96L76 112Z"/>
+ <path d="M70 62L86 58L94 50L95 56L100 55L95 61L98 64L90 64L72 72Z"/>
+ <path d="M48 112L46 118L60 118L58 112Z"/>
+ <path d="M71 27L78 29L71 32Z" style="fill:var(--corte)"/>
+ <path d="M80 27L83 23L86 25L89 20" fill="none" style="stroke:var(--corte)" stroke-width="1.2"/>
+ <path d="M44 70L50 76M40 86L48 90M60 60L64 70M54 90L62 96M50 52L56 58M62 80L66 88" fill="none" style="stroke:var(--corte)" stroke-width="1.3"/>
+</symbol>
+<symbol id="casal" viewBox="0 0 100 130">
+ <path d="M14 18Q28 24 42 18Q39 13 35 13Q34 5 28 5Q22 5 21 13Q17 13 14 18Z"/>
+ <circle cx="29" cy="24" r="6"/>
+ <path d="M20 32H40L44 76H18Z"/>
+ <path d="M19 76H29L28 120H21Z"/><path d="M33 76H43L47 118H39Z"/>
+ <path d="M18 119H29V124H16Z"/><path d="M39 117H48L52 122H40Z"/>
+ <circle cx="60" cy="25" r="6"/><circle cx="66" cy="19" r="4"/>
+ <path d="M53 23Q60 14 67 23L67 34L56 31Z"/>
+ <path d="M52 32H68L66 56H54Z"/>
+ <path d="M54 54H66L90 106Q70 116 50 110L44 106Z"/>
+ <path d="M59 109L61 124H65L63 109ZM69 108L72 122H76L72 107Z"/>
+ <path d="M38 38L60 44L60 48L38 44Z"/><path d="M56 36L34 33L34 37L54 40Z"/>
+ <path d="M22 36L10 24L12 20L26 32Z"/>
+ <path d="M30 34V74" fill="none" style="stroke:var(--corte)" stroke-width="1"/>
+ <g style="fill:var(--corte)"><circle cx="62" cy="76" r="2"/><circle cx="72" cy="90" r="2"/><circle cx="56" cy="96" r="2"/><circle cx="80" cy="102" r="2"/><circle cx="64" cy="104" r="1.6"/></g>
+</symbol>
+<symbol id="galo" viewBox="0 0 100 100">
+ <path d="M38 50Q14 18 4 28Q20 36 34 56Z"/><path d="M36 54Q8 44 2 58Q20 58 34 61Z"/><path d="M38 59Q14 66 10 82Q26 71 41 63Z"/>
+ <path d="M34 48Q40 34 60 36L66 26Q64 16 72 12L75 4L79 11L83 6L85 14L82 18L93 23L84 27L80 29L78 42Q80 60 64 68L44 68Q30 64 34 48Z"/>
+ <path d="M85 28L84 37L80 31Z"/>
+ <path d="M51 67L49 86L41 92L45 93L51 89L57 93L59 91L53 86L56 67Z"/><path d="M61 66L63 86L70 92L66 93L60 88L58 67Z"/>
+ <path d="M46 46Q60 40 72 48Q64 60 48 58Z" fill="none" style="stroke:var(--corte)" stroke-width="1.3"/>
+ <g style="fill:var(--corte)"><path d="M56 47l3 3l-3 3l-3-3z"/><path d="M64 50l3 3l-3 3l-3-3z"/><circle cx="79" cy="19" r="1.7"/></g>
+ <path d="M12 30Q24 38 34 52M8 56Q22 58 34 59M16 78Q28 70 38 62" fill="none" style="stroke:var(--corte)" stroke-width="1"/>
+</symbol>
+</svg>`;
+document.getElementById("sprite").innerHTML=SPRITE+SPRITE2;
+
+/* ---------- peças de faixa (bordas das páginas) ---------- */
+const U=(id,x,y,w,h)=>`<use href="#${id}" x="${x}" y="${y}" width="${w}" height="${h}"/>`;
+const UM=(id,x,y,w,h)=>`<g transform="translate(${2*x+w},0) scale(-1,1)">${U(id,x,y,w,h)}</g>`;
+const losango=(cx,cy,h,cheio)=>`<path d="M${cx} ${cy-h}L${cx+h} ${cy}L${cx} ${cy+h}L${cx-h} ${cy}Z" ${cheio?'fill="currentColor"':'fill="none" stroke="currentColor" stroke-width="1.3"'}/>`;
+function miniSol(cx,cy,r){let s=`<circle cx="${cx}" cy="${cy}" r="${r}"/><circle cx="${cx}" cy="${cy}" r="${r*.4}" style="fill:var(--corte)"/>`;
+  for(let k=0;k<12;k++){const a=k*Math.PI/6,c=Math.cos(a),n=Math.sin(a),r1=r+2,r2=r+(k%2?4.5:7);
+    s+=`<path d="M${(cx+c*r1).toFixed(1)} ${(cy+n*r1).toFixed(1)}L${(cx+c*r2).toFixed(1)} ${(cy+n*r2).toFixed(1)}" stroke="currentColor" stroke-width="1.5"/>`;}
+  return s;}
+const linha=(y,w=1.3)=>`<path d="M0 ${y}H300" stroke="currentColor" stroke-width="${w}"/>`;
+function dentes(y,h,passo,cima){let d="";for(let x=0;x<300;x+=passo)d+=cima?`M${x} ${y}L${x+passo/2} ${y-h}L${x+passo} ${y}Z`:`M${x} ${y}L${x+passo/2} ${y+h}L${x+passo} ${y}Z`;return `<path d="${d}"/>`;}
+function ondas(y,amp){let d=`M0 ${y}`;for(let x=0;x<300;x+=20)d+=`Q${x+5} ${y-amp} ${x+10} ${y}T${x+20} ${y}`;return `<path d="${d}" fill="none" stroke="currentColor" stroke-width="1.6"/>`;}
+const FX=c=>`<svg viewBox="0 0 300 34" fill="currentColor" xmlns="http://www.w3.org/2000/svg">${c}</svg>`;
+
+const TOPO=[
+ ()=>{let s=linha(3)+linha(31);for(let x=15;x<300;x+=30){if(x===135||x===165)continue;s+=losango(x,17,8,(x/30|0)%2===0);}return s+miniSol(150,17,6);},
+ ()=>dentes(34,5,10,true)+U("ave",20,4,40,20)+U("ave",80,0,30,15)+U("ave",130,8,44,22)+U("ave",200,2,34,17)+U("ave",250,10,36,18),
+ ()=>{let s=linha(32,1.6);for(let k=0;k<=16;k++){const a=Math.PI*(k/16),x2=150-Math.cos(a)*140,y2=32-Math.sin(a)*30;s+=`<path d="M150 32L${x2.toFixed(1)} ${y2.toFixed(1)}" stroke="currentColor" stroke-width="${k%2?0.7:1.4}"/>`;}
+   return s+`<path d="M134 32A16 16 0 0 1 166 32Z"/>`+`<circle cx="150" cy="32" r="7" style="fill:var(--corte)"/>`+losango(12,17,7,true)+losango(288,17,7,true);},
+ ()=>{let s=dentes(0,8,12,false)+dentes(34,8,12,true);for(let x=6;x<300;x+=24)s+=`<circle cx="${x+6}" cy="17" r="2.4"/>`;return s;},
+ ()=>miniSol(28,17,7)+miniSol(272,17,7)+linha(17,.8)+U("ave",70,2,36,18)+U("ave",130,6,40,20)+U("ave",190,0,34,17),
+];
+const BASE=[
+ ()=>{let s=linha(32,1.8);[[6,10,20,24],[40,16,14,16],[118,4,24,29],[170,14,15,18],[246,6,22,27],[280,15,13,17]].forEach(([x,y,w,h])=>s+=U("mandacaru",x,y,w,h));
+   for(let x=60;x<300;x+=26)s+=`<path d="M${x} 32l3-6l3 6M${x+8} 32l2-4l2 4" fill="none" stroke="currentColor" stroke-width="1"/>`;return s;},
+ ()=>ondas(22,4)+ondas(30,3)+U("jangada",128,-4,44,36)+U("ave",30,2,26,13)+U("ave",240,4,24,12),
+ ()=>linha(33,1.8)+UM("boi",196,8,38,25)+U("vaqueiro",130,0,44,34)+U("mandacaru",10,8,20,25)+U("mandacaru",60,14,14,19)+U("mandacaru",270,8,20,25),
+ ()=>{let s=linha(4)+linha(30);let d="M0 17";for(let x=0;x<300;x+=20)d+=`L${x+10} 7L${x+20} 17`;s+=`<path d="${d}" fill="none" stroke="currentColor" stroke-width="1.4"/>`;d="M0 17";for(let x=0;x<300;x+=20)d+=`L${x+10} 27L${x+20} 17`;s+=`<path d="${d}" fill="none" stroke="currentColor" stroke-width="1.4"/>`;for(let x=10;x<300;x+=20)s+=`<circle cx="${x}" cy="17" r="2"/>`;return s;},
+ ()=>linha(33,1.8)+U("cantador",118,0,21,34)+UM("cantador",161,0,21,34)+miniSol(150,10,4)+U("mandacaru",14,8,20,25)+U("mandacaru",266,8,20,25),
+];
+
+/* cenas grandes da capa */
+function cena(nome){
+  const sol=(x,y,w)=>U("sol-raios",x,y,w,w)+U("sol-nucleo",x,y,w,w);
+  let c="";
+  if(nome==="cantadores") c=sol(70,2,60)+U("cantador",14,30,66,108)+UM("cantador",120,30,66,108)+U("mandacaru",88,96,24,32);
+  if(nome==="vaqueiro")   c=sol(140,4,52)+U("mandacaru",4,64,36,46)+UM("boi",112,64,80,54)+U("vaqueiro",24,30,120,94)+U("ave",60,12,30,15);
+  if(nome==="jangada")    c=sol(14,6,58)+U("ave",120,14,34,17)+U("ave",150,34,24,12)+U("jangada",44,30,132,110);
+  if(nome==="bodes")      c=sol(72,0,56)+U("arvore",80,44,40,96)+U("bode",4,82,68,54)+UM("bode",128,82,68,54)+U("mandacaru",0,40,30,38)+U("mandacaru",170,40,30,38)+[20,60,100,140,180].map(x=>`<ellipse cx="${x}" cy="141" rx="6" ry="3"/>`).join("");
+  if(nome==="lobisomem")  c=U("lua",116,0,84,84)+U("estrela",14,10,16,16)+U("estrela",60,26,10,10)+U("estrela",96,4,12,12)+U("estrela",22,60,9,9)+U("lobisomem",34,30,92,110)+U("mandacaru",150,90,40,50);
+  if(nome==="forro")      c=bandeirinhas(8,26,200)+U("casal",56,32,84,109)+U("mandacaru",2,86,40,54)+U("mandacaru",160,92,36,48)+U("estrela",20,40,12,12)+U("estrela",170,46,10,10);
+  if(nome==="galo")       c=sol(10,2,62)+U("galo",46,30,112,112)+U("mandacaru",164,92,32,46);
+  if(nome==="asabranca") c=sol(68,4,64)+U("ave",8,44,58,29)+U("ave",128,30,64,32)+U("ave",64,76,40,20)+U("mandacaru",2,76,52,64)+U("mandacaru",148,84,44,56);
+  return `<svg viewBox="0 0 200 150" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0 141H200" stroke="currentColor" stroke-width="2"/>${c}</svg>`;
+}
+const CAPAS=[["cantadores","Cantadores"],["vaqueiro","Vaqueiro"],["jangada","Jangada"],["asabranca","Asa-branca"],["bodes","Bodes"],["lobisomem","Lobisomem"],["forro","Forró"],["galo","Galo"]];
+/* novas faixas */
+const EST=(x,y,w)=>U("estrela",x,y,w,w);
+function bandeirinhas(y0,curva,W=300){let s=`<path d="M0 ${y0}Q${W/2} ${y0+curva} ${W} ${y0}" fill="none" stroke="currentColor" stroke-width="1.2"/>`;
+  for(let x=8,k=0;x<W;x+=16,k++){const t=x/W,y=(1-t)*(1-t)*y0+2*(1-t)*t*(y0+curva)+t*t*y0;s+=`<path d="M${x-5} ${y.toFixed(1)}L${x+5} ${y.toFixed(1)}L${x} ${(y+9).toFixed(1)}Z" ${k%2?'fill="none" stroke="currentColor" stroke-width="1"':''}/>`;}
+  return s;}
+TOPO.push(
+ ()=>U("lua",128,-6,44,44)+EST(30,6,12)+EST(70,16,8)+EST(100,4,10)+EST(196,12,9)+EST(228,2,13)+EST(268,14,8)+linha(33,.8),
+ ()=>bandeirinhas(4,18)+EST(20,20,8)+EST(272,20,8),
+);
+BASE.push(
+ ()=>{let s=linha(33,1.8)+U("arvore",140,0,20,34)+U("bode",96,9,32,26)+UM("bode",172,9,32,26)+U("mandacaru",10,8,20,25)+U("mandacaru",270,8,20,25);for(let x=40;x<300;x+=34)s+=`<ellipse cx="${x}" cy="33" rx="4" ry="2"/>`;return s;},
+ ()=>linha(33,1.8)+U("casal",136,1,26,34)+EST(90,8,10)+EST(200,6,12)+U("mandacaru",14,8,20,25)+U("mandacaru",266,8,20,25),
+ ()=>linha(33,1.8)+U("galo",132,0,34,34)+miniSol(60,14,5)+miniSol(240,14,5)+U("mandacaru",14,8,20,25)+U("mandacaru",266,8,20,25),
+ ()=>linha(33,1.8)+U("lobisomem",136,0,28,34)+U("lua",40,-2,26,26)+EST(80,4,8)+EST(220,6,10)+EST(256,2,7)+U("mandacaru",270,8,20,25),
+);
+
+/* ---------- estilo das páginas (tela e impressão) ---------- */
+const PAG_CSS=`
+.pag{position:relative;container-type:inline-size;aspect-ratio:148/210;background:#FFFCF3;color:#1A1208;--corte:#FFFCF3;font-family:"Literata",Georgia,serif;font-style:italic;overflow:hidden}
+.pag .pi{position:absolute;inset:0;padding:5cqw 6cqw 4cqw;display:flex;flex-direction:column}
+.pag .fx svg{display:block;width:100%;height:auto;fill:#1A1208;color:#1A1208}
+.pag .miolo{flex:1;display:flex;flex-direction:column;justify-content:center;gap:6cqw;padding:3cqw 3cqw;min-height:0}
+.pag .est h5{font:600 2.4cqw/1.2 "Literata",Georgia,serif;font-style:italic;letter-spacing:.06em;margin:0 0 2cqw;color:#6B4A22;text-align:center}
+.pag .est h5::before,.pag .est h5::after{content:" ◆ ";font-style:normal;font-size:.8em;color:#8B1A1A}
+.pag .vv{width:fit-content;max-width:100%;margin:0 auto;font-size:var(--vs,4.1cqw);line-height:1.42}
+.pag .vv span{display:block;padding-left:1.4em;text-indent:-1.4em}
+.pag .vv .m{color:#8B1A1A;font-weight:700}
+.pag.s2 .miolo{--vs:2.95cqw;gap:3.5cqw;padding-block:2.5cqw}
+.pag.m11 .miolo{--vs:3.5cqw}
+.pag.m11.s2 .miolo{--vs:2.65cqw}
+.pag .num{text-align:center;font-size:2.4cqw;color:#6B4A22;margin:0 0 1.5cqw}
+.pag .r{font:500 2.1cqw "IBM Plex Mono",monospace;font-style:normal;letter-spacing:.16em;text-transform:uppercase;color:#6B4A22;text-align:center;display:block}
+.pag.capa .pi{padding:5cqw}
+.pag .moldura{flex:1;border:1.1cqw solid #1A1208;box-shadow:inset 0 0 0 1.4cqw #FFFCF3,inset 0 0 0 1.8cqw #1A1208;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:7cqw 7cqw 6cqw;gap:3cqw;text-align:center}
+.pag .capa-t{font-family:"Alfa Slab One",Rockwell,Georgia,serif;font-style:normal;font-weight:400;font-size:7.6cqw;line-height:1.08;text-transform:uppercase;margin:0;text-wrap:balance;overflow-wrap:anywhere}
+.pag .grav{width:100%;border:.9cqw solid #1A1208;padding:3cqw 3cqw 1cqw}
+.pag .grav svg{display:block;width:100%;height:auto;fill:#1A1208;color:#1A1208}
+.pag .autores{font-size:4.4cqw;line-height:1.3;margin:0}
+.pag .autores small{display:block;font-size:.6em;color:#6B4A22}
+.pag .rosto{text-align:center;align-items:center}
+.pag .rosto h4{font-family:"Alfa Slab One",Rockwell,Georgia,serif;font-style:normal;font-weight:400;font-size:6.4cqw;line-height:1.1;margin:0;text-wrap:balance}
+.pag .rosto .de{font-size:3.6cqw;margin:0}
+.pag .mote-g{font-size:4.2cqw;line-height:1.45;color:#8B1A1A;font-weight:700;text-align:center;margin:0}
+.pag .contra{text-align:center;align-items:center;gap:4.5cqw}
+.pag .esq{display:flex;gap:1.2cqw;justify-content:center;flex-wrap:wrap;font:600 3.6cqw "Literata",Georgia,serif;font-style:normal}
+.pag .esq b{width:5.4cqw;height:5.4cqw;display:grid;place-items:center;border:.35cqw solid #1A1208;font-weight:600}
+.pag .esq b.m{background:#8B1A1A;border-color:#8B1A1A;color:#FFFCF3}
+.pag .exp{font-size:3cqw;line-height:1.45;margin:0;max-width:62cqw}
+.pag .vinh{width:46cqw}
+.pag .vinh svg{display:block;width:100%;height:auto;fill:#1A1208;color:#1A1208}
+.pag .vv .lin{width:var(--lw,46cqw);height:1.42em;border-bottom:.25cqw solid #A8977A;padding:0;text-indent:0}
+.pag.m11 .vv .lin{--lw:62cqw}
+.pag .fx-vazia{height:10cqw;border:.3cqw solid #1A1208}
+.pag .grav-vazia{width:100%;height:60cqw;border:.6cqw solid #1A1208;display:flex;align-items:flex-end;justify-content:center;padding:1.5cqw}
+.pag .grav-vazia span,.pag .vinh-vazia span{font:500 1.9cqw "IBM Plex Mono",monospace;font-style:normal;letter-spacing:.12em;text-transform:uppercase;color:#A8977A}
+.pag .vinh-vazia{width:52cqw;height:30cqw;border:.3cqw solid #1A1208;display:flex;align-items:flex-end;justify-content:center;padding:1.2cqw}
+.pag .vinh-vazia.grande{width:100%;flex:1;height:auto}
+.pag .fim{font-family:"Alfa Slab One",Rockwell,Georgia,serif;font-style:normal;font-size:4cqw;letter-spacing:.2em}
+`;
+const sty=document.createElement("style");sty.textContent=PAG_CSS;document.body.appendChild(sty);
+
+/* ================= contagem poética aproximada ================= */
+const VOG="aeiouáéíóúâêôãõàü", FORTE="aeoáéóâêôãõàíú", FRACA="iuü";
+function limpa(s){return s.toLowerCase().replace(/[^a-záéíóúâêôãõàüç\s-]/g," ").replace(/-/g," ").trim();}
+function nucleos(w){
+  w=w.replace(/([qg])u(?=[aeioáéíóâêô])/g,"$1");
+  const ns=[];let prev=null;
+  for(let i=0;i<w.length;i++){const c=w[i];
+    if(!VOG.includes(c)){prev=null;continue;}
+    if(prev!==null&&((FORTE.includes(prev)&&FRACA.includes(c))||(FRACA.includes(prev)&&FRACA.includes(c))||("ãõ".includes(prev)&&"eo".includes(c)))){ns[ns.length-1].fim=i;prev=c;continue;}
+    ns.push({ini:i,fim:i});prev=c;}
+  return {w,ns};
+}
+function tonica(w,ns){const n=ns.length;if(n<=1)return n-1;
+  for(let k=n-1;k>=0;k--){if(/[áéíóúâêôãõ]/.test(w.slice(ns[k].ini,ns[k].fim+1)))return k;}
+  if(/(r|l|z|x|i|u|is|us|im|um|om|ons|ins|uns|ui|uis)$/.test(w))return n-1;return n-2;}
+function analisa(verso){
+  const ws=limpa(verso||"").split(/\s+/).filter(x=>/[aeiouáéíóúâêôãõàü]/.test(x));
+  if(!ws.length)return {sil:0,rima:""};
+  let t=0;ws.forEach((x,i)=>{t+=nucleos(x).ns.length;
+    if(i>0){const a=ws[i-1];if(/[aeiouáéíóâêô]$/.test(a)&&!/[ãõ][oe]?$/.test(a)&&/^h?[aeiouáéíóúâêô]/.test(x))t--;}});
+  const {w,ns}=nucleos(ws[ws.length-1]);const k=tonica(w,ns);t-=(ns.length-1-k);
+  let r=k>=0?w.slice(ns[k].ini):w;
+  r=r.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/ç/g,"s").replace(/ss/g,"s").replace(/z$/,"s");
+  return {sil:t,rima:r};
+}
+function rimam(a,b){if(!a||!b)return false;const s=x=>x.replace(/s$/,"");return a===b||s(a)===s(b);}
+
+/* ================= motes ================= */
+const MOTES={
+ 7:[["Quem estuda e tem vontade","chega longe nessa vida"],
+    ["O sertão tem poesia","que a cidade não conhece"],
+    ["Guamaré tem mar e vento","e um povo trabalhador"],
+    ["Quem pergunta sempre aprende","quem se cala fica preso"],
+    ["A palavra é minha enxada","e o papel é meu roçado"],
+    ["Sócrates andou descalço","perguntando pela praça"],
+    ["O celular tá na mão","mas o livro está na estante"],
+    ["Toda chuva no sertão","é motivo de alegria"],
+    ["Cordel é voz do Nordeste","rimado no coração"],
+    ["Ninguém nasce já sabendo","quem quer saber vai buscar"]],
+ 11:[["Eu vim lá do mato cantando a saudade","e canto as jangadas na beira do mar"],
+    ["Quem pega num livro conhece outro mundo","e aprende a pensar sem ninguém lhe mandar"],
+    ["A filosofia nasceu da pergunta","de quem olhou pro céu querendo explicar"],
+    ["O povo do campo levanta bem cedo","e vai pro roçado com fé de plantar"],
+    ["Na escola se planta a semente do sonho","que um dia floresce se a gente regar"],
+    ["O vento de Guamaré sopra a jangada","e o pescador volta com peixe pra dar"],
+    ["Quem tem um amigo não anda sozinho","na estrada da vida tem onde apoiar"]]
+};
+const ESQ=["A","B","B","A","A","C","C","D","D","C"];
+
+/* ================= estado ================= */
+const CHAVE="peleja-cordel-v3";
+/* por enquanto nada fica salvo: cada F5 começa do zero */
+function padrao(){return {metrica:7,p1:"",p2:"",n:4,origem:"sorteio",idx:{7:0,11:0},proprio:["",""],titulo:"",versos:{},divisao:"rimas",dono:{},capa:"cantadores",modo:"ilustrado"};}
+let S=padrao();
+try{["peleja-cordel-v1","peleja-cordel-v2","peleja-cordel-v3","peleja-tema"].forEach(k=>localStorage.removeItem(k));}catch(e){}
+function salva(){}
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function mote(){return S.origem==="proprio"?S.proprio:MOTES[S.metrica][S.idx[S.metrica]%MOTES[S.metrica].length];}
+function nomeP(i){return i===0?(S.p1.trim()||"Poeta 1"):(S.p2.trim()||"Poeta 2");}
+function donoLetra(e,L){
+  if(S.divisao!=="rimas")return e%2;
+  const d=S.dono[e];if(d&&d[L]!==undefined)return d[L];
+  return (L==="A"||L==="D")?e%2:1-e%2;
+}
+function donoLinha(e,l){return donoLetra(e,ESQ[l]);}
+function poeta(e){return S.divisao==="rimas"?nomeP(e%2)+" e "+nomeP(1-e%2):nomeP(e%2);}
+function versosDe(e){if(!S.versos[e])S.versos[e]=Array(8).fill("");return S.versos[e];}
+function linhaDe(e,l){return l<8?versosDe(e)[l]:mote()[l-8];}
+function feitos(e){return versosDe(e).filter(v=>v.trim()).length;}
+function ativa(){for(let e=0;e<S.n;e++)if(feitos(e)<8)return e;return -1;}
+
+/* ================= tema ================= */
+function aplicaTema(t){document.documentElement.setAttribute("data-theme",t);$("tema").textContent=t==="dark"?"☀ Tema claro":"☾ Tema escuro";}
+aplicaTema("dark");
+$("tema").onclick=()=>aplicaTema(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark");
+
+/* ================= arrumação ================= */
+function pintaArrumacao(){
+  ["m7","m11"].forEach(id=>$(id).setAttribute("aria-pressed",String(+$(id).dataset.m===S.metrica)));
+  ["n2","n4","n6","n8"].forEach(id=>$(id).setAttribute("aria-pressed",String(+$(id).dataset.n===S.n)));
+  $("dvInteira").setAttribute("aria-pressed",String(S.divisao==="inteira"));
+  $("dvRimas").setAttribute("aria-pressed",String(S.divisao==="rimas"));
+  $("dicaDivisao").textContent=S.divisao==="rimas"
+    ?"Os dois escrevem a mesma estrofe: um fica com as rimas A e D, o outro com B e C (quatro versos cada). Os papéis trocam na estrofe seguinte e podem ser ajustados em cada estrofe."
+    :"Cada poeta escreve uma estrofe inteira e a vez passa para o outro.";
+  $("moSorteio").setAttribute("aria-pressed",String(S.origem==="sorteio"));
+  $("moProprio").setAttribute("aria-pressed",String(S.origem==="proprio"));
+  $("caixaSorteio").hidden=S.origem!=="sorteio";$("caixaProprio").hidden=S.origem!=="proprio";
+  $("dicaMetrica").textContent=S.metrica===7?"Redondilha maior: sete sílabas poéticas por verso, o metro mais comum do cordel.":"Onze sílabas, no balanço do galope: tônicas na 2ª, 5ª, 8ª e 11ª.";
+  const m=MOTES[S.metrica][S.idx[S.metrica]%MOTES[S.metrica].length];
+  $("moteSorteado").innerHTML=esc(m[0])+"<br>"+esc(m[1]);
+  pintaContaMote();
+}
+function pintaContaMote(){
+  [["s9",0],["s10",1]].forEach(([s,k])=>{const t=S.proprio[k].trim();$(s).textContent=t?"· "+analisa(t).sil+" sílabas":"";});
+}
+
+/* ================= estrofes ================= */
+function montaEstrofes(){
+  const box=$("estrofes");box.innerHTML="";
+  for(let e=0;e<S.n;e++){
+    const art=document.createElement("article");art.className="estrofe";art.id="est-"+e;
+    let h=`<div class="cab"><h3>Estrofe ${e+1} <small id="quem-${e}"></small></h3><div class="acoes-est"><span class="estado" id="st-${e}"></span><button type="button" class="mini" id="cp-${e}">Copiar estrofe</button></div></div>`;
+    if(S.divisao==="rimas"){
+      h+=`<div class="donos">`+["A","B","C","D"].map(L=>{const d=donoLetra(e,L);
+        return `<button type="button" id="dn-${e}-${L}" class="d${d}" data-L="${L}" aria-label="Rima ${L}: ${esc(nomeP(d))}. Toque para trocar"><b>${L}</b>${esc(nomeP(d))}</button>`;}).join("")+`<span class="dica">toque para trocar</span></div>`;
+    }
+    for(let l=0;l<10;l++){
+      if(l===5||l===8)h+=`<div class="sep"></div>`;
+      const d=l<8?donoLinha(e,l):null;
+      const campo=l<8
+        ?`<input type="text" id="v-${e}-${l}" autocomplete="off" placeholder="verso de ${esc(nomeP(d))}" aria-label="Estrofe ${e+1}, verso ${l+1}, de ${esc(nomeP(d))}">`
+        :`<div class="fixo" id="fx-${e}-${l}"></div>`;
+      h+=`<div class="verso${l<8?" d"+d:""}"><div class="num"><b>${l+1}</b>${ESQ[l]}</div><div class="corpo">${campo}<div class="rimahint" id="rh-${e}-${l}"></div></div><div class="sil" id="sl-${e}-${l}">·</div></div>`;
+    }
+    art.innerHTML=h;box.appendChild(art);
+    art.querySelectorAll(".donos button").forEach(btn=>btn.onclick=()=>{
+      const L=btn.dataset.L;if(!S.dono[e])S.dono[e]={};S.dono[e][L]=1-donoLetra(e,L);salva();montaEstrofes();
+      const nb=$(`dn-${e}-${L}`);if(nb)nb.focus();});
+    $(`cp-${e}`).onclick=()=>{const b=$(`cp-${e}`);const txt=[...Array(10)].map((_,l)=>(linhaDe(e,l)||"").trim()).join("\n");
+      copiaTexto(txt,()=>{b.textContent="Copiada ✓";b.classList.add("ok");setTimeout(()=>{b.textContent="Copiar estrofe";b.classList.remove("ok");},2000);},
+        ()=>{b.textContent="Não deu para copiar";setTimeout(()=>b.textContent="Copiar estrofe",2500);});};
+    for(let l=0;l<8;l++){const inp=$(`v-${e}-${l}`);inp.value=versosDe(e)[l];
+      inp.addEventListener("input",ev=>{S.versos[e][l]=ev.target.value;salva();atualiza(e);estados();agendaFolheto();});}
+  }
+  for(let e=0;e<S.n;e++)atualiza(e);
+  estados();folheto();
+}
+function atualiza(e){
+  const alvo=S.metrica,rimas=[];
+  for(let l=0;l<10;l++){const t=linhaDe(e,l)||"";const a=analisa(t);rimas[l]=t.trim()?a.rima:"";
+    if(l>=8){const f=$(`fx-${e}-${l}`);if(f)f.textContent=t||"(escreva o mote acima)";}
+    const sl=$(`sl-${e}-${l}`);if(!sl)continue;
+    if(!t.trim()){sl.textContent="·";sl.className="sil";}
+    else{const d=Math.abs(a.sil-alvo);sl.textContent=a.sil;sl.className="sil "+(d===0?"ok":d===1?"perto":"longe");sl.title=a.sil+" sílabas (meta: "+alvo+")";}
+  }
+  const ancora={C:{l:9,r:rimas[9]},D:{l:8,r:rimas[8]}};
+  ["A","B"].forEach(L=>{for(let l=0;l<8;l++)if(ESQ[l]===L&&rimas[l]){ancora[L]={l,r:rimas[l]};break;}});
+  for(let l=0;l<10;l++){const rh=$(`rh-${e}-${l}`);if(!rh)continue;
+    rh.className="rimahint";rh.textContent="";
+    if(l>=8)continue;
+    const L=ESQ[l],an=ancora[L];
+    if(!an||!an.r)continue;
+    if(an.l===l){if(L!=="C"&&L!=="D")rh.textContent="define a rima "+L+": -"+an.r;continue;}
+    const alvoTxt=(L==="C"||L==="D")?`rima com o mote: -${an.r}`:`rima com o verso ${an.l+1}: -${an.r}`;
+    if(!rimas[l])rh.textContent=alvoTxt;
+    else if(rimam(rimas[l],an.r)){rh.textContent="rimou ✓ -"+rimas[l];rh.className="rimahint bate";}
+    else{rh.textContent="-"+rimas[l]+" não bate com -"+an.r;rh.className="rimahint nao";}
+  }
+}
+function estados(){
+  const at=ativa();
+  for(let e=0;e<S.n;e++){const f=feitos(e),st=$("st-"+e),art=$("est-"+e);if(!st)continue;
+    $("quem-"+e).textContent="· "+poeta(e);
+    art.classList.toggle("ativa",e===at);
+    if(f===8){st.textContent="completa";st.className="estado feita";}
+    else if(e===at){const v=versosDe(e);let l=0;while(l<8&&v[l].trim())l++;
+      st.textContent="vez de "+nomeP(donoLinha(e,l))+(S.divisao==="rimas"?" · verso "+(l+1):"");st.className="estado vez";}
+    else{st.textContent=f+" de 8 versos";st.className="estado";}
+  }
+}
+
+/* ================= folheto ================= */
+function tituloF(){return S.titulo.trim()||"Peleja sem título";}
+function estrofesUsadas(){return [...Array(S.n).keys()];}
+const desenhar=()=>S.modo==="desenhar";
+function planoPaginas(){
+  const n=estrofesUsadas().length;let best=null;
+  for(const spp of [1,2])for(const rosto of [true,false]){
+    const tot=2+(rosto?1:0)+Math.ceil(n/spp),P=Math.ceil(tot/4)*4,k=[P-tot,P,spp,rosto?0:1];
+    if(!best||cmp(k,best.k)<0)best={spp,rosto,P,pad:P-tot,k};}
+  return best;
+}
+function cmp(a,b){for(let i=0;i<a.length;i++){if(a[i]!==b[i])return a[i]-b[i];}return 0;}
+function faixaT(i){return desenhar()?`<div class="fx-vazia"></div>`:FX(TOPO[i%TOPO.length]());}
+function faixaB(i){return desenhar()?`<div class="fx-vazia"></div>`:FX(BASE[i%BASE.length]());}
+const mt=t=>t&&t.trim()?esc(t):`<span class="lin" style="display:inline-block;width:46cqw;height:1.2em;border-bottom:.25cqw solid #A8977A"></span>`;
+function pagina(inner,num,i,cls=""){return `<div class="pag ${cls}"><div class="pi"><div class="fx">${faixaT(i)}</div>${inner}<div class="num">${num}</div><div class="fx">${faixaB(i)}</div></div></div>`;}
+function vinheta(){return `<svg viewBox="0 0 200 120" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0 116H200" stroke="currentColor" stroke-width="2"/>${U("sol-raios",64,0,72,72)+U("sol-nucleo",64,0,72,72)+U("mandacaru",20,46,56,70)+U("mandacaru",130,58,46,58)}</svg>`;}
+function paginas(){
+  const pl=planoPaginas(),E=estrofesUsadas(),m=mote(),cls="m"+S.metrica+(pl.spp===2?" s2":"");
+  const out=[];
+  out.push({rot:"capa",html:`<div class="pag capa"><div class="pi"><div class="moldura"><h3 class="capa-t">${esc(tituloF())}</h3>${desenhar()?`<div class="grav-vazia"><span>espaço para a xilogravura</span></div>`:`<div class="grav">${cena(S.capa)}</div>`}<p class="autores">${esc(nomeP(0))} e ${esc(nomeP(1))}<small>Peleja em décimas de ${S.metrica} sílabas</small></p></div></div></div>`});
+  if(pl.rosto){const i=out.length;out.push({rot:"abertura",html:pagina(`<div class="miolo rosto"><h4>${esc(tituloF())}</h4><p class="de">peleja de ${esc(nomeP(0))} e ${esc(nomeP(1))}</p><span class="r">Mote</span><p class="mote-g">${mt(m[0])}<br>${mt(m[1])}</p></div>`,i+1,i)});}
+  for(let k=0;k<E.length;k+=pl.spp){const i=out.length,grupo=E.slice(k,k+pl.spp);
+    const ests=grupo.map(e=>{const ls=[];for(let l=0;l<10;l++){const v=(linhaDe(e,l)||"").trim();ls.push(v?`<span${l>=8?' class="m"':""}>${esc(v)}</span>`:`<span class="lin"></span>`);}
+      return `<div class="est"><h5>Estrofe ${e+1} · ${esc(poeta(e))}</h5><div class="vv">${ls.join("")}</div></div>`;}).join("");
+    out.push({rot:"estrofes",html:pagina(`<div class="miolo">${ests}</div>`,i+1,i,cls)});}
+  for(let p=0;p<pl.pad;p++){const i=out.length;out.push({rot:"vinheta",html:pagina(desenhar()?`<div class="miolo"><div class="vinh-vazia grande"><span>espaço para desenho</span></div></div>`:`<div class="miolo contra"><div class="vinh">${vinheta()}</div><span class="fim">✦ ◆ ✦</span></div>`,i+1,i)});}
+  const i=out.length;
+  const esqHTML=ESQ.map((L,k)=>`<b${k>=8?' class="m"':""}>${L}</b>`).join("");
+  out.push({rot:"contracapa",html:pagina(`<div class="miolo contra"><span class="r">O mote</span><p class="mote-g">${mt(m[0])}<br>${mt(m[1])}</p><span class="r">A décima</span><div class="esq">${esqHTML}</div><p class="exp">Dez versos de ${S.metrica} sílabas. Os dois últimos são o mote; o verso 8 rima com o 9, e os versos 6 e 7 rimam com o 10.</p>${desenhar()?`<div class="vinh-vazia"><span>vinheta</span></div>`:`<div class="vinh">${vinheta()}</div>`}</div>`,"",i)});
+  return out;
+}
+function folheto(){
+  const ps=paginas();
+  $("paginas").innerHTML=ps.map((p,i)=>`<figure>${p.html}<figcaption>pág. ${i+1} · ${p.rot}</figcaption></figure>`).join("");
+}
+let tFol=null;function agendaFolheto(){clearTimeout(tFol);tFol=setTimeout(folheto,250);}
+
+function pintaCapas(){
+  $("capas").innerHTML=CAPAS.map(([k,r])=>`<button type="button" id="capa-${k}" data-k="${k}" aria-pressed="${S.capa===k}">${cena(k)}<span>${r}</span></button>`).join("");
+  $("capas").querySelectorAll("button").forEach(b=>b.onclick=()=>{S.capa=b.dataset.k;salva();pintaCapas();folheto();$("capa-"+S.capa).focus();});
+}
+
+/* ---------- impressão ---------- */
+function documentoImpressao(){
+  const ps=paginas().map(p=>p.html),P=ps.length,folhas=[];
+  for(let s=0;s<P/4;s++){
+    folhas.push(`<div class="folha">${ps[P-2*s-1]}${ps[2*s]}</div>`);
+    folhas.push(`<div class="folha">${ps[2*s+1]}${ps[P-2*s-2]}</div>`);
+  }
+  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${esc(tituloF())}</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Literata:ital,opsz,wght@1,7..72,400;1,7..72,600;1,7..72,700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+@page{size:A4 landscape;margin:0}
+*{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+html,body{margin:0;background:#8a8070}
+.aviso{font:15px/1.5 Georgia,serif;color:#fff;background:#3b2a14;padding:12px 18px}
+.folha{width:297mm;height:210mm;display:flex;background:#FFFCF3;margin:10mm auto;overflow:hidden;break-after:page;page-break-after:always}
+.folha .pag{width:148.5mm;height:210mm;aspect-ratio:auto}
+.folha .pag+.pag{border-left:.2mm dashed #d8ccb2}
+@media print{html,body{background:#fff}.aviso{display:none}.folha{margin:0}.folha .pag+.pag{border-left:none}}
+${PAG_CSS}
+</style></head><body>${SPRITE}
+<p class="aviso">Cordel “${esc(tituloF())}”. A janela de impressão abre sozinha; se não abrir, use Ctrl+P. Escolha A4 paisagem, frente e verso virando na borda curta, sem margens. Depois empilhe as folhas e dobre ao meio.</p>
+${folhas.join("\n")}
+<script>addEventListener("load",function(){(document.fonts?document.fonts.ready:Promise.resolve()).then(function(){setTimeout(function(){try{print()}catch(e){}},500)})});<\/script>
+</body></html>`;
+}
+function slug(s){return s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,50)||"cordel";}
+function aviso(t,ms=5000){$("aviso").textContent=t;if(ms)setTimeout(()=>{if($("aviso").textContent===t)$("aviso").textContent="";},ms);}
+async function imprimir(){
+  const html=documentoImpressao();
+  if(window.claude&&typeof window.claude.use==="function"){
+    aviso("Preparando o folheto…",0);
+    let dl=null;try{dl=await window.claude.use("downloads");}catch(e){}
+    if(dl){
+      try{await dl.save({filename:"cordel-"+slug(tituloF())+".html",data:html});aviso("Folheto salvo. Abra o arquivo e a impressão começa sozinha.",8000);}
+      catch(e){aviso(e&&e.code==="declined"?"Download cancelado.":"Não foi possível salvar o folheto aqui.");}
+      return;
+    }
+    aviso("Neste link a impressão está bloqueada. Abra o site hospedado para imprimir.",8000);return;
+  }
+  const f=document.createElement("iframe");
+  f.setAttribute("aria-hidden","true");f.style.cssText="position:fixed;right:0;bottom:0;width:1px;height:1px;border:0;opacity:0";
+  document.body.appendChild(f);f.srcdoc=html;
+  setTimeout(()=>f.remove(),120000);
+  aviso("Abrindo a impressão…");
+}
+
+/* ---------- texto corrido ---------- */
+function textoCordel(){
+  let out=tituloF().toUpperCase()+"\n"+nomeP(0)+" e "+nomeP(1)+"\n";
+  for(let e=0;e<S.n;e++){if(!feitos(e))continue;out+="\n"+poeta(e).toUpperCase()+"\n";
+    for(let l=0;l<10;l++)out+=(linhaDe(e,l)||"").trim()+"\n";}
+  return out.trim();
+}
+function copiaTexto(txt,ok,falha){
+  const reserva=()=>{const ta=document.createElement("textarea");ta.className="copia";ta.value=txt;document.body.appendChild(ta);ta.select();
+    let r=false;try{r=document.execCommand("copy");}catch(e){}ta.remove();r?ok():falha();};
+  try{navigator.clipboard.writeText(txt).then(ok,reserva);}catch(e){reserva();}
+}
+
+/* ================= eventos ================= */
+const refaz=()=>{pintaArrumacao();for(let e=0;e<S.n;e++)atualiza(e);estados();folheto();};
+["m7","m11"].forEach(id=>$(id).onclick=()=>{S.metrica=+$(id).dataset.m;salva();refaz();});
+["n2","n4","n6","n8"].forEach(id=>$(id).onclick=()=>{S.n=+$(id).dataset.n;salva();pintaArrumacao();montaEstrofes();});
+["dvInteira","dvRimas"].forEach(id=>$(id).onclick=()=>{S.divisao=$(id).dataset.d;salva();pintaArrumacao();montaEstrofes();});
+["moSorteio","moProprio"].forEach(id=>$(id).onclick=()=>{S.origem=$(id).dataset.o;salva();refaz();});
+$("sortear").onclick=()=>{const L=MOTES[S.metrica].length;let n;do{n=Math.floor(Math.random()*L);}while(L>1&&n===S.idx[S.metrica]%L);
+  S.idx[S.metrica]=n;salva();refaz();};
+[["mp1",0],["mp2",1]].forEach(([id,k])=>{$(id).value=S.proprio[k];$(id).addEventListener("input",ev=>{S.proprio[k]=ev.target.value;salva();pintaContaMote();for(let e=0;e<S.n;e++)atualiza(e);agendaFolheto();});});
+[["p1","p1"],["p2","p2"]].forEach(([id,k])=>{$(id).value=S[k];$(id).addEventListener("input",ev=>{S[k]=ev.target.value;salva();clearTimeout(window._tn);window._tn=setTimeout(montaEstrofes,350);});});
+$("titulo").value=S.titulo;$("titulo").addEventListener("input",ev=>{S.titulo=ev.target.value;salva();agendaFolheto();});
+
+$("imprimir").onclick=imprimir;
+$("copiar").onclick=()=>copiaTexto(textoCordel(),()=>aviso("Cordel copiado.",2500),()=>aviso("Não deu para copiar. Selecione o texto e copie à mão."));
+
+["mdIlustrado","mdDesenhar"].forEach(id=>$(id).onclick=()=>{S.modo=$(id).dataset.md;pintaModo();folheto();});
+function pintaModo(){
+  $("mdIlustrado").setAttribute("aria-pressed",String(S.modo==="ilustrado"));
+  $("mdDesenhar").setAttribute("aria-pressed",String(S.modo==="desenhar"));
+  $("passoCapa").hidden=S.modo==="desenhar";
+  $("dicaModo").textContent=S.modo==="desenhar"
+    ?"Sai só o necessário: título, nomes, estrofes e mote. Capa, cabeçalhos e rodapés vêm com molduras vazias para a turma desenhar as gravuras depois de imprimir."
+    :"Capa com xilogravura e faixas ilustradas no topo e no pé de cada página.";
+}
+
+/* limpar tudo: dois toques para confirmar */
+function limparTudo(){
+  S=padrao();
+  ["p1","p2","mp1","mp2","titulo"].forEach(id=>$(id).value="");
+  aplicaTema("dark");pintaArrumacao();pintaModo();pintaCapas();montaEstrofes();
+  scrollTo({top:0,behavior:"smooth"});aviso("Tudo limpo. Pode começar uma nova peleja.");
+}
+function botaoConfirma(id,rotulo,cls){let t=null;const b=$(id);
+  b.onclick=()=>{
+    if(!t){b.textContent="Apagar tudo? Toque de novo";b.classList.add(cls);t=setTimeout(()=>{b.textContent=rotulo;b.classList.remove(cls);t=null;},4000);return;}
+    clearTimeout(t);t=null;b.textContent=rotulo;b.classList.remove(cls);limparTudo();};
+}
+botaoConfirma("limpar","Limpar tudo","cheio");
+botaoConfirma("limparTopo","Limpar tudo","perigo");
+
+/* notas do repente: pandeiro e viola se alternam, cada lado a cada 10 segundos */
+const camadaNotas=document.createElement("div");camadaNotas.className="notas";camadaNotas.setAttribute("aria-hidden","true");document.body.prepend(camadaNotas);
+const semMovimento=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function soltaNotas(lado){
+  const fig=document.querySelector(".c-cant."+lado);if(!fig||semMovimento)return;
+  const r=fig.getBoundingClientRect();if(!r.width)return;
+  const x0=r.left+r.width*(lado==="e"?0.82:0.18),y0=r.top+r.height*0.18,dir=lado==="e"?1:-1;
+  ["♪","♫","♩","♬"].forEach((c,k)=>{
+    const n=document.createElement("span");n.className="nota";n.textContent=c;n.style.left=x0+"px";n.style.top=y0+"px";
+    camadaNotas.appendChild(n);
+    const dx=dir*(30+Math.random()*60),dy=-(90+Math.random()*70),rot=dir*(10+Math.random()*25);
+    const a=n.animate([{transform:"translate(0,0) rotate(0)",opacity:0},{opacity:.85,offset:.15},{transform:`translate(${dx}px,${dy}px) rotate(${rot}deg)`,opacity:0}],{duration:4200,delay:k*380,easing:"ease-out",fill:"both"});
+    a.onfinish=()=>n.remove();
+  });
+}
+let ladoNota="e";
+if(!semMovimento){setTimeout(()=>soltaNotas("e"),1500);setInterval(()=>{ladoNota=ladoNota==="e"?"d":"e";soltaNotas(ladoNota);},5000);}
+
+pintaArrumacao();pintaModo();pintaCapas();montaEstrofes();
+</script>
+
+</body></html>

@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prática de Redação - Por Abas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        /* ABAS */
+        .tabs-container {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+            overflow-x: auto;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 18px 20px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            min-width: 150px;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-button:hover {
+            background: #efefef;
+            color: #333;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 40px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* LAYOUT 2 COLUNAS */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .column-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        /* COLUNA ESQUERDA - ESCRITA */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-group input,
+        .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .input-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* COLUNA DIREITA - BANCO DE PALAVRAS */
+        .banco-section {
+            margin-bottom: 30px;
+        }
+
+        .banco-title {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 12px;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .banco-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .palavra-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: grab;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .palavra-btn:hover:not(.disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .palavra-btn:active:not(.disabled) {
+            background: #764ba2;
+            transform: translateY(0);
+            cursor: grabbing;
+        }
+
+        .palavra-btn.dragging {
+            opacity: 0.6;
+            cursor: grabbing;
+        }
+
+        .palavra-btn.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: #ccc;
+        }
+
+        .palavra-btn.disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .palavra-btn.selected {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+        }
+
+        .palavra-btn.selected::after {
+            content: " ✓";
+            font-weight: bold;
+        }
+
+        .frase-btn.selected {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.3);
+            color: white;
+        }
+
+        .drop-zone {
+            border: 2px dashed #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            min-height: 200px;
+            background: #f0f4ff;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .drop-zone.dragover {
+            background: #e3f2fd;
+            border-color: #2196F3;
+            box-shadow: 0 0 10px rgba(33, 150, 243, 0.3);
+        }
+
+        .frase-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-align: left;
+            margin-bottom: 8px;
+            width: 100%;
+            display: block;
+        }
+
+        .frase-btn:hover {
+            background: #45a049;
+            transform: translateX(5px);
+        }
+
+        /* PREVIEW - INTRODUÇÃO */
+        .preview-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 30px;
+            line-height: 1.8;
+            font-size: 0.95em;
+            color: #444;
+            min-height: 200px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .preview-title {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1em;
+        }
+
+        .preview-texto {
+            text-align: justify;
+            text-indent: 2cm;
+        }
+
+        .placeholder {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 500;
+            color: #856404;
+        }
+
+        .palavras-selecionadas {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .palavras-selecionadas-title {
+            font-weight: 600;
+            color: #1565c0;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            background: #2196F3;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tag-close {
+            cursor: pointer;
+            font-weight: bold;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .tag-close:hover {
+            opacity: 1;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #1565c0;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        button.btn-primary,
+        button.btn-secondary {
+            padding: 12px 30px;
+            font-size: 1em;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .copy-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            font-size: 0.9em;
+            margin-top: 15px;
+        }
+
+        .copy-btn:hover {
+            background: #45a049;
+        }
+
+        .btn-limpar-tags {
+            background: #ff6b6b;
+            color: white;
+            padding: 6px 12px;
+            font-size: 0.8em;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-limpar-tags:hover {
+            background: #ff5252;
+            transform: scale(1.05);
+        }
+
+        .grupo-conectivos-label {
+            font-size: 0.8em;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Prática de Redação</h1>
+            <p>Aprenda a estruturar sua redação passo a passo</p>
+        </div>
+
+        <!-- ABAS -->
+        <div class="tabs-container">
+            <button class="tab-button active" onclick="mudarAba('introducao')">Introdução</button>
+            <button class="tab-button" onclick="mudarAba('dev1')">Desenvolvimento 1</button>
+            <button class="tab-button" onclick="mudarAba('dev2')">Desenvolvimento 2</button>
+            <button class="tab-button" onclick="mudarAba('conclusao')">Conclusão</button>
+        </div>
+
+        <!-- ABA INTRODUÇÃO -->
+        <div id="introducao" class="tab-content active">
+            <div class="info-box">
+                <strong>Como funciona:</strong> Preencha os campos e clique nos botões abaixo deles para construir sua introdução!
+            </div>
+
+            <div class="content-grid">
+                <!-- COLUNA ESQUERDA - VERTICAL ESTRUTURADO -->
+                <div class="coluna-esquerda">
+                    <h2 class="column-title">Escreva aqui</h2>
+
+                    <!-- 1. TÓPICO FRASAL / TEMA -->
+                    <div class="input-group">
+                        <label>TEMA / TÓPICO FRASAL</label>
+                        <input type="text" id="tema" placeholder="Ex: A importância do planejamento para a Copa do Mundo de 2014" onchange="atualizarPreview()">
+                    </div>
+
+                    <!-- 2. TESE -->
+                    <div class="input-group">
+                        <label>TESE (Sua afirmação principal)</label>
+                        <textarea id="tese" placeholder="Ex: é essencial para o sucesso da realização" onchange="atualizarPreview()"></textarea>
+                    </div>
+
+                    <!-- 4. QUALIFICADORES - LOGO ABAIXO DA TESE -->
+                    <div class="banco-section">
+                        <div class="banco-title">Qualificadores (Selecione 1)</div>
+                        <div class="banco-content">
+                            <button class="palavra-btn" id="btn-crucial" onclick="selecionarQualificador('crucial')">crucial</button>
+                            <button class="palavra-btn" id="btn-relevante" onclick="selecionarQualificador('relevante')">relevante</button>
+                            <button class="palavra-btn" id="btn-significativo" onclick="selecionarQualificador('significativo')">significativo</button>
+                            <button class="palavra-btn" id="btn-estrategico" onclick="selecionarQualificador('estratégico')">estratégico</button>
+                            <button class="palavra-btn" id="btn-indispensavel" onclick="selecionarQualificador('indispensável')">indispensável</button>
+                            <button class="palavra-btn" id="btn-vital" onclick="selecionarQualificador('vital')">vital</button>
+                        </div>
+                    </div>
+
+                    <!-- AUTORIDADE / REPERTÓRIO BLOCO COMPLETO -->
+                    <div class="input-group">
+                        <label>AUTORIDADE / REPERTÓRIO (Quem diz?)</label>
+                        <input type="text" id="autoridade" placeholder="Ex: Fulano de Tal, Especialista em Gestão" onchange="atualizarPreview()">
+                    </div>
+
+                    <!-- CONECTIVOS DE INTRODUÇÃO DE AUTORIDADE -->
+                    <div class="banco-section">
+                        <div class="banco-title">Conectivos de Introdução de Autoridade</div>
+                        <div class="banco-content">
+                            <button class="palavra-btn" id="btn-de-acordo" onclick="selecionarConectivo('De acordo com', 'grupo-autoridade')">De acordo com</button>
+                            <button class="palavra-btn" id="btn-conforme" onclick="selecionarConectivo('Conforme', 'grupo-autoridade')">Conforme</button>
+                            <button class="palavra-btn" id="btn-segundo" onclick="selecionarConectivo('Segundo', 'grupo-autoridade')">Segundo</button>
+                            <button class="palavra-btn" id="btn-nas-palavras" onclick="selecionarConectivo('Nas palavras de', 'grupo-autoridade')">Nas palavras de</button>
+                            <button class="palavra-btn" id="btn-afirma" onclick="selecionarConectivo('Como afirma', 'grupo-autoridade')">Como afirma</button>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>ARGUMENTO 1</label>
+                        <textarea id="arg1" placeholder="Ex: O planejamento estratégico permite otimizar recursos" onchange="atualizarPreview()"></textarea>
+                    </div>
+
+                    <!-- 5. VERIFICAÇÃO/CONSTATAÇÃO - APÓS ARGUMENTO 1 -->
+                    <div class="banco-section">
+                        <div class="banco-title">Verificação/Constatação</div>
+                        <div class="banco-content">
+                            <button class="palavra-btn" id="btn-percebe" onclick="selecionarConectivo('Percebe-se que', 'grupo-verificacao')">Percebe-se que</button>
+                            <button class="palavra-btn" id="btn-observa" onclick="selecionarConectivo('Observa-se', 'grupo-verificacao')">Observa-se</button>
+                            <button class="palavra-btn" id="btn-constata" onclick="selecionarConectivo('Constata-se que', 'grupo-verificacao')">Constata-se que</button>
+                            <button class="palavra-btn" id="btn-verifica" onclick="selecionarConectivo('Verifica-se que', 'grupo-verificacao')">Verifica-se que</button>
+                            <button class="palavra-btn" id="btn-nota-se" onclick="selecionarConectivo('Nota-se que', 'grupo-verificacao')">Nota-se que</button>
+                        </div>
+                    </div>
+
+                    <!-- 8. ARGUMENTO 2 -->
+                    <div class="input-group">
+                        <label>ARGUMENTO 2</label>
+                        <textarea id="arg2" placeholder="Ex: Garante o cumprimento de prazos e metas" onchange="atualizarPreview()"></textarea>
+                    </div>
+
+                    <!-- 7. ADIÇÃO/JUNÇÃO DE IDEIAS - APÓS ARGUMENTO 2 -->
+                    <div class="banco-section">
+                        <div class="banco-title">Adição/Junção de Ideias</div>
+                        <div class="banco-content">
+                            <button class="palavra-btn" id="btn-bem-como" onclick="selecionarConectivo('bem como', 'grupo-adicao')">bem como</button>
+                            <button class="palavra-btn" id="btn-alem-disso" onclick="selecionarConectivo('além disso', 'grupo-adicao')">além disso</button>
+                            <button class="palavra-btn" id="btn-ademais" onclick="selecionarConectivo('Ademais', 'grupo-adicao')">Ademais</button>
+                            <button class="palavra-btn" id="btn-ainda" onclick="selecionarConectivo('ainda', 'grupo-adicao')">ainda</button>
+                            <button class="palavra-btn" id="btn-somando-se" onclick="selecionarConectivo('Somando-se a isso', 'grupo-adicao')">Somando-se a isso</button>
+                        </div>
+                    </div>
+
+                    <!-- 9. FECHAMENTOS -->
+                    <div class="banco-section">
+                        <div class="banco-title">Fechamentos da Introdução</div>
+                        <button class="frase-btn" id="btn-fechamento-1" onclick="selecionarFechamento('tornando-se imprescindível a discussão.', 'btn-fechamento-1')">Tornando-se imprescindível a discussão</button>
+                        <button class="frase-btn" id="btn-fechamento-2" onclick="selecionarFechamento('evidenciando a relevância e importância.', 'btn-fechamento-2')">Evidenciando a relevância e importância</button>
+                        <button class="frase-btn" id="btn-fechamento-3" onclick="selecionarFechamento('justificando a necessidade de análise.', 'btn-fechamento-3')">Justificando a necessidade de análise</button>
+                        <button class="frase-btn" id="btn-fechamento-4" onclick="selecionarFechamento('sendo fundamental sua compreensão.', 'btn-fechamento-4')">Sendo fundamental sua compreensão</button>
+                        <button class="frase-btn" id="btn-fechamento-5" onclick="selecionarFechamento('demonstrando urgência e valor da temática.', 'btn-fechamento-5')">Demonstrando urgência e valor da temática</button>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn-secondary" onclick="limparIntroducao()">Limpar</button>
+                    </div>
+                </div>
+
+                <!-- COLUNA DIREITA - VISOR E MODELOS -->
+                <div class="coluna-direita">
+                    <h2 class="column-title">Visor e Modelos</h2>
+
+                    <!-- PREVIEW (VISOR DA INTRODUÇÃO) -->
+                    <div class="preview-section">
+                        <div class="preview-title">Visor da Introdução</div>
+                        <div class="drop-zone" id="dropZone">
+                            <div class="preview-texto" id="previewIntroducao">
+                                Clique nas palavras e preencha os campos para ver sua introdução aqui...
+                            </div>
+                        </div>
+                        <button class="copy-btn" onclick="copiarTexto('previewIntroducao')">Copiar</button>
+                    </div>
+
+                    <!-- MODELOS DE INTRODUÇÃO -->
+                    <div class="banco-section">
+                        <div class="banco-title">Modelos de Introdução</div>
+                        <button class="frase-btn" id="btn-modelo-1" onclick="usarModelo('O [TEMA] é essencial para [TESE]. De acordo com [AUTORIDADE], percebe-se que [ARGUMENTO 1], bem como [ARGUMENTO 2].', 'btn-modelo-1')">Modelo 1: Tema → Tese → Autoridade → Argumentos</button>
+                        <button class="frase-btn" id="btn-modelo-2" onclick="usarModelo('Conforme [AUTORIDADE], o [TEMA] demonstra que [ARGUMENTO 1]. Observa-se, ademais, que [ARGUMENTO 2], sendo [TESE].', 'btn-modelo-2')">Modelo 2: Autoridade → Tema → Argumentos → Tese</button>
+                        <button class="frase-btn" id="btn-modelo-3" onclick="usarModelo('[TEMA] constitui aspecto fundamental. De acordo com especialistas, [ARGUMENTO 1]. Além disso, [ARGUMENTO 2], o que é [TESE].', 'btn-modelo-3')">Modelo 3: Tema aberto → Argumentação</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA DESENVOLVIMENTO 1 -->
+        <div id="dev1" class="tab-content">
+            <div class="info-box">
+                <strong>Como funciona:</strong> Desenvolva e aprofunde o Argumento 1 com fundamentação, dados e exemplos práticos!
+            </div>
+
+            <div class="content-grid">
+                <!-- COLUNA ESQUERDA -->
+                <div class="coluna-esquerda">
+                    <h2 class="column-title">Escreva aqui</h2>
+
+                    <div class="input-group">
+                        <label>ARGUMENTO 1 (tópico frasal do parágrafo)</label>
+                        <textarea id="dev1-argumento" placeholder="Seu argumento 1 da introdução aparecerá aqui ou você pode editar" onchange="atualizarPreviewDev1()"></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label>FUNDAMENTAÇÃO (Por que este argumento é verdadeiro?)</label>
+                        <textarea id="dev1-fundamentacao" placeholder="Ex: O planejamento estratégico é crucial porque permite..." onchange="atualizarPreviewDev1()"></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label>FONTE / AUTORIDADE (Quem respalda?)</label>
+                        <input type="text" id="dev1-fonte" placeholder="Ex: Segundo o Instituto XYZ, Conforme pesquisa de..." onchange="atualizarPreviewDev1()">
+                    </div>
+
+                    <div class="input-group">
+                        <label>DADOS / PESQUISA (Números, estatísticas, fatos)</label>
+                        <textarea id="dev1-dados" placeholder="Ex: 85% das empresas que planejam estrategicamente aumentam 40% sua produtividade..." onchange="atualizarPreviewDev1()"></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label>APLICAÇÃO PRÁTICA (Como funciona? Exemplos?)</label>
+                        <textarea id="dev1-aplicacao" placeholder="Ex: Imagine uma empresa que define metas anuais..." onchange="atualizarPreviewDev1()"></textarea>
+                    </div>
+
+                    <div class="input-group">
+                        <label>FINALIDADE (Para quê? Qual o objetivo?)</label>
+                        <input type="text" id="dev1-finalidade" placeholder="Ex: contribuindo para melhor desempenho organizacional" onchange="atualizarPreviewDev1()">
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn-secondary" onclick="limparDev1()">Limpar</button>
+                    </div>
+                </div>
+
+                <!-- COLUNA DIREITA -->
+                <div class="coluna-direita">
+                    <h2 class="column-title">Banco de Palavras</h2>
+
+                    <!-- CONECTIVOS DE DESENVOLVIMENTO -->
+                    <div class="banco-section">
+                        <div class="banco-title">Conectivos de Desenvolvimento</div>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <div class="grupo-conectivos-label">Introdução do parágrafo:</div>
+                            <div class="banco-content" style="margin-bottom: 10px;">
+                                <button class="palavra-btn" id="btn-dev1-primeiro" onclick="selecionarConectivoDev1('Em primeiro lugar', 'grupo-intro-dev')">Em primeiro lugar</button>
+                                <button class="palavra-btn" id="btn-dev1-primeiramente" onclick="selecionarConectivoDev1('Primeiramente', 'grupo-intro-dev')">Primeiramente</button>
+                                <button class="palavra-btn" id="btn-dev1-inicialmente" onclick="selecionarConectivoDev1('Inicialmente', 'grupo-intro-dev')">Inicialmente</button>
+                            </div>
+                        </div>
+
+                        <!-- VERBOS DE FUNDAMENTAÇÃO -->
+                        <div class="banco-section" style="margin-bottom: 15px;">
+                            <div class="banco-title">Verbos de Fundamentação</div>
+                            <div class="banco-content">
+                                <button class="palavra-btn" id="btn-verbo-demonstra" onclick="selecionarVerboDev1('demonstra')">demonstra</button>
+                                <button class="palavra-btn" id="btn-verbo-evidencia" onclick="selecionarVerboDev1('evidencia')">evidencia</button>
+                                <button class="palavra-btn" id="btn-verbo-comprova" onclick="selecionarVerboDev1('comprova')">comprova</button>
+                                <button class="palavra-btn" id="btn-verbo-revela" onclick="selecionarVerboDev1('revela')">revela</button>
+                                <button class="palavra-btn" id="btn-verbo-indica" onclick="selecionarVerboDev1('indica')">indica</button>
+                                <button class="palavra-btn" id="btn-verbo-sugere" onclick="selecionarVerboDev1('sugere')">sugere</button>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <div class="grupo-conectivos-label">Explicação:</div>
+                            <div class="banco-content" style="margin-bottom: 10px;">
+                                <button class="palavra-btn" id="btn-dev1-isto" onclick="selecionarConectivoDev1('Isto é', 'grupo-explicacao-dev')">Isto é</button>
+                                <button class="palavra-btn" id="btn-dev1-ou-seja" onclick="selecionarConectivoDev1('Ou seja', 'grupo-explicacao-dev')">Ou seja</button>
+                                <button class="palavra-btn" id="btn-dev1-palavras" onclick="selecionarConectivoDev1('Em outras palavras', 'grupo-explicacao-dev')">Em outras palavras</button>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <div class="grupo-conectivos-label">Adição de informação:</div>
+                            <div class="banco-content" style="margin-bottom: 10px;">
+                                <button class="palavra-btn" id="btn-dev1-alem" onclick="selecionarConectivoDev1('Além disso', 'grupo-adicao-dev')">Além disso</button>
+                                <button class="palavra-btn" id="btn-dev1-inclusive" onclick="selecionarConectivoDev1('Inclusive', 'grupo-adicao-dev')">Inclusive</button>
+                                <button class="palavra-btn" id="btn-dev1-outrossim" onclick="selecionarConectivoDev1('Outrossim', 'grupo-adicao-dev')">Outrossim</button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="grupo-conectivos-label">Conclusão do ponto:</div>
+                            <div class="banco-content">
+                                <button class="palavra-btn" id="btn-dev1-portanto" onclick="selecionarConectivoDev1('Portanto', 'grupo-conclusao-dev')">Portanto</button>
+                                <button class="palavra-btn" id="btn-dev1-logo" onclick="selecionarConectivoDev1('Logo', 'grupo-conclusao-dev')">Logo</button>
+                                <button class="palavra-btn" id="btn-dev1-desse-modo" onclick="selecionarConectivoDev1('Desse modo', 'grupo-conclusao-dev')">Desse modo</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PREVIEW -->
+                    <div class="preview-section">
+                        <div class="preview-title">Seu Desenvolvimento 1</div>
+                        <div class="drop-zone" id="dropZoneDev1">
+                            <div class="preview-texto" id="previewDev1">
+                                Preencha os campos para ver seu desenvolvimento aqui...
+                            </div>
+                        </div>
+                        <button class="copy-btn" onclick="copiarTexto('previewDev1')">Copiar</button>
+                    </div>
+
+                    <!-- PALAVRAS SELECIONADAS -->
+                    <div class="palavras-selecionadas">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <div class="palavras-selecionadas-title">Palavras-Chave Selecionadas</div>
+                            <button class="btn-limpar-tags" onclick="limparTodasPalavrasDev1()" style="display: none;" id="btnLimparTodasDev1">Limpar Tudo</button>
+                        </div>
+                        <div class="tags-container" id="tagsContainerDev1">
+                            <span style="color: #1565c0; font-size: 0.85em;">Clique nas palavras para selecioná-las</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA DESENVOLVIMENTO 2 -->
+        <div id="dev2" class="tab-content">
+            <div class="info-box">
+                <strong>Em breve:</strong> A seção de Desenvolvimento 2 está sendo preparada!
+            </div>
+        </div>
+
+        <!-- ABA CONCLUSÃO (vazio - próxima fase) -->
+        <div id="conclusao" class="tab-content">
+            <div class="info-box">
+                <strong>Em breve:</strong> A seção de Conclusão está sendo preparada!
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let palavrasSelecionadas = [];
+        let qualificadorSelecionado = null;
+        let conectivos = {
+            'grupo-autoridade': null,
+            'grupo-verificacao': null,
+            'grupo-adicao': null
+        };
+        let fechamentoSelecionado = 'tornando-se imprescindível a discussão sobre o tema.';
+
+        const qualificadoresLista = ['crucial', 'relevante', 'significativo', 'estratégico', 'indispensável', 'vital'];
+        const gruposConectivos = {
+            'grupo-autoridade': ['De acordo com', 'Conforme', 'Segundo', 'Nas palavras de', 'Como afirma'],
+            'grupo-verificacao': ['Percebe-se que', 'Observa-se', 'Constata-se que', 'Verifica-se que', 'Nota-se que'],
+            'grupo-adicao': ['bem como', 'além disso', 'Ademais', 'ainda', 'Somando-se a isso']
+        };
+
+        function mudarAba(abaId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(abaId).classList.add('active');
+            event.target.classList.add('active');
+
+            // Se mudar para Dev1, copiar argumento 1 da Introdução
+            if (abaId === 'dev1') {
+                const arg1 = document.getElementById('arg1').value;
+                if (arg1 && !document.getElementById('dev1-argumento').value) {
+                    document.getElementById('dev1-argumento').value = arg1;
+                    atualizarPreviewDev1();
+                }
+            }
+
+            // Se mudar para Dev2, copiar argumento 2 da Introdução
+            if (abaId === 'dev2') {
+                const arg2 = document.getElementById('arg2').value;
+                if (arg2 && !document.getElementById('dev2-argumento').value) {
+                    document.getElementById('dev2-argumento').value = arg2;
+                    // atualizarPreviewDev2(); // Será adicionado depois
+                }
+            }
+        }
+
+        function selecionarQualificador(qualificador) {
+            if (qualificadorSelecionado === qualificador) {
+                // Desselecionar se clicar novamente
+                qualificadorSelecionado = null;
+                atualizarBotoesQualificadores();
+                atualizarPreview();
+                return;
+            }
+
+            qualificadorSelecionado = qualificador;
+            atualizarBotoesQualificadores();
+            
+            // Remover dos tags se estava lá
+            palavrasSelecionadas = palavrasSelecionadas.filter(p => !qualificadoresLista.includes(p));
+            palavrasSelecionadas.push(qualificador);
+            atualizarTags();
+            atualizarPreview();
+        }
+
+        function atualizarBotoesQualificadores() {
+            const mapa = {
+                'crucial': 'btn-crucial',
+                'relevante': 'btn-relevante',
+                'significativo': 'btn-significativo',
+                'estratégico': 'btn-estrategico',
+                'indispensável': 'btn-indispensavel',
+                'vital': 'btn-vital'
+            };
+
+            Object.entries(mapa).forEach(([q, btnId]) => {
+                const btn = document.getElementById(btnId);
+                if (qualificadorSelecionado === q) {
+                    btn.classList.add('selected');
+                    btn.classList.remove('disabled');
+                    btn.disabled = false;
+                } else if (qualificadorSelecionado) {
+                    btn.classList.add('disabled');
+                    btn.disabled = true;
+                } else {
+                    btn.classList.remove('selected', 'disabled');
+                    btn.disabled = false;
+                }
+            });
+        }
+
+        // SELEÇÃO DE CONECTIVOS (agrupado)
+        function selecionarConectivo(conectivo, grupo) {
+            if (conectivos[grupo] === conectivo) {
+                // Desselecionar se clicar novamente
+                conectivos[grupo] = null;
+                palavrasSelecionadas = palavrasSelecionadas.filter(p => !gruposConectivos[grupo].includes(p));
+            } else {
+                // Remover outro conectivo do mesmo grupo se houver
+                if (conectivos[grupo]) {
+                    palavrasSelecionadas = palavrasSelecionadas.filter(p => p !== conectivos[grupo]);
+                }
+                conectivos[grupo] = conectivo;
+                palavrasSelecionadas = palavrasSelecionadas.filter(p => !gruposConectivos[grupo].includes(p));
+                palavrasSelecionadas.push(conectivo);
+            }
+
+            atualizarBotoesConectivos();
+            atualizarTags();
+            atualizarPreview();
+        }
+
+        function atualizarBotoesConectivos() {
+            const mapa = {
+                'De acordo com': 'btn-de-acordo',
+                'Conforme': 'btn-conforme',
+                'Segundo': 'btn-segundo',
+                'Nas palavras de': 'btn-nas-palavras',
+                'Como afirma': 'btn-afirma',
+                'Percebe-se que': 'btn-percebe',
+                'Observa-se': 'btn-observa',
+                'Constata-se que': 'btn-constata',
+                'Verifica-se que': 'btn-verifica',
+                'Nota-se que': 'btn-nota-se',
+                'bem como': 'btn-bem-como',
+                'além disso': 'btn-alem-disso',
+                'Ademais': 'btn-ademais',
+                'ainda': 'btn-ainda',
+                'Somando-se a isso': 'btn-somando-se'
+            };
+
+            Object.entries(gruposConectivos).forEach(([grupo, conectivos_lista]) => {
+                conectivos_lista.forEach(c => {
+                    const btn = document.getElementById(mapa[c]);
+                    if (!btn) return;
+                    
+                    if (conectivos[grupo] === c) {
+                        btn.classList.add('selected');
+                        btn.classList.remove('disabled');
+                        btn.disabled = false;
+                    } else if (conectivos[grupo]) {
+                        btn.classList.add('disabled');
+                        btn.disabled = true;
+                    } else {
+                        btn.classList.remove('selected', 'disabled');
+                        btn.disabled = false;
+                    }
+                });
+            });
+        }
+
+        // SELEÇÃO DE FECHAMENTO
+        function selecionarFechamento(fechamento, btnId) {
+            fechamentoSelecionado = fechamento;
+            
+            // Remover selected de todos os botões de fechamento
+            document.querySelectorAll('[id^="btn-fechamento-"]').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Adicionar selected ao botão clicado
+            if (btnId) {
+                document.getElementById(btnId).classList.add('selected');
+            }
+            
+            atualizarPreview();
+        }
+
+        // DRAG AND DROP
+        function setupDragDrop() {
+            const dropZone = document.getElementById('dropZone');
+            
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                const palavra = e.dataTransfer.getData('text/plain');
+                adicionarPalavra(palavra);
+            });
+        }
+
+        function adicionarPalavra(palavra) {
+            if (!palavrasSelecionadas.includes(palavra)) {
+                palavrasSelecionadas.push(palavra);
+                atualizarTags();
+                atualizarPreview();
+            }
+        }
+
+        function removerPalavra(palavra) {
+            palavrasSelecionadas = palavrasSelecionadas.filter(p => p !== palavra);
+            
+            // Se removeu um qualificador, desselecionar
+            if (qualificadoresLista.includes(palavra)) {
+                qualificadorSelecionado = null;
+                atualizarBotoesQualificadores();
+            }
+
+            // Se removeu um conectivo, desselecionar
+            Object.entries(gruposConectivos).forEach(([grupo, conectivos_lista]) => {
+                if (conectivos_lista.includes(palavra)) {
+                    conectivos[grupo] = null;
+                }
+            });
+            atualizarBotoesConectivos();
+
+            atualizarTags();
+            atualizarPreview();
+        }
+
+        function atualizarTags() {
+            const container = document.getElementById('tagsContainer');
+            const btnLimpar = document.getElementById('btnLimparTodas');
+            
+            // Verificar se os elementos existem antes de usar
+            if (!container || !btnLimpar) {
+                return;
+            }
+            
+            if (palavrasSelecionadas.length === 0) {
+                container.innerHTML = '<span style="color: #1565c0; font-size: 0.85em;">Clique ou arraste as palavras para selecioná-las</span>';
+                btnLimpar.style.display = 'none';
+                return;
+            }
+
+            btnLimpar.style.display = 'block';
+            container.innerHTML = palavrasSelecionadas.map(palavra => 
+                `<div class="tag">
+                    ${palavra}
+                    <span class="tag-close" onclick="removerPalavra('${palavra}')">✕</span>
+                </div>`
+            ).join('');
+        }
+
+        function limparTodasPalavras() {
+            palavrasSelecionadas = [];
+            qualificadorSelecionado = null;
+            conectivos = {
+                'grupo-autoridade': null,
+                'grupo-verificacao': null,
+                'grupo-adicao': null
+            };
+            atualizarBotoesQualificadores();
+            atualizarBotoesConectivos();
+            atualizarTags();
+            atualizarPreview();
+        }
+
+        function usarModelo(modelo, btnId) {
+            const tema = document.getElementById('tema').value || '[TEMA]';
+            const tese = document.getElementById('tese').value || '[TESE]';
+            const autoridade = document.getElementById('autoridade').value || '[AUTORIDADE]';
+            const arg1 = document.getElementById('arg1').value || '[ARGUMENTO 1]';
+            const arg2 = document.getElementById('arg2').value || '[ARGUMENTO 2]';
+
+            let introducao = modelo
+                .replace('[TEMA]', tema)
+                .replace('[TESE]', tese)
+                .replace('[AUTORIDADE]', autoridade)
+                .replace('[ARGUMENTO 1]', arg1)
+                .replace('[ARGUMENTO 2]', arg2);
+
+            document.getElementById('previewIntroducao').innerHTML = 
+                `<p style="text-indent: 2cm; text-align: justify;">${introducao}</p>`;
+            
+            // Remover selected de todos os botões de modelo
+            document.querySelectorAll('[id^="btn-modelo-"]').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Adicionar selected ao botão clicado
+            if (btnId) {
+                document.getElementById(btnId).classList.add('selected');
+            }
+        }
+
+        function atualizarPreview() {
+            const tema = document.getElementById('tema').value;
+            const tese = document.getElementById('tese').value;
+            const autoridade = document.getElementById('autoridade').value;
+            const arg1 = document.getElementById('arg1').value;
+            const arg2 = document.getElementById('arg2').value;
+
+            if (!tema && !tese && !autoridade) {
+                document.getElementById('previewIntroducao').innerHTML = 
+                    'Preencha os campos para ver sua introdução aqui...';
+                return;
+            }
+
+            // QUALIFICADOR
+            let qualificador = 'importante';
+            if (qualificadorSelecionado) {
+                qualificador = qualificadorSelecionado;
+            }
+
+            let introducao = `O <strong>${tema || '[TEMA]'}</strong> é ${qualificador} para <strong>${tese || '[TESE]'}</strong>. `;
+
+            // CONECTIVO 1: De acordo com / Conforme
+            if (conectivos['grupo-autoridade']) {
+                introducao += `${conectivos['grupo-autoridade']} <strong>${autoridade || '[AUTORIDADE]'}</strong>, `;
+            }
+
+            // CONECTIVO 2: Percebe-se / Observa-se
+            if (conectivos['grupo-verificacao']) {
+                introducao += `${conectivos['grupo-verificacao']} <strong>${arg1 || '[ARGUMENTO 1]'}</strong>, `;
+            } else {
+                introducao += `<strong>${arg1 || '[ARGUMENTO 1]'}</strong>, `;
+            }
+
+            // CONECTIVO 3: bem como / além disso / Ademais
+            if (conectivos['grupo-adicao']) {
+                introducao += `${conectivos['grupo-adicao']} <strong>${arg2 || '[ARGUMENTO 2]'}</strong>, `;
+            } else {
+                introducao += `<strong>${arg2 || '[ARGUMENTO 2]'}</strong>, `;
+            }
+
+            // FECHAMENTO DA INTRODUÇÃO
+            introducao += `${fechamentoSelecionado}`;
+
+            document.getElementById('previewIntroducao').innerHTML = 
+                `<p style="text-indent: 2cm; text-align: justify;">${introducao}</p>`;
+        }
+
+        function limparIntroducao() {
+            document.getElementById('tema').value = '';
+            document.getElementById('tese').value = '';
+            document.getElementById('autoridade').value = '';
+            document.getElementById('arg1').value = '';
+            document.getElementById('arg2').value = '';
+            limparTodasPalavras();
+        }
+
+        function copiarTexto(elementId) {
+            const texto = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(texto).then(() => {
+                alert('✓ Texto copiado para a área de transferência!');
+            });
+        }
+
+        // VARIÁVEIS DESENVOLVIMENTO 1
+        let palavrasSelecionadasDev1 = [];
+        let verboDev1Selecionado = null;
+        let conectivosDev1 = {
+            'grupo-intro-dev': null,
+            'grupo-explicacao-dev': null,
+            'grupo-adicao-dev': null,
+            'grupo-conclusao-dev': null
+        };
+        const gruposConectivosDev1 = {
+            'grupo-intro-dev': ['Em primeiro lugar', 'Primeiramente', 'Inicialmente'],
+            'grupo-explicacao-dev': ['Isto é', 'Ou seja', 'Em outras palavras'],
+            'grupo-adicao-dev': ['Além disso', 'Inclusive', 'Outrossim'],
+            'grupo-conclusao-dev': ['Portanto', 'Logo', 'Desse modo']
+        };
+
+        // FUNÇÕES DESENVOLVIMENTO 1
+        function selecionarConectivoDev1(conectivo, grupo) {
+            if (conectivosDev1[grupo] === conectivo) {
+                conectivosDev1[grupo] = null;
+                palavrasSelecionadasDev1 = palavrasSelecionadasDev1.filter(p => !gruposConectivosDev1[grupo].includes(p));
+            } else {
+                if (conectivosDev1[grupo]) {
+                    palavrasSelecionadasDev1 = palavrasSelecionadasDev1.filter(p => p !== conectivosDev1[grupo]);
+                }
+                conectivosDev1[grupo] = conectivo;
+                palavrasSelecionadasDev1 = palavrasSelecionadasDev1.filter(p => !gruposConectivosDev1[grupo].includes(p));
+                palavrasSelecionadasDev1.push(conectivo);
+            }
+
+            atualizarBotoesConetivosDev1();
+            atualizarTagsDev1();
+            atualizarPreviewDev1();
+        }
+
+        function selecionarVerboDev1(verbo) {
+            const verbos = ['demonstra', 'evidencia', 'comprova', 'revela', 'indica', 'sugere'];
+            
+            if (verboDev1Selecionado === verbo) {
+                // Desselecionar se clicar novamente
+                verboDev1Selecionado = null;
+                atualizarBotoesVerboDev1();
+                atualizarTagsDev1();
+                atualizarPreviewDev1();
+                return;
+            }
+
+            verboDev1Selecionado = verbo;
+            atualizarBotoesVerboDev1();
+            
+            // Remover dos tags se estava lá
+            palavrasSelecionadasDev1 = palavrasSelecionadasDev1.filter(p => !verbos.includes(p));
+            palavrasSelecionadasDev1.push(verbo);
+            atualizarTagsDev1();
+            atualizarPreviewDev1();
+        }
+
+        function atualizarBotoesVerboDev1() {
+            const mapa = {
+                'demonstra': 'btn-verbo-demonstra',
+                'evidencia': 'btn-verbo-evidencia',
+                'comprova': 'btn-verbo-comprova',
+                'revela': 'btn-verbo-revela',
+                'indica': 'btn-verbo-indica',
+                'sugere': 'btn-verbo-sugere'
+            };
+
+            Object.entries(mapa).forEach(([v, btnId]) => {
+                const btn = document.getElementById(btnId);
+                if (!btn) return;
+                
+                if (verboDev1Selecionado === v) {
+                    btn.classList.add('selected');
+                    btn.disabled = false;
+                } else if (verboDev1Selecionado) {
+                    btn.classList.remove('selected');
+                    btn.disabled = false;
+                } else {
+                    btn.classList.remove('selected');
+                    btn.disabled = false;
+                }
+            });
+        }
+
+        function atualizarBotoesConetivosDev1() {
+            const mapa = {
+                'Em primeiro lugar': 'btn-dev1-primeiro',
+                'Primeiramente': 'btn-dev1-primeiramente',
+                'Inicialmente': 'btn-dev1-inicialmente',
+                'Isto é': 'btn-dev1-isto',
+                'Ou seja': 'btn-dev1-ou-seja',
+                'Em outras palavras': 'btn-dev1-palavras',
+                'Além disso': 'btn-dev1-alem',
+                'Inclusive': 'btn-dev1-inclusive',
+                'Outrossim': 'btn-dev1-outrossim',
+                'Portanto': 'btn-dev1-portanto',
+                'Logo': 'btn-dev1-logo',
+                'Desse modo': 'btn-dev1-desse-modo'
+            };
+
+            Object.entries(gruposConectivosDev1).forEach(([grupo, conectivos_lista]) => {
+                conectivos_lista.forEach(c => {
+                    const btn = document.getElementById(mapa[c]);
+                    if (!btn) return;
+                    
+                    if (conectivosDev1[grupo] === c) {
+                        btn.classList.add('selected');
+                        btn.classList.remove('disabled');
+                        btn.disabled = false;
+                    } else if (conectivosDev1[grupo]) {
+                        btn.classList.add('disabled');
+                        btn.disabled = true;
+                    } else {
+                        btn.classList.remove('selected', 'disabled');
+                        btn.disabled = false;
+                    }
+                });
+            });
+        }
+
+        function adicionarPalavraDev1(palavra) {
+            if (!palavrasSelecionadasDev1.includes(palavra)) {
+                palavrasSelecionadasDev1.push(palavra);
+                atualizarTagsDev1();
+                atualizarPreviewDev1();
+            }
+        }
+
+        function removerPalavraDev1(palavra) {
+            palavrasSelecionadasDev1 = palavrasSelecionadasDev1.filter(p => p !== palavra);
+            
+            Object.entries(gruposConectivosDev1).forEach(([grupo, conectivos_lista]) => {
+                if (conectivos_lista.includes(palavra)) {
+                    conectivosDev1[grupo] = null;
+                }
+            });
+            atualizarBotoesConetivosDev1();
+            atualizarTagsDev1();
+            atualizarPreviewDev1();
+        }
+
+        function atualizarTagsDev1() {
+            const container = document.getElementById('tagsContainerDev1');
+            const btnLimpar = document.getElementById('btnLimparTodasDev1');
+            
+            if (palavrasSelecionadasDev1.length === 0) {
+                container.innerHTML = '<span style="color: #1565c0; font-size: 0.85em;">Clique nas palavras para selecioná-las</span>';
+                btnLimpar.style.display = 'none';
+                return;
+            }
+
+            btnLimpar.style.display = 'block';
+            container.innerHTML = palavrasSelecionadasDev1.map(palavra => 
+                `<div class="tag">
+                    ${palavra}
+                    <span class="tag-close" onclick="removerPalavraDev1('${palavra}')">✕</span>
+                </div>`
+            ).join('');
+        }
+
+        function limparTodasPalavrasDev1() {
+            palavrasSelecionadasDev1 = [];
+            conectivosDev1 = {
+                'grupo-intro-dev': null,
+                'grupo-explicacao-dev': null,
+                'grupo-adicao-dev': null,
+                'grupo-conclusao-dev': null
+            };
+            atualizarBotoesConetivosDev1();
+            atualizarTagsDev1();
+            atualizarPreviewDev1();
+        }
+
+        function atualizarPreviewDev1() {
+            const argumento = document.getElementById('dev1-argumento').value;
+            const fundamentacao = document.getElementById('dev1-fundamentacao').value;
+            const fonte = document.getElementById('dev1-fonte').value;
+            const dados = document.getElementById('dev1-dados').value;
+            const aplicacao = document.getElementById('dev1-aplicacao').value;
+            const finalidade = document.getElementById('dev1-finalidade').value;
+
+            if (!argumento && !fundamentacao) {
+                document.getElementById('previewDev1').innerHTML = 
+                    'Preencha os campos para ver seu desenvolvimento aqui...';
+                return;
+            }
+
+            let preview = `<p style="text-indent: 2cm; text-align: justify;">`;
+            
+            // Tópico frasal com conectivo de introdução
+            if (conectivosDev1['grupo-intro-dev']) {
+                preview += `${conectivosDev1['grupo-intro-dev']}, <strong>${argumento || '[ARGUMENTO]'}</strong>. `;
+            } else {
+                preview += `<strong>${argumento || '[ARGUMENTO]'}</strong>. `;
+            }
+
+            // Fundamentação com verbo
+            if (fundamentacao || verboDev1Selecionado) {
+                if (verboDev1Selecionado) {
+                    preview += `<strong>${fundamentacao || 'Este argumento'} ${verboDev1Selecionado}</strong> que é importante. `;
+                } else {
+                    preview += `<strong>${fundamentacao}</strong>. `;
+                }
+            }
+
+            // Fonte/Dados com conectivo de adição
+            if (dados || fonte) {
+                if (conectivosDev1['grupo-adicao-dev']) {
+                    preview += `${conectivosDev1['grupo-adicao-dev']}, `;
+                }
+                if (fonte) {
+                    preview += `${fonte} `;
+                }
+                if (dados) {
+                    preview += `<strong>${dados}</strong>. `;
+                }
+            }
+
+            // Aplicação prática
+            if (aplicacao) {
+                if (conectivosDev1['grupo-explicacao-dev']) {
+                    preview += `${conectivosDev1['grupo-explicacao-dev']}, <strong>${aplicacao}</strong>. `;
+                } else {
+                    preview += `<strong>${aplicacao}</strong>. `;
+                }
+            }
+
+            // Conclusão com conectivo
+            if (finalidade) {
+                if (conectivosDev1['grupo-conclusao-dev']) {
+                    preview += `${conectivosDev1['grupo-conclusao-dev']}, <strong>${finalidade}</strong>.`;
+                } else {
+                    preview += `<strong>${finalidade}</strong>.`;
+                }
+            }
+
+            preview += `</p>`;
+            document.getElementById('previewDev1').innerHTML = preview;
+        }
+
+        function limparDev1() {
+            document.getElementById('dev1-argumento').value = '';
+            document.getElementById('dev1-fundamentacao').value = '';
+            document.getElementById('dev1-fonte').value = '';
+            document.getElementById('dev1-dados').value = '';
+            document.getElementById('dev1-aplicacao').value = '';
+            document.getElementById('dev1-finalidade').value = '';
+            verboDev1Selecionado = null;
+            atualizarBotoesVerboDev1();
+            limparTodasPalavrasDev1();
+        }
+
+        // INICIALIZAR
+        document.addEventListener('DOMContentLoaded', () => {
+            setupDragDrop();
+            
+            document.querySelectorAll('.palavra-btn').forEach(btn => {
+                btn.draggable = true;
+                btn.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.effectAllowed = 'copy';
+                    e.dataTransfer.setData('text/plain', btn.textContent.trim());
+                    btn.classList.add('dragging');
+                });
+                btn.addEventListener('dragend', () => {
+                    btn.classList.remove('dragging');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

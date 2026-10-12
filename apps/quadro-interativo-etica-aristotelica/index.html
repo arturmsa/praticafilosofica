@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ética de Aristóteles - Virtude como Justa Medida</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #F5F1ED 0%, #E8D4C0 100%);
+            min-height: 100vh;
+            color: #2C1810;
+        }
+
+        .main-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .word-bank-fixed {
+            width: 200px;
+            background: white;
+            padding: 1.5rem 1rem;
+            border-right: 3px solid #8B4513;
+            overflow-y: auto;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+        }
+
+        .word-bank-fixed h3 {
+            color: #8B4513;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        .word-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .word-tag {
+            background: #E8D4C0;
+            color: #2C1810;
+            padding: 0.6rem 0.8rem;
+            border-radius: 4px;
+            cursor: grab;
+            transition: all 0.2s ease;
+            border: 2px solid #8B4513;
+            font-size: 0.8rem;
+            font-family: 'Georgia', serif;
+            text-align: center;
+            word-break: break-word;
+            user-select: none;
+        }
+
+        .word-tag:hover {
+            background: #8B4513;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .word-tag:active {
+            cursor: grabbing;
+        }
+
+        .word-tag.used {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .word-tag.used:hover {
+            transform: scale(1);
+        }
+
+        .word-tag.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+
+        .input-field.drag-over {
+            border-color: #8B4513;
+            background: #FFF9F5;
+            box-shadow: 0 0 8px rgba(139, 69, 19, 0.3);
+        }
+
+        .content-wrapper {
+            margin-left: 200px;
+            flex: 1;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #8B4513;
+            margin-bottom: 0.5rem;
+            font-weight: normal;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #8B4513;
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .intro {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+            border-left: 5px solid #8B4513;
+        }
+
+        .intro p {
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 0.8rem;
+        }
+
+        .intro strong {
+            color: #8B4513;
+        }
+
+        .legend {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .legend h3 {
+            color: #8B4513;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .legend-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .legend-color {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .legend-color.deficiency {
+            background: #7B9FB8;
+        }
+
+        .legend-color.virtue {
+            background: #A8C686;
+        }
+
+        .legend-color.excess {
+            background: #D4736F;
+        }
+
+        .legend-text {
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .legend-text strong {
+            color: #8B4513;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 3rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #8B4513;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: 'Georgia', serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        button:hover {
+            background: #6B3410;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #D4A574;
+            color: #2C1810;
+        }
+
+        .btn-secondary:hover {
+            background: #C49560;
+        }
+
+        .virtues-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .virtue-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-top: 4px solid #A8C686;
+            transition: all 0.3s ease;
+        }
+
+        .virtue-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .virtue-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 0;
+            min-height: 140px;
+        }
+
+        .virtue-column {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-right: 2px solid #C9B39E;
+        }
+
+        .virtue-column:last-child {
+            border-right: none;
+        }
+
+        .virtue-column.deficiency {
+            background: linear-gradient(135deg, #F0F4F8 0%, #E6EEF6 100%);
+        }
+
+        .virtue-column.virtue {
+            background: linear-gradient(135deg, #F5F9F0 0%, #EBF3E5 100%);
+        }
+
+        .virtue-column.excess {
+            background: linear-gradient(135deg, #FAF0ED 0%, #F5E6E1 100%);
+        }
+
+        .column-label {
+            font-size: 0.75rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.8rem;
+            font-weight: bold;
+        }
+
+        .column-content {
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .virtue-name {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2C1810;
+            margin-bottom: 0.5rem;
+        }
+
+        .vice-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 0.5rem;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .vice-name.deficiency {
+            background: #7B9FB8;
+        }
+
+        .vice-name.excess {
+            background: #D4736F;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.6rem 0.8rem;
+            border: 2px solid #C9B39E;
+            border-radius: 4px;
+            font-family: 'Georgia', serif;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            background: white;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #8B4513;
+            box-shadow: 0 0 8px rgba(139, 69, 19, 0.2);
+        }
+
+        .input-field.filled {
+            background: #f9f9f9;
+            color: #2C1810;
+            font-weight: 500;
+        }
+
+        .input-field.drag-over {
+            border-color: #8B4513;
+            background: #FFF9F5;
+            box-shadow: 0 0 8px rgba(139, 69, 19, 0.3);
+        }
+
+        .palavra-inserida {
+            background: #E8D4C0;
+            color: #2C1810;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            border: 1px solid #8B4513;
+            font-weight: 500;
+            cursor: grab;
+            user-select: none;
+            display: inline-block;
+        }
+
+        .palavra-inserida:hover {
+            background: #D4A574;
+        }
+
+        .palavra-inserida:active {
+            cursor: grabbing;
+        }
+
+        @media (max-width: 768px) {
+            .main-wrapper {
+                flex-direction: column;
+            }
+
+            .word-bank-fixed {
+                position: static;
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 3px solid #8B4513;
+                max-height: 150px;
+                overflow-x: auto;
+            }
+
+            .word-list {
+                flex-direction: row;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+
+            .content-wrapper {
+                margin-left: 0;
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .virtue-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .virtue-column {
+                padding: 1rem;
+            }
+
+            .virtues-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        .feedback {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+        }
+
+        .feedback.success {
+            background: #D4EDDA;
+            color: #155724;
+            border-left: 4px solid #28A745;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <!-- Banco de Palavras Fixo na Esquerda -->
+        <div class="word-bank-fixed">
+            <h3>📚 Banco de Palavras</h3>
+            <div id="wordBank" class="word-list"></div>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <div class="content-wrapper">
+            <div class="container">
+                <header>
+                    <h1>Ética de Aristóteles</h1>
+                    <p class="subtitle">A Virtude como Justa Medida</p>
+                </header>
+
+                <div class="intro">
+                    <p><strong>Objetivo:</strong> Compreender a teoria ética aristotélica onde a virtude é o ponto de equilíbrio entre dois vícios extremos.</p>
+                    <p>Para cada virtude, identifique o <strong>vício por falta</strong> (à esquerda), a <strong>virtude</strong> (centro) e o <strong>vício por excesso</strong> (à direita). Clique nas palavras do banco de palavras para preenchê-los.</p>
+                </div>
+
+                <div class="legend">
+                    <h3>Legenda</h3>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <div class="legend-color deficiency"></div>
+                            <div class="legend-text">
+                                <strong>Vício por Falta:</strong> Ausência ou deficiência da virtude
+                            </div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color virtue"></div>
+                            <div class="legend-text">
+                                <strong>Virtude (Justa Medida):</strong> O ponto de equilíbrio, a excelência
+                            </div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color excess"></div>
+                            <div class="legend-text">
+                                <strong>Vício por Excesso:</strong> Exageração ou excesso da virtude
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="exercicio" class="virtues-grid"></div>
+
+                <div class="controls">
+                    <button onclick="gerarNovoExercicio()">🔄 Novo Exercício</button>
+                    <button class="btn-secondary" onclick="verificarRespostas()">✓ Verificar Respostas</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 15 virtudes aristotélicas com seus vícios
+        const virtudes = [
+            {
+                virtude: "Coragem",
+                vicio_falta: "Covardia",
+                vicio_excesso: "Temeridade"
+            },
+            {
+                virtude: "Temperança",
+                vicio_falta: "Insensibilidade",
+                vicio_excesso: "Luxúria"
+            },
+            {
+                virtude: "Liberalidade",
+                vicio_falta: "Avareza",
+                vicio_excesso: "Prodigalidade"
+            },
+            {
+                virtude: "Magnificência",
+                vicio_falta: "Mesquinharia",
+                vicio_excesso: "Ostentação"
+            },
+            {
+                virtude: "Magnamidade",
+                vicio_falta: "Humildade Falsa",
+                vicio_excesso: "Arrogância"
+            },
+            {
+                virtude: "Honra",
+                vicio_falta: "Desonra",
+                vicio_excesso: "Vanglória"
+            },
+            {
+                virtude: "Mansidão",
+                vicio_falta: "Apatia",
+                vicio_excesso: "Irascibilidade"
+            },
+            {
+                virtude: "Sinceridade",
+                vicio_falta: "Falsa Humildade",
+                vicio_excesso: "Jactância"
+            },
+            {
+                virtude: "Urbanidade",
+                vicio_falta: "Rusticidade",
+                vicio_excesso: "Bufaria"
+            },
+            {
+                virtude: "Modéstia",
+                vicio_falta: "Falta de Pudor",
+                vicio_excesso: "Vergonha Excessiva"
+            },
+            {
+                virtude: "Justiça",
+                vicio_falta: "Injustiça",
+                vicio_excesso: "Rigor Extremo"
+            },
+            {
+                virtude: "Inteligência",
+                vicio_falta: "Estupidez",
+                vicio_excesso: "Astúcia Malévola"
+            },
+            {
+                virtude: "Paciência",
+                vicio_falta: "Impaciência",
+                vicio_excesso: "Complacência"
+            },
+            {
+                virtude: "Amizade",
+                vicio_falta: "Isolamento",
+                vicio_excesso: "Obsessão"
+            },
+            {
+                virtude: "Contemplação",
+                vicio_falta: "Ignorância",
+                vicio_excesso: "Pedantismo"
+            }
+        ];
+
+        let exercicioAtual = [];
+
+        function gerarNovoExercicio() {
+            exercicioAtual = [...virtudes].sort(() => Math.random() - 0.5);
+            
+            const exercicioDiv = document.getElementById('exercicio');
+            exercicioDiv.innerHTML = '';
+
+            exercicioAtual.forEach((item, index) => {
+                const colunaPrefilled = Math.floor(Math.random() * 3);
+
+                const card = document.createElement('div');
+                card.className = 'virtue-card';
+
+                card.innerHTML = `
+                    <div class="virtue-grid">
+                        <div class="virtue-column deficiency">
+                            <div class="column-label">Vício por Falta</div>
+                            <div class="column-content">
+                                ${colunaPrefilled === 0 
+                                    ? `<div class="vice-name deficiency">${item.vicio_falta}</div>`
+                                    : `<div class="input-field" data-index="${index}" data-type="falta"></div>`
+                                }
+                            </div>
+                        </div>
+
+                        <div class="virtue-column virtue">
+                            <div class="column-label">Virtude (Justa Medida)</div>
+                            <div class="column-content">
+                                ${colunaPrefilled === 1 
+                                    ? `<div class="virtue-name">${item.virtude}</div>`
+                                    : `<div class="input-field" data-index="${index}" data-type="virtude"></div>`
+                                }
+                            </div>
+                        </div>
+
+                        <div class="virtue-column excess">
+                            <div class="column-label">Vício por Excesso</div>
+                            <div class="column-content">
+                                ${colunaPrefilled === 2 
+                                    ? `<div class="vice-name excess">${item.vicio_excesso}</div>`
+                                    : `<div class="input-field" data-index="${index}" data-type="excesso"></div>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                exercicioDiv.appendChild(card);
+            });
+
+            atualizarBancoPalavras();
+            document.querySelectorAll('.feedback').forEach(el => el.style.display = 'none');
+        }
+
+        let palavraSendoArrastada = null;
+        let linkedElements = {}; // Rastrear qual palavra está em qual campo
+
+        function atualizarBancoPalavras() {
+            const palavras = new Set();
+            exercicioAtual.forEach(item => {
+                palavras.add(item.vicio_falta);
+                palavras.add(item.virtude);
+                palavras.add(item.vicio_excesso);
+            });
+
+            const bankDiv = document.getElementById('wordBank');
+            bankDiv.innerHTML = '';
+
+            Array.from(palavras).sort().forEach(palavra => {
+                const tag = document.createElement('div');
+                tag.className = 'word-tag';
+                tag.textContent = palavra;
+                tag.draggable = true;
+                tag.dataset.palavra = palavra;
+
+                // Eventos de drag
+                tag.addEventListener('dragstart', function(e) {
+                    if (tag.classList.contains('used')) {
+                        e.preventDefault();
+                        return;
+                    }
+                    palavraSendoArrastada = palavra;
+                    tag.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                tag.addEventListener('dragend', function(e) {
+                    tag.classList.remove('dragging');
+                });
+
+                bankDiv.appendChild(tag);
+            });
+
+            // Adicionar drag listeners aos campos vazios
+            document.querySelectorAll('.input-field').forEach(campo => {
+                campo.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    campo.classList.add('drag-over');
+                });
+
+                campo.addEventListener('dragleave', function(e) {
+                    campo.classList.remove('drag-over');
+                });
+
+                campo.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    campo.classList.remove('drag-over');
+                    
+                    if (palavraSendoArrastada && campo.textContent.trim() === '') {
+                        // Adicionar palavra ao campo
+                        adicionarPalavraAoCampo(campo, palavraSendoArrastada);
+                        
+                        // Marcar a palavra como usada no banco
+                        const tag = document.querySelector(`[data-palavra="${palavraSendoArrastada}"]`);
+                        if (tag) {
+                            tag.classList.add('used');
+                        }
+                        
+                        palavraSendoArrastada = null;
+                    }
+                });
+            });
+        }
+
+        function adicionarPalavraAoCampo(campo, palavra) {
+            // Limpar campo se houver conteúdo anterior
+            campo.innerHTML = '';
+            
+            // Criar elemento visual da palavra
+            const palavraElement = document.createElement('div');
+            palavraElement.className = 'palavra-inserida';
+            palavraElement.textContent = palavra;
+            palavraElement.draggable = true;
+            palavraElement.dataset.palavra = palavra;
+
+            // Permitir arrastar a palavra de volta para o banco
+            palavraElement.addEventListener('dragstart', function(e) {
+                palavraSendoArrastada = palavra;
+                palavraElement.style.opacity = '0.5';
+                e.dataTransfer.effectAllowed = 'move';
+            });
+
+            palavraElement.addEventListener('dragend', function(e) {
+                palavraElement.style.opacity = '1';
+            });
+
+            campo.appendChild(palavraElement);
+            campo.classList.add('filled');
+            campo.dataset.palavra = palavra;
+
+            // Permitir soltar no banco para remover
+            document.getElementById('wordBank').addEventListener('drop', function(e) {
+                if (palavraSendoArrastada === palavra) {
+                    // Remover do campo
+                    campo.innerHTML = '';
+                    campo.classList.remove('filled');
+                    delete campo.dataset.palavra;
+                    
+                    // Marcar no banco como não utilizado
+                    const tag = document.querySelector(`[data-palavra="${palavra}"]`);
+                    if (tag) {
+                        tag.classList.remove('used');
+                    }
+                }
+            });
+        }
+
+        function verificarRespostas() {
+            let respostasCorretas = 0;
+            let totalCampos = 0;
+
+            document.querySelectorAll('.input-field').forEach(campo => {
+                totalCampos++;
+                const index = parseInt(campo.dataset.index);
+                const type = campo.dataset.type;
+                const valor = (campo.dataset.palavra || '').trim().toLowerCase();
+
+                let esperado = '';
+                if (type === 'falta') esperado = exercicioAtual[index].vicio_falta.toLowerCase();
+                else if (type === 'virtude') esperado = exercicioAtual[index].virtude.toLowerCase();
+                else if (type === 'excesso') esperado = exercicioAtual[index].vicio_excesso.toLowerCase();
+
+                if (valor === esperado) {
+                    campo.style.borderColor = '#28A745';
+                    campo.style.backgroundColor = '#D4EDDA';
+                    respostasCorretas++;
+                } else if (valor === '') {
+                    campo.style.borderColor = '#C9B39E';
+                    campo.style.backgroundColor = 'white';
+                } else {
+                    campo.style.borderColor = '#DC3545';
+                    campo.style.backgroundColor = '#F8D7DA';
+                }
+            });
+
+            let feedbackDiv = document.querySelector('.feedback');
+            if (!feedbackDiv) {
+                feedbackDiv = document.createElement('div');
+                const exercicioDiv = document.getElementById('exercicio');
+                exercicioDiv.parentNode.insertBefore(feedbackDiv, exercicioDiv);
+            }
+            
+            feedbackDiv.className = 'feedback show success';
+            feedbackDiv.style.display = 'block';
+            feedbackDiv.textContent = 'Resultado: ' + respostasCorretas + '/' + totalCampos + ' respostas corretas.';
+        }
+
+        gerarNovoExercicio();
+    </script>
+</body>
+</html>

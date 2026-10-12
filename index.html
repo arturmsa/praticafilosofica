@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prática Filosófica</title>
+<meta name="description" content="Ferramentas interativas para pensar, escrever e debater em sala de aula.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root{
+  --fundo:#faf8f5; --fundo2:#f0ece6; --cartao:#ffffff; --tinta:#121212; --apagado:#5d5751;
+  --borda:#e2ddd5; --destaque:#c1272d; --destaque-suave:#f7e2e2;
+  --filosofia:#6b4fc4; --cidadania:#2a7d5f; --redacao:#335fc0; --literatura:#b0651f; --gestao:#6e6e6e;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --fundo:#111111; --fundo2:#1b1b1b; --cartao:#171717; --tinta:#f3f0eb; --apagado:#aaa39b;
+    --borda:#2f2c29; --destaque:#e8484e; --destaque-suave:#3b1a1c;
+    --filosofia:#a58cf0; --cidadania:#5cc79c; --redacao:#7aa2f0; --literatura:#e7a35c; --gestao:#a8a8a8;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Inter",system-ui,sans-serif;background:var(--fundo);color:var(--tinta);min-height:100vh;line-height:1.55}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+
+header{padding:56px 0 28px;text-align:center}
+.selo{display:inline-block;font-size:.74rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--destaque);padding-bottom:6px;border-bottom:2px solid var(--destaque);margin-bottom:20px}
+h1{font-family:"Fraunces",Georgia,serif;font-weight:800;font-size:clamp(2.6rem,8vw,4.4rem);line-height:1;letter-spacing:-.025em;text-transform:lowercase}
+h1 span{color:var(--destaque);font-style:italic}
+.sub{margin:16px auto 0;max-width:560px;color:var(--apagado);font-size:1.05rem}
+
+.faixa{overflow:hidden;border-top:1px solid var(--tinta);border-bottom:1px solid var(--tinta);margin:0 0 32px;padding:10px 0;white-space:nowrap}
+.faixa-trilho{display:inline-flex;animation:corre 40s linear infinite}
+.faixa span{font-family:"Fraunces",Georgia,serif;font-style:italic;font-size:1rem;padding-right:18px}
+.faixa b{color:var(--destaque);font-weight:400;padding-right:18px}
+@keyframes corre{to{transform:translateX(-50%)}}
+
+.ferramentas{display:flex;flex-direction:column;gap:14px;align-items:center;margin:8px 0 28px}
+.busca{width:100%;max-width:520px;position:relative}
+.busca input{width:100%;font:inherit;font-size:1rem;padding:13px 16px 13px 44px;border-radius:4px;border:1.5px solid var(--borda);background:var(--cartao);color:var(--tinta)}
+.busca input:focus{outline:none;border-color:var(--destaque);box-shadow:0 0 0 4px var(--destaque-suave)}
+.busca::before{content:"🔎";position:absolute;left:15px;top:50%;transform:translateY(-50%);font-size:1rem;opacity:.7}
+.filtros{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.filtro{font:inherit;font-size:.9rem;font-weight:500;cursor:pointer;padding:7px 16px;border-radius:2px;border:1.5px solid var(--borda);background:var(--cartao);color:var(--tinta);transition:all .2s}
+.filtro:hover{border-color:var(--destaque);color:var(--destaque)}
+.filtro[aria-pressed="true"]{background:var(--tinta);color:var(--fundo);border-color:var(--tinta)}
+.contagem{font-size:.88rem;color:var(--apagado)}
+
+.grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;padding-bottom:48px}
+.cartao{--cor:var(--destaque);position:relative;display:flex;flex-direction:column;gap:12px;background:var(--cartao);border:1px solid var(--borda);border-radius:4px;padding:22px 22px 18px;text-decoration:none;color:inherit;overflow:hidden;transition:transform .2s,box-shadow .2s,border-color .2s}
+.cartao::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--cor)}
+.cartao:hover,.cartao:focus-visible{transform:translateY(-3px);border-color:var(--tinta);box-shadow:6px 6px 0 var(--destaque);outline:none}
+.cartao:hover h2{color:var(--destaque)}
+.topo-cartao{display:flex;align-items:center;gap:14px}
+.icone{flex-shrink:0;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-size:1.7rem;background:color-mix(in srgb,var(--cor) 16%,transparent)}
+.area{font-size:.74rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--cor)}
+.cartao h2{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:1.3rem;line-height:1.2;transition:color .2s}
+.cartao p{color:var(--apagado);font-size:.95rem;flex:1}
+.tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:.76rem;padding:3px 10px;border-radius:999px;background:var(--fundo2);color:var(--apagado)}
+.abrir{font-weight:600;font-size:.92rem;color:var(--cor);display:flex;align-items:center;gap:6px}
+.cartao:hover .abrir span{transform:translateX(4px)}
+.abrir span{transition:transform .2s}
+
+.vazio{grid-column:1/-1;text-align:center;padding:48px 16px;color:var(--apagado)}
+footer{border-top:1px solid var(--borda);padding:24px 0 36px;text-align:center;font-size:.88rem;color:var(--apagado)}
+
+@media (max-width:520px){header{padding:40px 0 24px}.grade{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}.faixa-trilho{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="selo">Sala de aula interativa</div>
+    <h1>Prática <span>Filosófica</span></h1>
+    <p class="sub">Ferramentas para pensar, escrever e debater. Escolha uma atividade e comece agora.</p>
+  </header>
+</div>
+
+<div class="faixa" aria-hidden="true">
+  <div class="faixa-trilho" id="faixa"></div>
+</div>
+
+<div class="wrap">
+  <div class="ferramentas">
+    <label class="busca"><input type="search" id="busca" placeholder="Buscar atividade, tema ou filósofo" aria-label="Buscar"></label>
+    <div class="filtros" id="filtros" role="group" aria-label="Filtrar por área"></div>
+    <div class="contagem" id="contagem" aria-live="polite"></div>
+  </div>
+
+  <main class="grade" id="grade"></main>
+</div>
+
+<footer>
+  <div class="wrap">Prática Filosófica · materiais interativos para a sala de aula</div>
+</footer>
+
+<script>
+/* =====================================================================
+   LISTA DE APLICAÇÕES
+   Para publicar uma aplicação nova:
+   1. coloque a pasta dela dentro de "apps/" com o arquivo index.html;
+   2. copie um bloco { ... } abaixo, cole no fim da lista e edite.
+   "pasta" deve ser exatamente o nome da pasta (sem acento e sem espaço).
+   ===================================================================== */
+const APPS = [
+  {
+    pasta: "anel-de-giges-twine",
+    titulo: "O Anel de Giges",
+    area: "Filosofia",
+    icone: "💍",
+    descricao: "História interativa baseada no mito contado por Glauco na República. Cada escolha leva a um final diferente e a uma pergunta sobre a justiça.",
+    tags: ["Platão", "Ética", "História interativa"]
+  },
+  {
+    pasta: "dilema-do-prisioneiro",
+    titulo: "Dilema do Prisioneiro",
+    area: "Filosofia",
+    icone: "🎲",
+    descricao: "Roteiro em oito passos sobre cooperação e traição, seguido de uma simulação contra a máquina com estratégias diferentes.",
+    tags: ["Teoria dos jogos", "Hobbes", "Kant"]
+  },
+  {
+    pasta: "escolha-seu-filosofo",
+    titulo: "Construtor Filosófico",
+    area: "Filosofia",
+    icone: "🧩",
+    descricao: "Arraste ideias e descubra seu perfil entre escolas helenísticas, tipos de conhecimento e visões de mundo.",
+    tags: ["Estoicismo", "Epicurismo", "Conhecimento"]
+  },
+  {
+    pasta: "quadro-interativo-etica-aristotelica",
+    titulo: "Ética de Aristóteles",
+    area: "Filosofia",
+    icone: "🏛️",
+    descricao: "Monte o quadro da virtude como justa medida: complete cada virtude com seu vício por falta e por excesso.",
+    tags: ["Aristóteles", "Virtude", "Arrastar e soltar"]
+  },
+  {
+    pasta: "plataforma-de-organizacao-de-leis",
+    titulo: "Organize a Lei",
+    area: "Cidadania",
+    icone: "⚖️",
+    descricao: "Distribua as disposições nos capítulos certos do CDC, da CLT, do ECA, da Lei Maria da Penha e da Política Ambiental.",
+    tags: ["Direitos", "Leis brasileiras", "Arrastar e soltar"]
+  },
+  {
+    pasta: "redacao-interativa",
+    titulo: "Prática de Redação",
+    area: "Redação",
+    icone: "✍️",
+    descricao: "Construa a introdução e o desenvolvimento passo a passo, com conectivos, qualificadores e um visor do texto em tempo real.",
+    tags: ["Dissertação", "Conectivos", "ENEM"]
+  },
+  {
+    pasta: "cordel-filosofico",
+    titulo: "Peleja de Cordel",
+    area: "Literatura",
+    icone: "🌵",
+    descricao: "Dois poetas, um mote e as décimas indo e voltando, com contagem de sílabas e rimas. No fim, a peleja vira folheto para imprimir.",
+    tags: ["Cordel", "Métrica", "Cultura nordestina"]
+  },
+  {
+    pasta: "biblioteca-escolar-jose-de-alencar",
+    titulo: "Biblioteca José de Alencar",
+    area: "Gestão escolar",
+    icone: "📚",
+    descricao: "Sistema de gestão do acervo, inscrições de leitores e empréstimos da biblioteca da escola.",
+    tags: ["Acervo", "Empréstimos"]
+  }
+];
+
+/* Cor de cada área (acrescente aqui se criar uma área nova) */
+const CORES = {
+  "Filosofia": "var(--filosofia)",
+  "Cidadania": "var(--cidadania)",
+  "Redação": "var(--redacao)",
+  "Literatura": "var(--literatura)",
+  "Gestão escolar": "var(--gestao)"
+};
+
+/* ============ daqui para baixo não precisa mexer ============ */
+const grade = document.getElementById("grade");
+const filtrosEl = document.getElementById("filtros");
+const buscaEl = document.getElementById("busca");
+const contagemEl = document.getElementById("contagem");
+let areaAtiva = "Todas";
+
+const semAcento = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function montaFiltros() {
+  const areas = ["Todas", ...new Set(APPS.map(a => a.area))];
+  filtrosEl.innerHTML = areas.map(a =>
+    `<button type="button" class="filtro" data-area="${esc(a)}" aria-pressed="${a === areaAtiva}">${esc(a)}</button>`
+  ).join("");
+  filtrosEl.querySelectorAll(".filtro").forEach(b => b.onclick = () => {
+    areaAtiva = b.dataset.area;
+    montaFiltros();
+    mostra();
+  });
+}
+
+function mostra() {
+  const termo = semAcento(buscaEl.value.trim());
+  const lista = APPS.filter(a => {
+    const naArea = areaAtiva === "Todas" || a.area === areaAtiva;
+    const texto = semAcento([a.titulo, a.area, a.descricao, ...(a.tags || [])].join(" "));
+    return naArea && (!termo || texto.includes(termo));
+  });
+
+  contagemEl.textContent = lista.length === 1 ? "1 atividade" : `${lista.length} atividades`;
+
+  if (!lista.length) {
+    grade.innerHTML = `<div class="vazio">Nenhuma atividade encontrada. Tente outra palavra.</div>`;
+    return;
+  }
+
+  grade.innerHTML = lista.map(a => `
+    <a class="cartao" href="apps/${encodeURIComponent(a.pasta)}/" style="--cor:${CORES[a.area] || "var(--destaque)"}">
+      <div class="topo-cartao">
+        <div class="icone" aria-hidden="true">${a.icone || "✦"}</div>
+        <div>
+          <div class="area">${esc(a.area)}</div>
+          <h2>${esc(a.titulo)}</h2>
+        </div>
+      </div>
+      <p>${esc(a.descricao)}</p>
+      <div class="tags">${(a.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join("")}</div>
+      <div class="abrir">Abrir atividade <span>→</span></div>
+    </a>`).join("");
+}
+
+/* Faixa corrida: o texto é repetido para o movimento ficar contínuo */
+const FRASES = ["prática filosófica", "pensar é um exercício", "filosofia em sala de aula"];
+const bloco = FRASES.map(f => `<span>${esc(f)}</span><b>●</b>`).join("");
+document.getElementById("faixa").innerHTML = bloco.repeat(6);
+
+buscaEl.addEventListener("input", mostra);
+montaFiltros();
+mostra();
+</script>
+</body>
+</html>

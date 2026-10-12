@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organize a Lei</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .abas {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .aba-btn {
+            padding: 12px 20px;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .aba-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .aba-btn.ativa {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .banco {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            height: fit-content;
+        }
+
+        .banco h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .artigos-disponiveis {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .artigo-item {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: move;
+            transition: all 0.3s ease;
+            border-left: 4px solid #ff4757;
+            font-weight: 500;
+            user-select: none;
+            line-height: 1.4;
+        }
+
+        .artigo-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.3);
+        }
+
+        .artigo-item.dragging {
+            opacity: 0.5;
+        }
+
+        .capitulos {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .capitulos h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .capitulos-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .capitulo {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            min-height: 300px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .capitulo.dragover {
+            background: #e8f5e9;
+            border-color: #4caf50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.2);
+        }
+
+        .capitulo.erro {
+            border-color: #f44336;
+            background: #ffebee;
+        }
+
+        .capitulo h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .capitulo p {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .artigos-colocados {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 100px;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            border: 1px dashed #ddd;
+        }
+
+        .artigo-colocado {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+            transition: all 0.3s ease;
+            line-height: 1.4;
+            user-select: none;
+        }
+
+        .artigo-colocado:hover {
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .artigo-colocado.dragging-colocado {
+            opacity: 0.5;
+        }
+
+        .artigo-colocado button {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            margin-left: 10px;
+        }
+
+        .artigo-colocado button:hover {
+            background: rgba(255,255,255,0.5);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .botoes {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button.btn {
+            padding: 12px 25px;
+            font-size: 1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-verificar {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-verificar:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-limpar {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-limpar:hover {
+            background: #da190b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.3);
+        }
+
+        .resultado {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            text-align: center;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .resultado.sucesso {
+            background: #c8e6c9;
+            color: #2e7d32;
+            border-left: 5px solid #4caf50;
+        }
+
+        .resultado.erro {
+            background: #ffcdd2;
+            color: #c62828;
+            border-left: 5px solid #f44336;
+        }
+
+        .resultado.visivel {
+            display: block;
+        }
+
+        .erros-capitulos {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 6px;
+            text-align: left;
+        }
+
+        .erros-capitulos p {
+            margin: 5px 0;
+            color: #856404;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .capitulos-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .empty-state {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚖️ Organize a Lei</h1>
+            <div class="abas" id="abas"></div>
+            <p id="titulo-lei"></p>
+        </header>
+
+        <div class="content">
+            <div class="banco">
+                <h2>📋 Disposições</h2>
+                <div class="artigos-disponiveis" id="artigos-banco"></div>
+            </div>
+
+            <div class="capitulos">
+                <h2>📑 Capítulos da Lei</h2>
+                <div class="capitulos-grid" id="capitulos-container"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div id="resultado" class="resultado"></div>
+            <div class="botoes">
+                <button class="btn btn-verificar" onclick="verificarOrganizacao()">✓ Verificar Resposta</button>
+                <button class="btn btn-limpar" onclick="limparTudo()">🔄 Limpar Tudo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Todas as leis disponíveis
+        const leis = {
+            'consumidor': {
+                titulo: 'Lei nº 8.078/1990 - Código de Defesa do Consumidor',
+                capitulos: [
+                    {
+                        id: 1,
+                        titulo: "I - Disposições Gerais",
+                        descricao: "Definições e conceitos básicos",
+                        artigos: [1, 2, 3]
+                    },
+                    {
+                        id: 2,
+                        titulo: "II - Direitos Básicos do Consumidor",
+                        descricao: "Direitos fundamentais que todo consumidor tem",
+                        artigos: [4, 5, 6]
+                    },
+                    {
+                        id: 3,
+                        titulo: "III - Responsabilidade do Fornecedor",
+                        descricao: "O que o fornecedor é obrigado a fazer",
+                        artigos: [7, 8, 9]
+                    },
+                    {
+                        id: 4,
+                        titulo: "IV - Práticas Proibidas",
+                        descricao: "O que é ilegal o fornecedor fazer",
+                        artigos: [10]
+                    }
+                ],
+                artigos: {
+                    1: "Consumidor é toda pessoa física que adquire ou utiliza produto ou serviço",
+                    2: "Fornecedor é toda pessoa física ou jurídica que oferece produto ou serviço ao mercado",
+                    3: "O presente código estabelece normas de proteção e defesa do consumidor",
+                    4: "Todo consumidor tem direito à segurança do produto ou serviço",
+                    5: "É direito do consumidor receber informações claras sobre o produto",
+                    6: "O consumidor tem liberdade para escolher entre diferentes produtos ou serviços",
+                    7: "O fornecedor é responsável pelos defeitos do produto",
+                    8: "O fornecedor deve informar sobre riscos à saúde ou segurança",
+                    9: "É proibido colocar no mercado produto que causa dano ao consumidor",
+                    10: "É proibida qualquer prática que prejudique o consumidor"
+                }
+            },
+            'trabalhista': {
+                titulo: 'Lei nº 13.467/2017 - Reforma Trabalhista',
+                capitulos: [
+                    {
+                        id: 1,
+                        titulo: "I - Definições",
+                        descricao: "Quem é quem na relação de trabalho",
+                        artigos: [1, 2, 3]
+                    },
+                    {
+                        id: 2,
+                        titulo: "II - Jornada de Trabalho",
+                        descricao: "Tempo e duração do trabalho",
+                        artigos: [4, 5, 6]
+                    },
+                    {
+                        id: 3,
+                        titulo: "III - Salário e Benefícios",
+                        descricao: "Dinheiro que o trabalhador recebe",
+                        artigos: [7, 8, 9]
+                    },
+                    {
+                        id: 4,
+                        titulo: "IV - Segurança do Trabalho",
+                        descricao: "Proteger a saúde do trabalhador",
+                        artigos: [10]
+                    }
+                ],
+                artigos: {
+                    1: "Empregado é a pessoa física que trabalha para um empregador",
+                    2: "Empregador é a pessoa que contrata e controla o trabalho",
+                    3: "Contrato de trabalho é o acordo entre empregado e empregador",
+                    4: "A jornada normal de trabalho não pode ser maior que 8 horas por dia",
+                    5: "O trabalhador tem direito a um dia de descanso por semana",
+                    6: "Horas extras devem ser pagas com acréscimo",
+                    7: "Salário é a remuneração mensal devida ao trabalhador",
+                    8: "Todo trabalhador tem direito ao 13º salário",
+                    9: "O trabalhador tem direito a férias remuneradas",
+                    10: "A empresa deve fornecer equipamentos de proteção"
+                }
+            },
+            'ambiental': {
+                titulo: 'Lei nº 6.938/1981 - Política Nacional do Meio Ambiente',
+                capitulos: [
+                    {
+                        id: 1,
+                        titulo: "I - Objetivos",
+                        descricao: "Para que essa lei existe",
+                        artigos: [1, 2, 3]
+                    },
+                    {
+                        id: 2,
+                        titulo: "II - Quem Fiscaliza",
+                        descricao: "Órgãos responsáveis pelo meio ambiente",
+                        artigos: [4, 5, 6]
+                    },
+                    {
+                        id: 3,
+                        titulo: "III - Como Proteger o Ambiente",
+                        descricao: "Ações práticas de proteção",
+                        artigos: [7, 8, 9]
+                    },
+                    {
+                        id: 4,
+                        titulo: "IV - Responsabilidade e Punições",
+                        descricao: "Consequências de prejudicar o ambiente",
+                        artigos: [10, 11, 12]
+                    }
+                ],
+                artigos: {
+                    1: "O objetivo é proteger o meio ambiente para as gerações presentes e futuras",
+                    2: "A lei busca equilibrar o desenvolvimento econômico com a proteção ambiental",
+                    3: "Todos têm direito a um meio ambiente ecologicamente equilibrado",
+                    4: "A União (governo federal) é responsável pela fiscalização ambiental",
+                    5: "Os Estados são responsáveis pela proteção ambiental em seu território",
+                    6: "Os Municípios têm responsabilidade sobre o meio ambiente local",
+                    7: "Licenciamento ambiental é obrigatório para projetos que afetam a natureza",
+                    8: "Avaliação de impacto ambiental deve ser feita antes de grandes projetos",
+                    9: "Monitoramento contínuo dos ambientes é necessário",
+                    10: "Quem degradar o meio ambiente é obrigado a restaurá-lo",
+                    11: "Aquele que polui o ambiente deve pagar indenização pelos danos causados",
+                    12: "Crimes ambientais podem resultar em multa e prisão"
+                }
+            },
+            'eca': {
+                titulo: 'Lei nº 8.069/1990 - Estatuto da Criança e do Adolescente (ECA)',
+                capitulos: [
+                    {
+                        id: 1,
+                        titulo: "I - Direitos Fundamentais",
+                        descricao: "Direitos que toda criança e adolescente têm",
+                        artigos: [1, 2, 3]
+                    },
+                    {
+                        id: 2,
+                        titulo: "II - Direitos de Proteção",
+                        descricao: "Proteção contra abuso e exploração",
+                        artigos: [4, 5, 6]
+                    },
+                    {
+                        id: 3,
+                        titulo: "III - Responsabilidade da Família",
+                        descricao: "O papel dos pais e responsáveis",
+                        artigos: [7, 8, 9]
+                    },
+                    {
+                        id: 4,
+                        titulo: "IV - Responsabilidade e Punições",
+                        descricao: "Consequências de prejudicar crianças",
+                        artigos: [10, 11, 12]
+                    }
+                ],
+                artigos: {
+                    1: "Criança é a pessoa até 12 anos de idade incompletos",
+                    2: "Adolescente é a pessoa entre 12 e 18 anos de idade",
+                    3: "Toda criança e adolescente tem direito à vida e à saúde",
+                    4: "A criança e adolescente têm direito de ser protegidos de violência e negligência",
+                    5: "É proibido trabalho infantil prejudicial ao desenvolvimento",
+                    6: "Toda criança tem direito à educação e lazer",
+                    7: "Os pais ou responsáveis têm o dever de cuidar e educar a criança",
+                    8: "A família deve garantir alimentação, saúde e segurança",
+                    9: "Os responsáveis devem proteger a criança de qualquer forma de abuso",
+                    10: "Quem maltrata criança é punido com multa e prisão",
+                    11: "Abuso sexual de menores é crime gravíssimo",
+                    12: "Exploração do trabalho infantil resulta em pena de prisão"
+                }
+            },
+            'mariadapenha': {
+                titulo: 'Lei nº 11.340/2006 - Lei Maria da Penha',
+                capitulos: [
+                    {
+                        id: 1,
+                        titulo: "I - Conceitos e Objetivos",
+                        descricao: "O que a lei protege",
+                        artigos: [1, 2, 3]
+                    },
+                    {
+                        id: 2,
+                        titulo: "II - Tipos de Violência",
+                        descricao: "As diferentes formas de violência",
+                        artigos: [4, 5, 6]
+                    },
+                    {
+                        id: 3,
+                        titulo: "III - Medidas Protetivas",
+                        descricao: "Como proteger a mulher vítima",
+                        artigos: [7, 8, 9]
+                    },
+                    {
+                        id: 4,
+                        titulo: "IV - Responsabilidade e Punições",
+                        descricao: "Consequências para o agressor",
+                        artigos: [10, 11, 12]
+                    }
+                ],
+                artigos: {
+                    1: "Violência doméstica é qualquer ação que prejudique a mulher em casa",
+                    2: "Essa lei protege mulheres em relacionamentos amorosos ou familiares",
+                    3: "O objetivo é prevenir, punir e erradicar a violência contra a mulher",
+                    4: "Violência física é agressão corporal contra a mulher",
+                    5: "Violência psicológica inclui ameaças, humilhação e controle",
+                    6: "Violência patrimonial é destruir ou reter bens da mulher",
+                    7: "Afastamento do agressor do lar é uma medida de proteção",
+                    8: "A mulher pode solicitar medidas protetivas na delegacia",
+                    9: "Restrição de contato é uma medida legal de proteção",
+                    10: "Violência doméstica é crime e não pode ser desculpada",
+                    11: "O agressor pode ser preso em flagrante",
+                    12: "Condenação resulta em prisão e multa"
+                }
+            }
+        };
+
+        let leiAtual = 'consumidor';
+        let estado = {};
+
+        // Inicializar
+        function init() {
+            renderizarAbas();
+            carregarEstado();
+            renderizarBanco();
+            renderizarCapitulos();
+            atualizarTitulo();
+        }
+
+        function renderizarAbas() {
+            const container = document.getElementById('abas');
+            container.innerHTML = '';
+
+            Object.keys(leis).forEach(chave => {
+                const btn = document.createElement('button');
+                btn.className = 'aba-btn';
+                if (chave === leiAtual) btn.classList.add('ativa');
+
+                let label = '';
+                if (chave === 'consumidor') label = 'Consumidor';
+                else if (chave === 'trabalhista') label = 'Trabalhista';
+                else if (chave === 'ambiental') label = 'Ambiental';
+                else if (chave === 'eca') label = 'ECA';
+                else if (chave === 'mariadapenha') label = 'Maria da Penha';
+
+                btn.textContent = label;
+                btn.onclick = () => trocarLei(chave);
+                container.appendChild(btn);
+            });
+        }
+
+        function trocarLei(novaLei) {
+            if (leiAtual !== novaLei) {
+                leiAtual = novaLei;
+                localStorage.removeItem(`lei-${leiAtual}`);
+                estado = {};
+                renderizarAbas();
+                carregarEstado();
+                renderizarBanco();
+                renderizarCapitulos();
+                atualizarTitulo();
+                document.getElementById('resultado').classList.remove('visivel');
+            }
+        }
+
+        function atualizarTitulo() {
+            document.getElementById('titulo-lei').textContent = leis[leiAtual].titulo;
+        }
+
+        function carregarEstado() {
+            const salvo = localStorage.getItem(`lei-${leiAtual}`);
+            if (salvo) {
+                estado = JSON.parse(salvo);
+            } else {
+                // Estado inicial
+                estado = {
+                    artigos: {}
+                };
+                const artigosDisponiveis = Object.keys(leis[leiAtual].artigos).map(Number);
+                for (let i = artigosDisponiveis.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [artigosDisponiveis[i], artigosDisponiveis[j]] = [artigosDisponiveis[j], artigosDisponiveis[i]];
+                }
+                artigosDisponiveis.forEach(id => {
+                    estado.artigos[id] = null;
+                });
+            }
+        }
+
+        function salvarEstado() {
+            localStorage.setItem(`lei-${leiAtual}`, JSON.stringify(estado));
+        }
+
+        function renderizarBanco() {
+            const banco = document.getElementById('artigos-banco');
+            banco.innerHTML = '';
+
+            const artigosDesalocados = Object.keys(estado.artigos)
+                .filter(id => estado.artigos[id] === null)
+                .map(Number);
+
+            if (artigosDesalocados.length === 0) {
+                banco.innerHTML = '<div class="empty-state">Todas as disposições foram alocadas!</div>';
+                return;
+            }
+
+            artigosDesalocados.forEach(id => {
+                const div = document.createElement('div');
+                div.className = 'artigo-item';
+                div.draggable = true;
+                div.id = `artigo-${id}`;
+                div.textContent = leis[leiAtual].artigos[id];
+
+                div.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', id);
+                    div.classList.add('dragging');
+                });
+
+                div.addEventListener('dragend', (e) => {
+                    div.classList.remove('dragging');
+                });
+
+                banco.appendChild(div);
+            });
+
+            // Permitir dropar artigos de volta no banco
+            banco.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                banco.style.background = 'rgba(102, 126, 234, 0.1)';
+            });
+
+            banco.addEventListener('dragleave', (e) => {
+                if (e.target === banco) {
+                    banco.style.background = 'white';
+                }
+            });
+
+            banco.addEventListener('drop', (e) => {
+                e.preventDefault();
+                banco.style.background = 'white';
+
+                const articuloId = parseInt(e.dataTransfer.getData('text/plain'));
+                estado.artigos[articuloId] = null;
+                salvarEstado();
+                renderizarBanco();
+                renderizarCapitulos();
+            });
+        }
+
+        function renderizarCapitulos() {
+            const container = document.getElementById('capitulos-container');
+            container.innerHTML = '';
+
+            leis[leiAtual].capitulos.forEach(capitulo => {
+                const div = document.createElement('div');
+                div.className = 'capitulo';
+                div.id = `capitulo-${capitulo.id}`;
+
+                const articulosAlocados = Object.keys(estado.artigos)
+                    .filter(id => estado.artigos[id] === capitulo.id)
+                    .map(Number);
+
+                let html = `
+                    <h3>${capitulo.titulo}</h3>
+                    <p>${capitulo.descricao}</p>
+                    <div class="artigos-colocados" data-capitulo="${capitulo.id}">
+                `;
+
+                if (articulosAlocados.length === 0) {
+                    html += '<div class="empty-state">Arraste as disposições aqui</div>';
+                } else {
+                    articulosAlocados.forEach(id => {
+                        html += `
+                            <div class="artigo-colocado" draggable="true" data-artigo="${id}">
+                                <span>${leis[leiAtual].artigos[id]}</span>
+                                <button onclick="removerArtigo(${id})" title="Remover">✕</button>
+                            </div>
+                        `;
+                    });
+                }
+
+                html += '</div>';
+                div.innerHTML = html;
+
+                const dropZone = div.querySelector('.artigos-colocados');
+                adicionarDragListeners(dropZone);
+
+                container.appendChild(div);
+            });
+
+            // Adicionar listeners aos artigos colocados
+            adicionarDragListenersArtigos();
+        }
+
+        function adicionarDragListenersArtigos() {
+            document.querySelectorAll('.artigo-colocado').forEach(artigo => {
+                artigo.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', artigo.dataset.artigo);
+                    artigo.classList.add('dragging-colocado');
+                });
+
+                artigo.addEventListener('dragend', (e) => {
+                    artigo.classList.remove('dragging-colocado');
+                });
+            });
+        }
+
+        function adicionarDragListeners(zone) {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                zone.parentElement.classList.add('dragover');
+            });
+
+            zone.addEventListener('dragleave', (e) => {
+                if (e.target === zone) {
+                    zone.parentElement.classList.remove('dragover');
+                }
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.parentElement.classList.remove('dragover');
+
+                const articuloId = parseInt(e.dataTransfer.getData('text/plain'));
+                const capituloId = parseInt(zone.dataset.capitulo);
+
+                estado.artigos[articuloId] = capituloId;
+                salvarEstado();
+                renderizarBanco();
+                renderizarCapitulos();
+            });
+        }
+
+        function removerArtigo(articuloId) {
+            estado.artigos[articuloId] = null;
+            salvarEstado();
+            renderizarBanco();
+            renderizarCapitulos();
+        }
+
+        function verificarOrganizacao() {
+            const resultado = document.getElementById('resultado');
+
+            // Verificar se todos os artigos foram alocados
+            const todosAlocados = Object.values(estado.artigos).every(v => v !== null);
+            if (!todosAlocados) {
+                resultado.className = 'resultado erro visivel';
+                resultado.innerHTML = '❌ Nem todas as disposições foram alocadas. Verifique o banco!';
+                return;
+            }
+
+            // Verificar quais capítulos têm erros
+            const erros = [];
+            const capitulos = leis[leiAtual].capitulos;
+
+            for (let artigo in estado.artigos) {
+                artigo = parseInt(artigo);
+                const capituloCorreto = capitulos.find(c => c.artigos.includes(artigo));
+                if (!capituloCorreto || estado.artigos[artigo] !== capituloCorreto.id) {
+                    const capituloErrado = capitulos.find(c => c.id === estado.artigos[artigo]);
+                    erros.push({
+                        artigo: artigo,
+                        alocadoEm: capituloErrado ? capituloErrado.titulo : 'Desconhecido',
+                        correto: capituloCorreto.titulo
+                    });
+                }
+            }
+
+            // Marcar capítulos com erro
+            document.querySelectorAll('.capitulo').forEach(cap => {
+                cap.classList.remove('erro');
+            });
+
+            if (erros.length > 0) {
+                // Marcar os capítulos que têm erro
+                erros.forEach(erro => {
+                    const capitulo = leis[leiAtual].capitulos.find(c => c.titulo === erro.correto);
+                    if (capitulo) {
+                        document.getElementById(`capitulo-${capitulo.id}`).classList.add('erro');
+                    }
+                });
+
+                resultado.className = 'resultado erro visivel';
+                let html = '❌ <strong>Há erros!</strong>';
+                html += '<div class="erros-capitulos">';
+                erros.forEach(erro => {
+                    html += `<p>❌ Disposição ${erro.artigo} está em "<strong>${erro.alocadoEm}</strong>" mas deveria estar em "<strong>${erro.correto}</strong>"</p>`;
+                });
+                html += '</div>';
+                resultado.innerHTML = html;
+            } else {
+                resultado.className = 'resultado sucesso visivel';
+                resultado.textContent = '✅ Perfeito! Você organizou corretamente a lei!';
+            }
+        }
+
+        function limparTudo() {
+            if (confirm('Deseja realmente limpar tudo? O progresso será perdido.')) {
+                localStorage.removeItem(`lei-${leiAtual}`);
+                estado = {};
+                carregarEstado();
+                renderizarBanco();
+                renderizarCapitulos();
+                document.getElementById('resultado').classList.remove('visivel');
+                document.querySelectorAll('.capitulo').forEach(cap => {
+                    cap.classList.remove('erro');
+                });
+            }
+        }
+
+        // Iniciar
+        init();
+    </script>
+</body>
+</html>
