@@ -8,32 +8,41 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600&display=swap">
+<script>
+/* aplica o tema salvo antes de desenhar a página (padrão: claro) */
+try{ if(localStorage.getItem("tema")==="escuro") document.documentElement.dataset.tema="escuro"; }catch(e){}
+</script>
 <style>
 :root{
   --fundo:#faf8f5; --fundo2:#f0ece6; --cartao:#ffffff; --tinta:#121212; --apagado:#5d5751;
   --borda:#e2ddd5; --destaque:#c1272d; --destaque-suave:#f7e2e2;
   --filosofia:#6b4fc4; --cidadania:#2a7d5f; --redacao:#335fc0; --literatura:#b0651f; --gestao:#6e6e6e;
 }
-@media (prefers-color-scheme: dark){
-  :root{
-    --fundo:#111111; --fundo2:#1b1b1b; --cartao:#171717; --tinta:#f3f0eb; --apagado:#aaa39b;
-    --borda:#2f2c29; --destaque:#e8484e; --destaque-suave:#3b1a1c;
-    --filosofia:#a58cf0; --cidadania:#5cc79c; --redacao:#7aa2f0; --literatura:#e7a35c; --gestao:#a8a8a8;
-  }
+:root[data-tema="escuro"]{
+  --fundo:#111111; --fundo2:#1b1b1b; --cartao:#171717; --tinta:#f3f0eb; --apagado:#aaa39b;
+  --borda:#2f2c29; --destaque:#e8484e; --destaque-suave:#3b1a1c;
+  --filosofia:#a58cf0; --cidadania:#5cc79c; --redacao:#7aa2f0; --literatura:#e7a35c; --gestao:#a8a8a8;
+  color-scheme:dark;
 }
+:root{color-scheme:light}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"Inter",system-ui,sans-serif;background:var(--fundo);color:var(--tinta);min-height:100vh;line-height:1.55}
 .wrap{max-width:1120px;margin:0 auto;padding:0 16px}
 
-header{padding:56px 0 28px;text-align:center}
+header{padding:56px 0 28px;text-align:center;position:relative}
+.tema{position:absolute;top:16px;right:0;font:inherit;font-size:.85rem;font-weight:500;display:flex;align-items:center;gap:6px;cursor:pointer;padding:7px 14px;border-radius:999px;border:1.5px solid var(--borda);background:var(--cartao);color:var(--tinta);transition:border-color .2s}
+.tema:hover{border-color:var(--destaque)}
 .selo{display:inline-block;font-size:.74rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--destaque);padding-bottom:6px;border-bottom:2px solid var(--destaque);margin-bottom:20px}
 h1{font-family:"Fraunces",Georgia,serif;font-weight:800;font-size:clamp(2.6rem,8vw,4.4rem);line-height:1;letter-spacing:-.025em;text-transform:lowercase}
 h1 span{color:var(--destaque);font-style:italic}
 .sub{margin:16px auto 0;max-width:560px;color:var(--apagado);font-size:1.05rem}
 
 .faixa{overflow:hidden;border-top:1px solid var(--tinta);border-bottom:1px solid var(--tinta);margin:0 0 32px;padding:10px 0;white-space:nowrap}
-.faixa-trilho{display:inline-flex;animation:corre 40s linear infinite}
+.faixa-trilho{display:inline-flex;animation:corre 120s linear infinite}
+.faixa:hover .faixa-trilho{animation-play-state:paused}
 .faixa span{font-family:"Fraunces",Georgia,serif;font-style:italic;font-size:1rem;padding-right:18px}
+.faixa span i{font-family:"Inter",system-ui,sans-serif;font-style:normal;font-size:.82rem;color:var(--apagado);padding-left:6px}
+.faixa .intuito{font-family:"Inter",system-ui,sans-serif;font-style:normal;font-size:.78rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--destaque)}
 .faixa b{color:var(--destaque);font-weight:400;padding-right:18px}
 @keyframes corre{to{transform:translateX(-50%)}}
 
@@ -45,7 +54,9 @@ h1 span{color:var(--destaque);font-style:italic}
 .filtros{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 .filtro{font:inherit;font-size:.9rem;font-weight:500;cursor:pointer;padding:7px 16px;border-radius:2px;border:1.5px solid var(--borda);background:var(--cartao);color:var(--tinta);transition:all .2s}
 .filtro:hover{border-color:var(--destaque);color:var(--destaque)}
-.filtro[aria-pressed="true"]{background:var(--tinta);color:var(--fundo);border-color:var(--tinta)}
+.filtro{--cor:var(--tinta);border-radius:999px}
+.filtro:hover{border-color:var(--cor);color:var(--cor)}
+.filtro[aria-pressed="true"]{background:var(--cor);color:var(--cartao);border-color:var(--cor)}
 .contagem{font-size:.88rem;color:var(--apagado)}
 
 .grade{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;padding-bottom:48px}
@@ -55,6 +66,7 @@ h1 span{color:var(--destaque);font-style:italic}
 .cartao:hover h2{color:var(--destaque)}
 .topo-cartao{display:flex;align-items:center;gap:14px}
 .icone{flex-shrink:0;width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-size:1.7rem;background:color-mix(in srgb,var(--cor) 16%,transparent)}
+.novo{position:absolute;top:14px;right:14px;font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 10px;border-radius:999px;background:var(--destaque);color:#fff}
 .area{font-size:.74rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--cor)}
 .cartao h2{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:1.3rem;line-height:1.2;transition:color .2s}
 .cartao p{color:var(--apagado);font-size:.95rem;flex:1}
@@ -73,14 +85,17 @@ footer{border-top:1px solid var(--tinta);padding:36px 0 40px;text-align:center;f
 .autor-links a:hover{color:var(--destaque)}
 .autor-links b{color:var(--destaque);font-weight:400;font-size:.6rem}
 .rodape-site{font-size:.8rem}
+.frase-dia{font-family:"Fraunces",Georgia,serif;font-style:italic;font-size:1.05rem;color:var(--tinta);max-width:520px;margin:0 auto 26px}
+.frase-dia small{display:block;font-family:"Inter",system-ui,sans-serif;font-style:normal;font-size:.8rem;color:var(--apagado);margin-top:4px}
 
-@media (max-width:520px){header{padding:40px 0 24px}.grade{grid-template-columns:1fr}}
+@media (max-width:520px){header{padding:64px 0 24px}.grade{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}.faixa-trilho{animation:none}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
+    <button type="button" class="tema" id="tema" aria-label="Alternar modo claro e escuro"></button>
     <div class="selo">Sala de aula interativa</div>
     <h1>Prática <span>Filosófica</span></h1>
     <p class="sub">Ferramentas para pensar, escrever e debater. Escolha uma atividade e comece agora.</p>
@@ -103,6 +118,7 @@ footer{border-top:1px solid var(--tinta);padding:36px 0 40px;text-align:center;f
 
 <footer>
   <div class="wrap">
+    <p class="frase-dia" id="frase-dia"></p>
     <p class="autor-rotulo">Criado por</p>
     <p class="autor-nome">Artur Merlin</p>
     <nav class="autor-links" aria-label="Contatos do autor">
@@ -143,6 +159,7 @@ const APPS = [
   },
   {
     pasta: "roleta-etica",
+    novo: true,
     titulo: "Roleta Ética",
     area: "Filosofia",
     icone: "🎡",
@@ -237,7 +254,7 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":
 function montaFiltros() {
   const areas = ["Todas", ...new Set(APPS.map(a => a.area))];
   filtrosEl.innerHTML = areas.map(a =>
-    `<button type="button" class="filtro" data-area="${esc(a)}" aria-pressed="${a === areaAtiva}">${esc(a)}</button>`
+    `<button type="button" class="filtro" data-area="${esc(a)}" aria-pressed="${a === areaAtiva}" style="--cor:${a === "Todas" ? "var(--tinta)" : (CORES[a] || "var(--destaque)")}">${esc(a)}</button>`
   ).join("");
   filtrosEl.querySelectorAll(".filtro").forEach(b => b.onclick = () => {
     areaAtiva = b.dataset.area;
@@ -263,6 +280,7 @@ function mostra() {
 
   grade.innerHTML = lista.map(a => `
     <a class="cartao" href="apps/${encodeURIComponent(a.pasta)}/" style="--cor:${CORES[a.area] || "var(--destaque)"}">
+      ${a.novo ? '<span class="novo">Novo</span>' : ""}
       <div class="topo-cartao">
         <div class="icone" aria-hidden="true">${a.icone || "✦"}</div>
         <div>
@@ -276,10 +294,44 @@ function mostra() {
     </a>`).join("");
 }
 
-/* Faixa corrida: o texto é repetido para o movimento ficar contínuo */
-const FRASES = ["prática filosófica", "pensar é um exercício", "filosofia em sala de aula"];
-const bloco = FRASES.map(f => `<span>${esc(f)}</span><b>●</b>`).join("");
-document.getElementById("faixa").innerHTML = bloco.repeat(6);
+/* Faixa corrida: uma frase inspiradora, depois o intuito do site, e assim por diante.
+   Para trocar, edite as listas abaixo. */
+const FRASES = [
+  { t: "O que a vida quer da gente é coragem.", a: "Guimarães Rosa" },
+  { t: "Bom mesmo é ser um realista esperançoso.", a: "Ariano Suassuna" },
+  { t: "Ensinar é um exercício de imortalidade.", a: "Rubem Alves" },
+  { t: "Ensinar não é transferir conhecimento.", a: "Paulo Freire" },
+  { t: "Quem tem fome tem pressa.", a: "Betinho" },
+  { t: "Só há duas opções nesta vida: se resignar ou se indignar.", a: "Darcy Ribeiro" },
+  { t: "É necessário se espantar, se indignar e se contagiar.", a: "Nise da Silveira" }
+];
+const INTUITOS = ["pensar é um exercício", "filosofia em sala de aula", "aprender fazendo"];
+const bloco = FRASES.map((f, i) =>
+  `<span>“${esc(f.t)}”<i>${esc(f.a)}</i></span><b>●</b><span class="intuito">${esc(INTUITOS[i % INTUITOS.length])}</span><b>●</b>`
+).join("");
+const trilho = document.getElementById("faixa");
+trilho.innerHTML = bloco + bloco;
+/* velocidade constante e calma: cerca de 30 pixels por segundo */
+requestAnimationFrame(() => { trilho.style.animationDuration = Math.max(60, trilho.scrollWidth / 2 / 30) + "s"; });
+
+/* Frase do dia no rodapé */
+const hoje = new Date(), dia = Math.floor((hoje - new Date(hoje.getFullYear(), 0, 0)) / 864e5);
+const fd = FRASES[dia % FRASES.length];
+document.getElementById("frase-dia").innerHTML = `“${esc(fd.t)}”<small>${esc(fd.a)}</small>`;
+
+/* Botão de modo claro e escuro (a escolha fica salva no navegador) */
+const temaBtn = document.getElementById("tema");
+function rotuloTema() {
+  const escuro = document.documentElement.dataset.tema === "escuro";
+  temaBtn.innerHTML = escuro ? "☀️ Modo claro" : "🌙 Modo escuro";
+}
+temaBtn.onclick = () => {
+  const escuro = document.documentElement.dataset.tema !== "escuro";
+  if (escuro) document.documentElement.dataset.tema = "escuro"; else delete document.documentElement.dataset.tema;
+  try { localStorage.setItem("tema", escuro ? "escuro" : "claro"); } catch (e) {}
+  rotuloTema();
+};
+rotuloTema();
 
 buscaEl.addEventListener("input", mostra);
 montaFiltros();
