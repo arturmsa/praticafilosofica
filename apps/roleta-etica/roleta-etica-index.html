@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<style>*,*::before,*::after{box-sizing:border-box}body{margin:0}[hidden]{display:none!important}</style>
+<title>Roleta Ética</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Literata:opsz,wght@7..72,400;7..72,600&display=swap">
+<style>
+/* Layout: duas roletas lado a lado (empilham no celular), botão de giro entre elas, cartão de tarefa abaixo em letra grande para projetor */
+:root{
+  --bg:#e9edf2; --surface:#ffffff; --ink:#18202e; --muted:#5a6578; --line:#cfd6e0;
+  --accent:#c9740f; --accent-ink:#ffffff;
+  --s1:#264b73; --s2:#3f7d6e; --s3:#8a4a6b; --s4:#b5832a; --s5:#4f5d8c; --s6:#2f6a86; --s7:#7a5a3c; --s8:#5b7a3a; --s9:#a0503a; --s10:#2c5e5a;
+  --used:#c4cad3;
+  --display:"Bricolage Grotesque",system-ui,sans-serif;
+  --body:"Literata",Georgia,serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#121722; --surface:#1b2230; --ink:#e8ecf3; --muted:#9aa5b8; --line:#2c3546;
+  --accent:#e8952f; --accent-ink:#1a1206; --used:#323b4b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121722; --surface:#1b2230; --ink:#e8ecf3; --muted:#9aa5b8; --line:#2c3546;
+  --accent:#e8952f; --accent-ink:#1a1206; --used:#323b4b; color-scheme:dark}
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:clamp(16px,1.2vw + 10px,22px);line-height:1.5}
+.wrap{max-width:1200px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(2rem,4vw,3.4rem);line-height:1;margin:0;letter-spacing:-.02em}
+h1 span{color:var(--accent)}
+.sub{color:var(--muted);margin:6px 0 0;font-size:.9em}
+.opts{display:flex;gap:16px;align-items:center;flex-wrap:wrap;font-size:.8em;color:var(--muted)}
+.opts label{display:flex;gap:6px;align-items:center;cursor:pointer}
+.linkbtn{background:none;border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:4px 14px;font:inherit;cursor:pointer}
+.linkbtn:hover{border-color:var(--accent)}
+
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.wheelbox{display:grid;gap:14px;justify-items:center;min-width:0}
+.wheelbox h2{font-family:var(--display);font-weight:500;font-size:.85em;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0}
+.wheel{position:relative;width:100%;max-width:420px;aspect-ratio:1}
+.wheel canvas{width:100%;height:100%;display:block}
+.pin{position:absolute;left:50%;top:-6px;transform:translateX(-50%);width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-top:30px solid var(--accent);filter:drop-shadow(0 2px 2px rgba(0,0,0,.25));z-index:2}
+.spin{font-family:var(--display);font-weight:800;font-size:1.1em;letter-spacing:.04em;background:var(--accent);color:var(--accent-ink);border:none;border-radius:999px;padding:14px 34px;cursor:pointer;box-shadow:0 5px 0 color-mix(in srgb,var(--accent) 60%,#000);transition:transform .1s}
+.spin:active{transform:translateY(4px);box-shadow:0 1px 0 color-mix(in srgb,var(--accent) 60%,#000)}
+.spin:disabled{background:var(--used);color:var(--muted);box-shadow:none;cursor:not-allowed}
+.hint{font-size:.75em;color:var(--muted);margin:0;min-height:1.4em;text-align:center}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:clamp(18px,3vw,36px);display:grid;gap:18px}
+.card.empty{color:var(--muted);text-align:center}
+.tag{font-family:var(--display);font-size:.7em;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+.dtitle{font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,2.6vw,2.4rem);line-height:1.1;margin:0;text-wrap:balance}
+.dtext{margin:0;max-width:62ch}
+.lens{border-left:6px solid var(--lens,var(--accent));padding:4px 0 4px 16px}
+.lens strong{font-family:var(--display);font-size:1.2em}
+.lens p{margin:4px 0 0;max-width:62ch}
+.lensWrap{display:grid;gap:18px;position:relative}
+.lenshead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}
+.lenshead .tag{margin:0}
+.lvl{font-family:var(--display);font-weight:500;font-size:.75em;border:2px solid var(--lens,var(--accent));color:var(--ink);background:color-mix(in srgb,var(--lens,var(--accent)) 12%,transparent);border-radius:999px;padding:6px 14px;cursor:pointer}
+.lvl:hover{background:color-mix(in srgb,var(--lens,var(--accent)) 24%,transparent)}
+.chips{list-style:none;display:flex;flex-wrap:wrap;gap:8px;padding:0;margin:10px 0 0}
+.chips li{font-family:var(--display);font-size:.72em;letter-spacing:.03em;border:1px solid var(--lens,var(--accent));border-radius:6px;padding:3px 10px}
+.lens-out{animation:irisOut .38s ease-in forwards}
+.lens-in{animation:irisIn .52s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes irisOut{
+  from{clip-path:circle(120% at 50% 40%);filter:blur(0);transform:rotate(0) scale(1)}
+  to{clip-path:circle(0% at 50% 40%);filter:blur(8px);transform:rotate(-8deg) scale(.94)}}
+@keyframes irisIn{
+  0%{clip-path:circle(0% at 50% 40%);filter:blur(10px);transform:rotate(8deg) scale(.94)}
+  60%{filter:blur(2px)}
+  100%{clip-path:circle(120% at 50% 40%);filter:blur(0);transform:rotate(0) scale(1)}}
+.task{font-family:var(--display);font-weight:500;background:color-mix(in srgb,var(--accent) 14%,transparent);border-radius:10px;padding:12px 16px;margin:0}
+.twist{border:2px dashed var(--accent);border-radius:10px;padding:12px 16px;margin:0}
+.twist b{font-family:var(--display);color:var(--accent)}
+.actions{display:flex;gap:12px;flex-wrap:wrap}
+.btn{font-family:var(--display);font-weight:500;font-size:.9em;border-radius:10px;padding:10px 18px;cursor:pointer;border:2px solid var(--ink);background:transparent;color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.count{font-size:.8em;color:var(--muted)}
+
+@media (max-width:760px){.stage{grid-template-columns:1fr}.wheel{max-width:300px}}
+@media (prefers-reduced-motion:reduce){.spin{transition:none}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Roleta <span>Ética</span></h1>
+      <p class="sub">Gire, receba um dilema e uma lente. Defenda a decisão com os olhos daquele filósofo.</p>
+    </div>
+    <div class="opts">
+      <label><input type="checkbox" id="norepeat" checked> Não repetir dilemas</label>
+      <button class="linkbtn" id="reset" type="button">Recomeçar</button>
+      <button class="linkbtn" id="fs" type="button">Tela cheia</button>
+    </div>
+  </header>
+
+  <section class="stage">
+    <div class="wheelbox"><h2>1 · Dilema</h2><div class="wheel"><div class="pin"></div><canvas id="w1" width="840" height="840" aria-label="Roleta de dilemas"></canvas></div>
+      <button class="spin" id="spin1" type="button">GIRAR DILEMA</button><p class="hint">&nbsp;</p></div>
+    <div class="wheelbox"><h2>2 · Lente ética</h2><div class="wheel"><div class="pin"></div><canvas id="w2" width="840" height="840" aria-label="Roleta de lentes éticas"></canvas></div>
+      <button class="spin" id="spin2" type="button" disabled>GIRAR LENTE</button><p class="hint" id="hint2">Libera depois de sortear o dilema.</p></div>
+  </section>
+
+  <section class="card empty" id="result" aria-live="polite">
+    <p>Aperte <b>GIRAR DILEMA</b> para sortear o primeiro caso.</p>
+  </section>
+  <p class="count" id="count"></p>
+</div>
+
+<script>
+const DILEMAS = [
+  {t:"A carteira", txt:"Você acha uma carteira na praça com R$ 500 e o documento do dono. Ninguém viu. O que você faz?",
+   tw:["O dono é alguém que já te humilhou na frente da turma.","Sua família está sem dinheiro para comprar um remédio essa semana."]},
+  {t:"O print", txt:"Um amigo manda no grupo o print de uma conversa privada de uma colega, só para zoar. Todos estão rindo. Você repassa, fica calado ou reage?",
+   tw:["A conversa mostra que essa colega anda espalhando mentiras sobre você.","Se você reclamar, o grupo vai começar a zoar você."]},
+  {t:"A cola", txt:"Na prova final, seu melhor amigo pede a resposta. Se ele reprovar, perde a vaga no time da escola.",
+   tw:["O professor avisou: se pegar cola, os dois zeram.","Seu amigo te ajudou a estudar o ano inteiro em outra matéria."]},
+  {t:"Trabalho ou escola", txt:"Te oferecem um trabalho que paga bem, mas é no horário da aula. Você teria que largar a escola por um tempo.",
+   tw:["As contas de casa estão atrasadas há três meses.","Faltam só seis meses para você terminar o Ensino Médio."]},
+  {t:"O barco", txt:"Um barco de pesca afunda. No bote cabem cinco pessoas, mas há seis no mar. Você decide quem sobe.",
+   tw:["Uma das seis pessoas é o seu pai.","Um dos pescadores foi quem furou o barco por descuido."]},
+  {t:"A pichação", txt:"Um amigo pichou o muro da escola. A direção diz que, se ninguém contar quem foi, a turma inteira perde o passeio.",
+   tw:["Esse amigo foi o único que te defendeu quando você sofreu bullying.","Outro aluno inocente está sendo acusado no lugar dele."]},
+  {t:"A desculpa", txt:"Uma amiga pede para você dizer à mãe dela que ela passou a tarde na sua casa. Não é verdade.",
+   tw:["Você sabe que ela foi encontrar alguém que conheceu pela internet.","A mãe dela é muito rígida e já a castigou por coisas pequenas."]},
+  {t:"O mangue", txt:"A prefeitura quer aterrar parte do mangue para construir uma quadra para a comunidade, que nunca teve onde jogar.",
+   tw:["A obra traria 50 empregos para a cidade.","Pescadores e marisqueiras dependem daquele trecho do mangue."]}
+];
+
+const LENTES = [
+  {n:"Kant", s:"Dever",
+   q:"Faça o que é certo, mesmo que ninguém esteja vendo. Sua ação poderia virar uma regra para todo mundo?",
+   qc:"Imperativo categórico: aja apenas segundo uma máxima que você possa querer como lei universal. Trate a humanidade, em você e no outro, sempre como fim e nunca apenas como meio. O valor moral está na boa vontade de cumprir o dever, não nos resultados.",
+   c:["imperativo categórico","dever","autonomia","dignidade"]},
+  {n:"Utilitarismo", s:"Consequências",
+   q:"Pense nas consequências. Qual escolha deixa mais gente bem e menos gente sofrendo?",
+   qc:"Princípio da utilidade (Bentham e Mill): a ação correta é a que produz a maior felicidade para o maior número. Calcule intensidade, duração e alcance dos efeitos. Mill acrescenta que há prazeres superiores e que a liberdade individual também pesa no cálculo.",
+   c:["princípio da utilidade","bem-estar","cálculo","prazeres superiores"]},
+  {n:"Aristóteles", s:"Virtude",
+   q:"O que uma pessoa boa e equilibrada faria? Fuja dos exageros para os dois lados.",
+   qc:"A virtude (areté) é uma disposição formada pelo hábito e está na justa medida entre o excesso e a falta. A prudência (phronesis) indica a ação certa no caso concreto, tendo em vista a eudaimonia, a vida plena e bem realizada.",
+   c:["areté","justa medida","phronesis","eudaimonia"]},
+  {n:"Sartre", s:"Liberdade",
+   q:"Você é livre para escolher e responsável pelo que escolhe. Nada de desculpas.",
+   qc:"A existência precede a essência: não existe natureza humana pronta, nós nos fazemos pelas escolhas. Estamos condenados a ser livres, e culpar as circunstâncias é má-fé. Ao escolher, escolho também uma imagem do ser humano para todos.",
+   c:["existência e essência","liberdade","má-fé","angústia"]},
+  {n:"Ética do cuidado", s:"Relações",
+   q:"Quem precisa de cuidado aqui? Pense nas pessoas e nos laços entre elas.",
+   qc:"Carol Gilligan e Nel Noddings: a moral nasce das relações concretas, não de regras abstratas. Considere a vulnerabilidade, a interdependência e a responsabilidade de responder às necessidades do outro, sem esquecer o cuidado de si.",
+   c:["cuidado","vulnerabilidade","interdependência","responsabilidade"]},
+  {n:"Estoicismo", s:"O que depende de mim",
+   q:"Separe o que você controla do que não controla. Aja com calma e com a razão.",
+   qc:"Dicotomia do controle (Epicteto): dependem de nós os juízos, desejos e ações; não dependem o corpo, a fama, os bens e o que os outros fazem. Viver segundo a razão e a natureza, tendo a virtude como único bem verdadeiro, rumo à apatheia, a liberdade diante das paixões.",
+   c:["dicotomia do controle","razão","virtude","apatheia"]},
+  {n:"Hobbes", s:"Contrato social",
+   q:"Sem regras, vira bagunça. Que regra todos aceitariam para viver em paz?",
+   qc:"No estado de natureza, sem um poder comum, a vida seria uma guerra de todos contra todos. Por medo e por razão, os indivíduos firmam um contrato social e cedem parte da liberdade ao soberano em troca de segurança. Cumprir os pactos é o fundamento da justiça.",
+   c:["estado de natureza","contrato social","soberano","segurança"]},
+  {n:"Nietzsche", s:"Valores próprios",
+   q:"Você está só repetindo o que os outros dizem ou pensando com a sua cabeça?",
+   qc:"Genealogia da moral: os valores têm origem histórica e muitas vezes nascem do ressentimento, a moral de rebanho. Questione o bem e o mal herdados pela transvaloração dos valores e afirme a vida como vontade de potência criadora.",
+   c:["genealogia","moral de rebanho","transvaloração","vontade de potência"]},
+  {n:"Arendt", s:"Pensar e responsabilidade",
+   q:"Pense antes de agir. Não faça algo só porque mandaram ou porque todo mundo faz.",
+   qc:"Banalidade do mal: grandes males podem ser cometidos por pessoas comuns que deixam de pensar e apenas obedecem. Pensar é dialogar consigo mesmo, e julgar exige se colocar no lugar dos outros. Obedecer não apaga a responsabilidade.",
+   c:["banalidade do mal","pensamento","juízo","responsabilidade"]},
+  {n:"Ubuntu", s:"Eu sou porque nós somos",
+   q:"Eu sou porque nós somos. Como essa escolha afeta a comunidade?",
+   qc:"Filosofia africana (Mogobe Ramose, Desmond Tutu): uma pessoa se torna pessoa por meio das outras pessoas. A ação boa é a que fortalece os vínculos comunitários, a solidariedade, a reconciliação e a dignidade partilhada.",
+   c:["comunidade","solidariedade","reconciliação","dignidade"]}
+];
+let nivel = "simples";
+
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const SEG_COLORS = ["--s1","--s2","--s3","--s4","--s5","--s6","--s7","--s8","--s9","--s10"];
+const TAU = Math.PI*2;
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function makeWheel(canvas, items, label){
+  const ctx = canvas.getContext("2d"), N = items.length, seg = TAU/N;
+  const w = {rot:0, used:new Set(), seg, N};
+  w.draw = function(){
+    const W = canvas.width, R = W/2 - 8, c = W/2;
+    ctx.clearRect(0,0,W,W);
+    for(let i=0;i<N;i++){
+      const a0 = -Math.PI/2 + i*seg + w.rot, a1 = a0 + seg;
+      ctx.beginPath(); ctx.moveTo(c,c); ctx.arc(c,c,R,a0,a1); ctx.closePath();
+      ctx.fillStyle = w.used.has(i) ? css("--used") : css(SEG_COLORS[i % SEG_COLORS.length]);
+      ctx.fill(); ctx.strokeStyle = css("--surface"); ctx.lineWidth = 6; ctx.stroke();
+      ctx.save(); ctx.translate(c,c); ctx.rotate(a0 + seg/2);
+      ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      ctx.fillStyle = w.used.has(i) ? css("--muted") : "#ffffff";
+      ctx.font = `800 ${N>8?34:N>6?38:44}px "Bricolage Grotesque", system-ui, sans-serif`;
+      ctx.fillText(label(items[i]), R - 26, 0);
+      ctx.restore();
+    }
+    ctx.beginPath(); ctx.arc(c,c,58,0,TAU); ctx.fillStyle = css("--surface"); ctx.fill();
+    ctx.lineWidth = 8; ctx.strokeStyle = css("--accent"); ctx.stroke();
+  };
+  w.spinTo = function(t, dur){
+    return new Promise(res=>{
+      const jitter = (Math.random()-.5)*seg*0.7;
+      let target = -((t+.5)*seg + jitter);
+      const minTurns = reduce ? 1 : 5;
+      while(target < w.rot + minTurns*TAU) target += TAU;
+      const start = w.rot, d = target - start, t0 = performance.now();
+      if(reduce) dur = 400;
+      (function step(now){
+        const p = Math.min(1,(now-t0)/dur), e = 1 - Math.pow(1-p,4);
+        w.rot = start + d*e; w.draw();
+        p<1 ? requestAnimationFrame(step) : (w.rot = target % TAU, res());
+      })(t0);
+    });
+  };
+  return w;
+}
+
+const w1 = makeWheel(document.getElementById("w1"), DILEMAS, d=>d.t);
+const w2 = makeWheel(document.getElementById("w2"), LENTES, l=>l.n);
+const result = document.getElementById("result");
+const spin1 = document.getElementById("spin1");
+const spin2 = document.getElementById("spin2");
+const hint2 = document.getElementById("hint2");
+const noRepeat = document.getElementById("norepeat");
+const countEl = document.getElementById("count");
+const EMPTY = "<p>Aperte <b>GIRAR DILEMA</b> para sortear o primeiro caso.</p>";
+let current = null, twistIdx = 0;
+
+function updateCount(){
+  const left = DILEMAS.length - w1.used.size;
+  countEl.textContent = noRepeat.checked ? `${left} de ${DILEMAS.length} dilemas ainda na roleta.` : "";
+}
+function drawAll(){ w1.draw(); w2.draw(); }
+
+async function spinDilema(){
+  spin1.disabled = spin2.disabled = true;
+  let pool = DILEMAS.map((_,i)=>i).filter(i=>!(noRepeat.checked && w1.used.has(i)));
+  if(!pool.length){ w1.used.clear(); pool = DILEMAS.map((_,i)=>i); }
+  const d = pool[Math.floor(Math.random()*pool.length)];
+  result.classList.add("empty");
+  result.innerHTML = "<p>Girando o dilema…</p>";
+  await w1.spinTo(d, 4200);
+  current = {d, l:null}; twistIdx = 0;
+  render();
+  if(noRepeat.checked) w1.used.add(d);
+  drawAll(); updateCount();
+  spin1.disabled = spin2.disabled = false;
+  hint2.textContent = "Pronto! Agora gire a lente.";
+}
+
+async function spinLente(){
+  if(!current) return;
+  spin1.disabled = spin2.disabled = true;
+  const l = Math.floor(Math.random()*LENTES.length);
+  await w2.spinTo(l, 4600);
+  current.l = l;
+  render();
+  spin1.disabled = spin2.disabled = false;
+  hint2.textContent = "Gire de novo para dar outra lente a outro grupo.";
+}
+
+function render(){
+  const D = DILEMAS[current.d];
+  const twists = D.tw.slice(0, twistIdx).map(t=>`<p class="twist"><b>Reviravolta:</b> ${t}</p>`).join("");
+  let lensHtml = `<p class="lens" style="--lens:var(--line)"><span class="tag">Sua lente</span><br>Gire a roleta de lentes para descobrir de qual ponto de vista vocês vão argumentar.</p>`;
+  if(current.l !== null){
+    lensHtml = `<div class="lensWrap" id="lensWrap">${lensInner()}</div>`;
+  }
+  result.classList.remove("empty");
+  result.innerHTML = `
+    <div><p class="tag">Dilema</p><h3 class="dtitle">${D.t}</h3></div>
+    <p class="dtext">${D.txt}</p>
+    ${twists}
+    ${lensHtml}
+    <div class="actions">
+      <button class="btn" id="twistBtn" type="button" ${twistIdx>=D.tw.length?"disabled":""}>Reviravolta (${D.tw.length - twistIdx})</button>
+    </div>`;
+  document.getElementById("twistBtn").onclick = ()=>{ twistIdx++; render(); };
+  bindLevel();
+}
+
+function lensInner(){
+  const L = LENTES[current.l], color = css(SEG_COLORS[current.l % SEG_COLORS.length]);
+  const adv = nivel === "complexa";
+  const body = adv
+    ? `<p>${L.qc}</p><ul class="chips">${L.c.map(k=>`<li>${k}</li>`).join("")}</ul>`
+    : `<p>${L.q}</p>`;
+  const task = adv
+    ? `Tarefa avançada: decidam e justifiquem usando pelo menos dois conceitos de ${L.n}. Depois, respondam a uma objeção que outra lente faria.`
+    : `Tarefa: tome uma decisão e defenda-a usando o jeito de pensar de ${L.n}, mesmo que você pense diferente.`;
+  return `<div class="lens" style="--lens:${color}">
+      <div class="lenshead"><p class="tag">Sua lente · ${adv ? "aprofundada" : "simples"}</p>
+        <button class="lvl" id="lvlBtn" type="button" aria-pressed="${adv}">${adv ? "◐ Voltar à lente simples" : "◉ Trocar para lente aprofundada"}</button></div>
+      <strong>${L.n} · ${L.s}</strong>${body}</div>
+    <p class="task">${task}</p>`;
+}
+
+let swapping = false;
+function bindLevel(){
+  const b = document.getElementById("lvlBtn");
+  if(b) b.onclick = swapLens;
+}
+function swapLens(){
+  if(swapping) return;
+  const wrap = document.getElementById("lensWrap");
+  nivel = nivel === "simples" ? "complexa" : "simples";
+  if(reduce || !wrap){ if(wrap){ wrap.innerHTML = lensInner(); bindLevel(); } return; }
+  swapping = true;
+  wrap.classList.add("lens-out");
+  setTimeout(()=>{
+    wrap.innerHTML = lensInner(); bindLevel();
+    wrap.classList.remove("lens-out");
+    wrap.classList.add("lens-in");
+    setTimeout(()=>{ wrap.classList.remove("lens-in"); swapping = false; }, 520);
+  }, 380);
+}
+
+spin1.onclick = spinDilema;
+spin2.onclick = spinLente;
+noRepeat.onchange = ()=>{ if(!noRepeat.checked){ w1.used.clear(); drawAll(); } updateCount(); };
+document.getElementById("reset").onclick = ()=>{
+  w1.used.clear(); current = null; drawAll(); updateCount();
+  spin2.disabled = true; hint2.textContent = "Libera depois de sortear o dilema.";
+  result.classList.add("empty"); result.innerHTML = EMPTY;
+};
+document.getElementById("fs").onclick = ()=>{
+  try{ document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(()=>{}); }catch(e){}
+};
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ()=>{ drawAll(); if(current) render(); });
+new MutationObserver(()=>{ drawAll(); if(current) render(); }).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+document.fonts && document.fonts.ready.then(drawAll);
+drawAll(); updateCount();
+</script>
+
+</body>
+</html>
