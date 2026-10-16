@@ -7,7 +7,7 @@
 <title>Roleta Ética</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Literata:opsz,wght@7..72,400;7..72,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Literata:opsz,wght@7..72,400;7..72,600&display=swap">
 <style>
 /* Layout: duas roletas lado a lado (empilham no celular), botão de giro entre elas, cartão de tarefa abaixo em letra grande para projetor */
 :root{
@@ -15,20 +15,33 @@
   --accent:#c9740f; --accent-ink:#ffffff;
   --s1:#264b73; --s2:#3f7d6e; --s3:#8a4a6b; --s4:#b5832a; --s5:#4f5d8c; --s6:#2f6a86; --s7:#7a5a3c; --s8:#5b7a3a; --s9:#a0503a; --s10:#2c5e5a;
   --used:#c4cad3;
+  --bg2:#d4dde8; --sky:#1f4e79; --deco:#8fa3bb; --rim:#2a3f5c; --stud:#e2b354; --glow:rgba(201,116,15,.18);
   --display:"Bricolage Grotesque",system-ui,sans-serif;
   --body:"Literata",Georgia,serif;
+  --carved:"Cinzel","Times New Roman",serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#121722; --surface:#1b2230; --ink:#e8ecf3; --muted:#9aa5b8; --line:#2c3546;
-  --accent:#e8952f; --accent-ink:#1a1206; --used:#323b4b; color-scheme:dark}}
+  --bg:#0f1520; --surface:#18202e; --ink:#e8ecf3; --muted:#9aa5b8; --line:#2c3546;
+  --accent:#e8952f; --accent-ink:#1a1206; --used:#323b4b;
+  --bg2:#17233a; --sky:#8fb6e0; --deco:#3a4a63; --rim:#0b111b; --stud:#d9a441; --glow:rgba(232,149,47,.14); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#121722; --surface:#1b2230; --ink:#e8ecf3; --muted:#9aa5b8; --line:#2c3546;
-  --accent:#e8952f; --accent-ink:#1a1206; --used:#323b4b; color-scheme:dark}
+  --bg:#0f1520; --surface:#18202e; --ink:#e8ecf3; --muted:#9aa5b8; --line:#2c3546;
+  --accent:#e8952f; --accent-ink:#1a1206; --used:#323b4b;
+  --bg2:#17233a; --sky:#8fb6e0; --deco:#3a4a63; --rim:#0b111b; --stud:#d9a441; --glow:rgba(232,149,47,.14); color-scheme:dark}
 
-body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:clamp(16px,1.2vw + 10px,22px);line-height:1.5}
-.wrap{max-width:1200px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
+body{background:radial-gradient(ellipse 90% 60% at 50% 0%,var(--bg2),transparent 70%),radial-gradient(circle at 50% 38%,var(--glow),transparent 55%),var(--bg);background-attachment:fixed;color:var(--ink);font-family:var(--body);font-size:clamp(16px,1.2vw + 10px,22px);line-height:1.5}
+.deco{position:fixed;inset:0;pointer-events:none;z-index:0;color:var(--deco);overflow:hidden}
+.deco svg{position:absolute;fill:currentColor}
+.deco .col-l{left:-10px;bottom:0;height:78vh;opacity:.38}
+.deco .col-r{right:-10px;bottom:0;height:78vh;opacity:.38;transform:scaleX(-1)}
+.deco .bust{right:6vw;bottom:0;height:46vh;opacity:.3}
+.deco .owl{left:7vw;top:16vh;height:16vh;opacity:.26}
+.deco .laurel{left:50%;top:6px;width:min(520px,80vw);transform:translateX(-50%);opacity:.28}
+.meander{height:14px;background:var(--accent);opacity:.75;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='14' viewBox='0 0 28 14'%3E%3Cpath d='M0 13h26V1H6v8h12V5h-8' fill='none' stroke='black' stroke-width='2'/%3E%3C/svg%3E") repeat-x;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='14' viewBox='0 0 28 14'%3E%3Cpath d='M0 13h26V1H6v8h12V5h-8' fill='none' stroke='black' stroke-width='2'/%3E%3C/svg%3E") repeat-x}
+@media (max-width:900px){.deco .col-l,.deco .col-r{opacity:.22}.deco .bust,.deco .owl{display:none}}
+.wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:28px}
 header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px}
-h1{font-family:var(--display);font-weight:800;font-size:clamp(2rem,4vw,3.4rem);line-height:1;margin:0;letter-spacing:-.02em}
+h1{font-family:var(--carved);font-weight:800;font-size:clamp(2rem,4.4vw,3.6rem);line-height:1;margin:0;letter-spacing:.06em;color:var(--sky)}
 h1 span{color:var(--accent)}
 .sub{color:var(--muted);margin:6px 0 0;font-size:.9em}
 .opts{display:flex;gap:16px;align-items:center;flex-wrap:wrap;font-size:.8em;color:var(--muted)}
@@ -38,17 +51,19 @@ h1 span{color:var(--accent)}
 
 .stage{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
 .wheelbox{display:grid;gap:14px;justify-items:center;min-width:0}
-.wheelbox h2{font-family:var(--display);font-weight:500;font-size:.85em;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0}
+.wheelbox h2{font-family:var(--carved);font-weight:600;font-size:.95em;letter-spacing:.16em;text-transform:uppercase;color:var(--sky);margin:0}
+.wheel{filter:drop-shadow(0 14px 24px rgba(10,20,40,.28))}
 .wheel{position:relative;width:100%;max-width:420px;aspect-ratio:1}
 .wheel canvas{width:100%;height:100%;display:block}
 .pin{position:absolute;left:50%;top:-6px;transform:translateX(-50%);width:0;height:0;border-left:16px solid transparent;border-right:16px solid transparent;border-top:30px solid var(--accent);filter:drop-shadow(0 2px 2px rgba(0,0,0,.25));z-index:2}
 .spin{font-family:var(--display);font-weight:800;font-size:1.1em;letter-spacing:.04em;background:var(--accent);color:var(--accent-ink);border:none;border-radius:999px;padding:14px 34px;cursor:pointer;box-shadow:0 5px 0 color-mix(in srgb,var(--accent) 60%,#000);transition:transform .1s}
 .spin:active{transform:translateY(4px);box-shadow:0 1px 0 color-mix(in srgb,var(--accent) 60%,#000)}
+#spin2:not(:disabled){background:var(--s2);color:#fff;box-shadow:0 5px 0 color-mix(in srgb,var(--s2) 60%,#000)}
 .spin:disabled{background:var(--used);color:var(--muted);box-shadow:none;cursor:not-allowed}
 .hint{font-size:.75em;color:var(--muted);margin:0;min-height:1.4em;text-align:center}
 :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 
-.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:clamp(18px,3vw,36px);display:grid;gap:18px}
+.card{background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(6px);border:1px solid var(--line);border-top:4px solid var(--sky);border-radius:14px;box-shadow:0 10px 30px rgba(10,20,40,.08);padding:clamp(18px,3vw,36px);display:grid;gap:18px}
 .card.empty{color:var(--muted);text-align:center}
 .tag{font-family:var(--display);font-size:.7em;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
 .dtitle{font-family:var(--display);font-weight:800;font-size:clamp(1.5rem,2.6vw,2.4rem);line-height:1.1;margin:0;text-wrap:balance}
@@ -86,6 +101,35 @@ h1 span{color:var(--accent)}
 
 </head>
 <body>
+<div class="deco" aria-hidden="true">
+  <svg class="laurel" id="laurel" viewBox="0 0 520 90"></svg>
+  <svg class="col-l" viewBox="0 0 120 600" preserveAspectRatio="xMinYMax meet">
+    <rect x="0" y="0" width="120" height="18"/><polygon points="10,18 110,18 98,38 22,38"/><rect x="18" y="38" width="84" height="8"/>
+    <rect x="22" y="46" width="9" height="486"/><rect x="33" y="46" width="9" height="486"/><rect x="44" y="46" width="9" height="486"/><rect x="55" y="46" width="10" height="486"/><rect x="67" y="46" width="9" height="486"/><rect x="78" y="46" width="9" height="486"/><rect x="89" y="46" width="9" height="486"/>
+    <rect x="14" y="532" width="92" height="14"/><rect x="6" y="546" width="108" height="18"/><rect x="0" y="564" width="120" height="36"/>
+  </svg>
+  <svg class="col-r" viewBox="0 0 120 600" preserveAspectRatio="xMaxYMax meet">
+    <rect x="0" y="0" width="120" height="18"/><polygon points="10,18 110,18 98,38 22,38"/><rect x="18" y="38" width="84" height="8"/>
+    <rect x="22" y="46" width="9" height="486"/><rect x="33" y="46" width="9" height="486"/><rect x="44" y="46" width="9" height="486"/><rect x="55" y="46" width="10" height="486"/><rect x="67" y="46" width="9" height="486"/><rect x="78" y="46" width="9" height="486"/><rect x="89" y="46" width="9" height="486"/>
+    <rect x="14" y="532" width="92" height="14"/><rect x="6" y="546" width="108" height="18"/><rect x="0" y="564" width="120" height="36"/>
+  </svg>
+  <svg class="bust" viewBox="0 0 200 300">
+    <circle cx="70" cy="56" r="13"/><circle cx="85" cy="48" r="13"/><circle cx="100" cy="45" r="13"/><circle cx="115" cy="48" r="13"/><circle cx="130" cy="56" r="13"/>
+    <ellipse cx="100" cy="95" rx="40" ry="50"/><path d="M138 86 l10 16 l-10 3 Z"/>
+    <path d="M62 108 Q100 182 138 108 Q134 152 100 164 Q66 152 62 108 Z"/>
+    <rect x="82" y="135" width="36" height="42"/>
+    <path d="M18 256 Q28 182 76 170 L124 170 Q172 182 182 256 Z"/>
+    <rect x="50" y="256" width="100" height="14"/><rect x="62" y="270" width="76" height="30"/>
+  </svg>
+  <svg class="owl" viewBox="0 0 100 120">
+    <polygon points="18,34 28,8 42,30"/><polygon points="58,30 72,8 82,34"/>
+    <ellipse cx="50" cy="70" rx="34" ry="44"/>
+    <circle cx="36" cy="52" r="11" style="fill:var(--bg)"/><circle cx="64" cy="52" r="11" style="fill:var(--bg)"/>
+    <circle cx="36" cy="52" r="5"/><circle cx="64" cy="52" r="5"/>
+    <polygon points="46,62 54,62 50,72" style="fill:var(--bg)"/>
+  </svg>
+</div>
+
 <div class="wrap">
   <header>
     <div>
@@ -98,6 +142,7 @@ h1 span{color:var(--accent)}
       <button class="linkbtn" id="fs" type="button">Tela cheia</button>
     </div>
   </header>
+  <div class="meander" aria-hidden="true"></div>
 
   <section class="stage">
     <div class="wheelbox"><h2>1 · Dilema</h2><div class="wheel"><div class="pin"></div><canvas id="w1" width="840" height="840" aria-label="Roleta de dilemas"></canvas></div>
@@ -185,8 +230,11 @@ function makeWheel(canvas, items, label){
   const ctx = canvas.getContext("2d"), N = items.length, seg = TAU/N;
   const w = {rot:0, used:new Set(), seg, N};
   w.draw = function(){
-    const W = canvas.width, R = W/2 - 8, c = W/2;
+    const W = canvas.width, c = W/2, R = W/2 - 38;
     ctx.clearRect(0,0,W,W);
+    ctx.beginPath(); ctx.arc(c,c,W/2-4,0,TAU); ctx.fillStyle = css("--rim"); ctx.fill();
+    ctx.fillStyle = css("--stud");
+    for(let k=0;k<N*2;k++){ const a = w.rot + k*seg/2 - Math.PI/2; ctx.beginPath(); ctx.arc(c+Math.cos(a)*(W/2-21), c+Math.sin(a)*(W/2-21), 7, 0, TAU); ctx.fill(); }
     for(let i=0;i<N;i++){
       const a0 = -Math.PI/2 + i*seg + w.rot, a1 = a0 + seg;
       ctx.beginPath(); ctx.moveTo(c,c); ctx.arc(c,c,R,a0,a1); ctx.closePath();
@@ -333,6 +381,19 @@ document.getElementById("fs").onclick = ()=>{
 };
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", ()=>{ drawAll(); if(current) render(); });
 new MutationObserver(()=>{ drawAll(); if(current) render(); }).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+(function laurel(){
+  const svg = document.getElementById("laurel"); if(!svg) return;
+  let h = "";
+  for(const side of [-1,1]){
+    for(let i=0;i<10;i++){
+      const t = i/9, x = 260 + side*(40 + t*200), y = 20 + Math.pow(t,1.6)*55;
+      const ang = side*(-20 - t*35);
+      h += `<ellipse cx="${x.toFixed(1)}" cy="${(y-8).toFixed(1)}" rx="5" ry="13" transform="rotate(${(ang-30*side).toFixed(1)} ${x.toFixed(1)} ${(y-8).toFixed(1)})"/>`;
+      h += `<ellipse cx="${x.toFixed(1)}" cy="${(y+8).toFixed(1)}" rx="5" ry="13" transform="rotate(${(ang+40*side).toFixed(1)} ${x.toFixed(1)} ${(y+8).toFixed(1)})"/>`;
+    }
+  }
+  svg.innerHTML = h;
+})();
 document.fonts && document.fonts.ready.then(drawAll);
 drawAll(); updateCount();
 </script>
