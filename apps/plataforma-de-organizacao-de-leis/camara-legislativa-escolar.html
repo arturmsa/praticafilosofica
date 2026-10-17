@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Câmara Legislativa Escolar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Garamond', serif;
+            background: linear-gradient(135deg, #003366 0%, #1a5490 100%);
+            min-height: 100vh;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(180deg, #001a33 0%, #003366 100%);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+            border-bottom: 4px solid #b8860b;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        header h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            font-style: italic;
+        }
+
+        .brasao {
+            display: inline-block;
+            font-size: 3em;
+            margin-right: 20px;
+            vertical-align: middle;
+        }
+
+        .tabs-header {
+            display: flex;
+            gap: 0;
+            background: #f5f5f5;
+            border-bottom: 3px solid #b8860b;
+            padding: 0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 20px 30px;
+            border: none;
+            background: #e8e8e8;
+            color: #003366;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            border-bottom: 4px solid transparent;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .tab-btn:hover {
+            background: #d0d0d0;
+        }
+
+        .tab-btn.ativo {
+            background: white;
+            color: #003366;
+            border-bottom-color: #b8860b;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 40px;
+            background: white;
+            min-height: calc(100vh - 400px);
+        }
+
+        .tab-content.ativo {
+            display: block;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 30px;
+        }
+
+        .painel {
+            background: #f9f9f9;
+            border: 2px solid #003366;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .painel h2 {
+            color: #003366;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #b8860b;
+            font-size: 1.4em;
+        }
+
+        .painel h3 {
+            color: #1a5490;
+            margin: 20px 0 15px 0;
+            font-size: 1.1em;
+        }
+
+        .painel p {
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .artigo-item {
+            background: linear-gradient(135deg, #003366 0%, #1a5490 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            cursor: move;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            border-left: 4px solid #b8860b;
+            font-weight: 500;
+            user-select: none;
+            line-height: 1.4;
+        }
+
+        .artigo-item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 4px 12px rgba(0,51,102,0.3);
+        }
+
+        .artigo-item.dragging {
+            opacity: 0.6;
+        }
+
+        .capitulo-box {
+            background: #f0f0f0;
+            border: 2px solid #1a5490;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .capitulo-box.dragover {
+            background: #e8f5e9;
+            border-color: #b8860b;
+            box-shadow: 0 0 15px rgba(184,134,11,0.3);
+        }
+
+        .capitulo-box.erro {
+            border-color: #d32f2f;
+            background: #ffebee;
+        }
+
+        .capitulo-box h3 {
+            color: #003366;
+            margin-bottom: 12px;
+            font-size: 1.15em;
+        }
+
+        .capitulo-box p {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .artigos-drop {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 120px;
+            padding: 15px;
+            background: white;
+            border: 2px dashed #999;
+            border-radius: 6px;
+        }
+
+        .artigo-colocado {
+            background: linear-gradient(135deg, #003366 0%, #1a5490 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+            user-select: none;
+            transition: all 0.2s ease;
+        }
+
+        .artigo-colocado:hover {
+            box-shadow: 0 4px 12px rgba(0,51,102,0.3);
+        }
+
+        .artigo-colocado button {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .artigo-colocado button:hover {
+            background: rgba(255,255,255,0.5);
+        }
+
+        .empty-state {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* CRIAR LEI STYLES */
+        .secao-criacao {
+            background: white;
+            border: 2px solid #003366;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .secao-criacao h3 {
+            color: #003366;
+            border-bottom: 3px solid #b8860b;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #003366;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            font-family: 'Georgia', serif;
+            font-size: 1em;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #b8860b;
+            box-shadow: 0 0 8px rgba(184,134,11,0.2);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-grupo {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            font-family: 'Arial', sans-serif;
+            font-size: 0.95em;
+        }
+
+        .btn-primary {
+            background: #003366;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #001a33;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,51,102,0.3);
+        }
+
+        .btn-success {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #1b5e20;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(46,125,50,0.3);
+        }
+
+        .btn-danger {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #b71c1c;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #999;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #777;
+        }
+
+        .artigos-container {
+            background: #f9f9f9;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .artigo-criado {
+            background: white;
+            border-left: 4px solid #003366;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .artigo-criado h4 {
+            color: #003366;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .artigo-criado p {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .btn-remover {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #d32f2f;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+
+        .preview {
+            background: #f5f5f5;
+            border: 2px solid #003366;
+            border-radius: 8px;
+            padding: 30px;
+            margin-top: 30px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .preview-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #b8860b;
+        }
+
+        .preview-header p {
+            color: #666;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        .preview-titulo {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #003366;
+            margin: 15px 0;
+        }
+
+        .preview-artigo {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .preview-artigo:last-child {
+            border-bottom: none;
+        }
+
+        .resultado {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 1.05em;
+            font-weight: 600;
+            display: none;
+        }
+
+        .resultado.sucesso {
+            background: #c8e6c9;
+            color: #2e7d32;
+            border-left: 4px solid #2e7d32;
+        }
+
+        .resultado.erro {
+            background: #ffcdd2;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+
+        .resultado.visivel {
+            display: block;
+        }
+
+        .erros-lista {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 6px;
+            text-align: left;
+        }
+
+        .erros-lista p {
+            color: #856404;
+            margin: 5px 0;
+        }
+
+        footer {
+            background: #001a33;
+            color: white;
+            text-align: center;
+            padding: 25px;
+            border-top: 4px solid #b8860b;
+            margin-top: 50px;
+            font-size: 0.9em;
+        }
+
+        footer a {
+            color: #b8860b;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 1200px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .brasao {
+                font-size: 2em;
+            }
+
+            .tab-btn {
+                padding: 15px 20px;
+                font-size: 0.95em;
+            }
+
+            .tabs-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                <span class="brasao">🏛️</span>
+                <h1>CÂMARA LEGISLATIVA ESCOLAR</h1>
+            </div>
+            <p>Aprenda a criar, organizar e entender leis</p>
+        </header>
+
+        <div class="tabs-header">
+            <button class="tab-btn ativo" onclick="abrirTab('organizar')">📖 Organizar Lei</button>
+            <button class="tab-btn" onclick="abrirTab('criar')">✍️ Criar Lei</button>
+        </div>
+
+        <!-- TAB 1: ORGANIZAR LEI -->
+        <div id="organizar" class="tab-content ativo">
+            <div class="content-grid">
+                <div class="painel">
+                    <h2>📋 Disposições</h2>
+                    <div class="artigos-disponiveis" id="artigos-banco"></div>
+                </div>
+
+                <div class="painel">
+                    <h2>📑 Capítulos da Lei</h2>
+                    <div id="capitulos-container"></div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn btn-success" onclick="verificarOrganizacao()">✓ Verificar Resposta</button>
+                <button class="btn btn-danger" onclick="limparTudo()">🔄 Limpar Tudo</button>
+            </div>
+
+            <div id="resultado" class="resultado"></div>
+        </div>
+
+        <!-- TAB 2: CRIAR LEI -->
+        <div id="criar" class="tab-content">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div>
+                    <!-- PREÂMBULO -->
+                    <div class="secao-criacao">
+                        <h3>I - Preâmbulo</h3>
+                        <div class="form-group">
+                            <label>Local de Votação</label>
+                            <input type="text" id="local" placeholder="Ex: Câmara dos Deputados" value="Câmara Legislativa Escolar">
+                        </div>
+                        <div class="form-group">
+                            <label>Data de Aprovação</label>
+                            <input type="date" id="data">
+                        </div>
+                        <div class="form-group">
+                            <label>Objetivo Principal</label>
+                            <textarea id="objetivo" placeholder="Descreva o objetivo da lei..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- DADOS BÁSICOS -->
+                    <div class="secao-criacao">
+                        <h3>II - Dados Básicos</h3>
+                        <div class="form-group">
+                            <label>Número da Lei (Ano)</label>
+                            <input type="number" id="ano-lei" placeholder="Ex: 2024" min="2000" max="2099">
+                        </div>
+                        <div class="form-group">
+                            <label>Número da Lei (Sequencial)</label>
+                            <input type="number" id="seq-lei" placeholder="Ex: 1234" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Título da Lei</label>
+                            <input type="text" id="titulo-lei" placeholder="Ex: Lei de Proteção ao Consumidor">
+                        </div>
+                        <div class="form-group">
+                            <label>Ementa (Resumo)</label>
+                            <textarea id="ementa" placeholder="Escreva um resumo da lei em uma frase..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- AUTORES -->
+                    <div class="secao-criacao">
+                        <h3>III - Autores</h3>
+                        <div class="form-group">
+                            <label>Nome do Autor/Autores</label>
+                            <input type="text" id="autores" placeholder="Ex: Deputado Fulano de Tal">
+                        </div>
+                        <div class="form-group">
+                            <label>Instituição/Partido</label>
+                            <input type="text" id="instituicao" placeholder="Ex: Escola Estadual Monsenhor Joaquim">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <!-- ARTIGOS -->
+                    <div class="secao-criacao">
+                        <h3>IV - Artigos</h3>
+                        <div class="btn-grupo">
+                            <button class="btn btn-primary" onclick="adicionarArtigo()">+ Adicionar Artigo</button>
+                        </div>
+                        <div class="artigos-container" id="artigos-lista"></div>
+                    </div>
+
+                    <!-- DISPOSIÇÕES FINAIS -->
+                    <div class="secao-criacao">
+                        <h3>V - Disposições Finais</h3>
+                        <div class="form-group">
+                            <label>Data de Vigência</label>
+                            <textarea id="vigencia" placeholder="Ex: Esta lei entra em vigor na data de sua publicação."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Revoga</label>
+                            <textarea id="revoga" placeholder="Ex: Revoga a Lei anterior de..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- AÇÕES -->
+                    <div class="secao-criacao">
+                        <h3>Gerar Lei</h3>
+                        <div class="btn-grupo">
+                            <button class="btn btn-success" onclick="gerarPreview()">👁️ Visualizar</button>
+                            <button class="btn btn-secondary" onclick="exportarPDF()">📥 Exportar PDF</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PREVIEW -->
+            <div class="preview" id="preview-container" style="display: none;">
+                <div id="preview-content"></div>
+            </div>
+
+            <div id="resultado-criacao" class="resultado"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>🏛️ Câmara Legislativa Escolar | Desenvolvido por <strong>Artur Merlin</strong></p>
+        <p>📧 artur.merlins@gmail.com | 📱 @arturmerlins | 🎓 Lattes: <a href="http://lattes.cnpq.br/4544860184760544" target="_blank">4544860184760544</a></p>
+    </footer>
+
+    <script>
+        // DADOS DAS LEIS (ORGANIZAR)
+        const leis = {
+            'consumidor': {
+                titulo: 'Lei nº 8.078/1990 - Código de Defesa do Consumidor',
+                capitulos: [
+                    { id: 1, titulo: "I - Disposições Gerais", descricao: "Definições e conceitos básicos", artigos: [1, 2, 3] },
+                    { id: 2, titulo: "II - Direitos Básicos do Consumidor", descricao: "Direitos fundamentais que todo consumidor tem", artigos: [4, 5, 6] },
+                    { id: 3, titulo: "III - Responsabilidade do Fornecedor", descricao: "O que o fornecedor é obrigado a fazer", artigos: [7, 8, 9] },
+                    { id: 4, titulo: "IV - Práticas Proibidas", descricao: "O que é ilegal o fornecedor fazer", artigos: [10] }
+                ],
+                artigos: {
+                    1: "Consumidor é toda pessoa física que adquire ou utiliza produto ou serviço",
+                    2: "Fornecedor é toda pessoa física ou jurídica que oferece produto ou serviço ao mercado",
+                    3: "O presente código estabelece normas de proteção e defesa do consumidor",
+                    4: "Todo consumidor tem direito à segurança do produto ou serviço",
+                    5: "É direito do consumidor receber informações claras sobre o produto",
+                    6: "O consumidor tem liberdade para escolher entre diferentes produtos ou serviços",
+                    7: "O fornecedor é responsável pelos defeitos do produto",
+                    8: "O fornecedor deve informar sobre riscos à saúde ou segurança",
+                    9: "É proibido colocar no mercado produto que causa dano ao consumidor",
+                    10: "É proibida qualquer prática que prejudique o consumidor"
+                }
+            },
+            'trabalhista': {
+                titulo: 'Lei nº 13.467/2017 - Reforma Trabalhista',
+                capitulos: [
+                    { id: 1, titulo: "I - Definições", descricao: "Quem é quem na relação de trabalho", artigos: [1, 2, 3] },
+                    { id: 2, titulo: "II - Jornada de Trabalho", descricao: "Tempo e duração do trabalho", artigos: [4, 5, 6] },
+                    { id: 3, titulo: "III - Salário e Benefícios", descricao: "Dinheiro que o trabalhador recebe", artigos: [7, 8, 9] },
+                    { id: 4, titulo: "IV - Segurança do Trabalho", descricao: "Proteger a saúde do trabalhador", artigos: [10] }
+                ],
+                artigos: {
+                    1: "Empregado é a pessoa física que trabalha para um empregador",
+                    2: "Empregador é a pessoa que contrata e controla o trabalho",
+                    3: "Contrato de trabalho é o acordo entre empregado e empregador",
+                    4: "A jornada normal de trabalho não pode ser maior que 8 horas por dia",
+                    5: "O trabalhador tem direito a um dia de descanso por semana",
+                    6: "Horas extras devem ser pagas com acréscimo",
+                    7: "Salário é a remuneração mensal devida ao trabalhador",
+                    8: "Todo trabalhador tem direito ao 13º salário",
+                    9: "O trabalhador tem direito a férias remuneradas",
+                    10: "A empresa deve fornecer equipamentos de proteção"
+                }
+            },
+            'ambiental': {
+                titulo: 'Lei nº 6.938/1981 - Política Nacional do Meio Ambiente',
+                capitulos: [
+                    { id: 1, titulo: "I - Objetivos", descricao: "Para que essa lei existe", artigos: [1, 2, 3] },
+                    { id: 2, titulo: "II - Quem Fiscaliza", descricao: "Órgãos responsáveis pelo meio ambiente", artigos: [4, 5, 6] },
+                    { id: 3, titulo: "III - Como Proteger o Ambiente", descricao: "Ações práticas de proteção", artigos: [7, 8, 9] },
+                    { id: 4, titulo: "IV - Responsabilidade e Punições", descricao: "Consequências de prejudicar o ambiente", artigos: [10, 11, 12] }
+                ],
+                artigos: {
+                    1: "O objetivo é proteger o meio ambiente para as gerações presentes e futuras",
+                    2: "A lei busca equilibrar o desenvolvimento econômico com a proteção ambiental",
+                    3: "Todos têm direito a um meio ambiente ecologicamente equilibrado",
+                    4: "A União (governo federal) é responsável pela fiscalização ambiental",
+                    5: "Os Estados são responsáveis pela proteção ambiental em seu território",
+                    6: "Os Municípios têm responsabilidade sobre o meio ambiente local",
+                    7: "Licenciamento ambiental é obrigatório para projetos que afetam a natureza",
+                    8: "Avaliação de impacto ambiental deve ser feita antes de grandes projetos",
+                    9: "Monitoramento contínuo dos ambientes é necessário",
+                    10: "Quem degradar o meio ambiente é obrigado a restaurá-lo",
+                    11: "Aquele que polui o ambiente deve pagar indenização pelos danos causados",
+                    12: "Crimes ambientais podem resultar em multa e prisão"
+                }
+            },
+            'eca': {
+                titulo: 'Lei nº 8.069/1990 - Estatuto da Criança e do Adolescente (ECA)',
+                capitulos: [
+                    { id: 1, titulo: "I - Direitos Fundamentais", descricao: "Direitos que toda criança e adolescente têm", artigos: [1, 2, 3] },
+                    { id: 2, titulo: "II - Direitos de Proteção", descricao: "Proteção contra abuso e exploração", artigos: [4, 5, 6] },
+                    { id: 3, titulo: "III - Responsabilidade da Família", descricao: "O papel dos pais e responsáveis", artigos: [7, 8, 9] },
+                    { id: 4, titulo: "IV - Responsabilidade e Punições", descricao: "Consequências de prejudicar crianças", artigos: [10, 11, 12] }
+                ],
+                artigos: {
+                    1: "Criança é a pessoa até 12 anos de idade incompletos",
+                    2: "Adolescente é a pessoa entre 12 e 18 anos de idade",
+                    3: "Toda criança e adolescente tem direito à vida e à saúde",
+                    4: "A criança e adolescente têm direito de ser protegidos de violência e negligência",
+                    5: "É proibido trabalho infantil prejudicial ao desenvolvimento",
+                    6: "Toda criança tem direito à educação e lazer",
+                    7: "Os pais ou responsáveis têm o dever de cuidar e educar a criança",
+                    8: "A família deve garantir alimentação, saúde e segurança",
+                    9: "Os responsáveis devem proteger a criança de qualquer forma de abuso",
+                    10: "Quem maltrata criança é punido com multa e prisão",
+                    11: "Abuso sexual de menores é crime gravíssimo",
+                    12: "Exploração do trabalho infantil resulta em pena de prisão"
+                }
+            },
+            'mariadapenha': {
+                titulo: 'Lei nº 11.340/2006 - Lei Maria da Penha',
+                capitulos: [
+                    { id: 1, titulo: "I - Conceitos e Objetivos", descricao: "O que a lei protege", artigos: [1, 2, 3] },
+                    { id: 2, titulo: "II - Tipos de Violência", descricao: "As diferentes formas de violência", artigos: [4, 5, 6] },
+                    { id: 3, titulo: "III - Medidas Protetivas", descricao: "Como proteger a mulher vítima", artigos: [7, 8, 9] },
+                    { id: 4, titulo: "IV - Responsabilidade e Punições", descricao: "Consequências para o agressor", artigos: [10, 11, 12] }
+                ],
+                artigos: {
+                    1: "Violência doméstica é qualquer ação que prejudique a mulher em casa",
+                    2: "Essa lei protege mulheres em relacionamentos amorosos ou familiares",
+                    3: "O objetivo é prevenir, punir e erradicar a violência contra a mulher",
+                    4: "Violência física é agressão corporal contra a mulher",
+                    5: "Violência psicológica inclui ameaças, humilhação e controle",
+                    6: "Violência patrimonial é destruir ou reter bens da mulher",
+                    7: "Afastamento do agressor do lar é uma medida de proteção",
+                    8: "A mulher pode solicitar medidas protetivas na delegacia",
+                    9: "Restrição de contato é uma medida legal de proteção",
+                    10: "Violência doméstica é crime e não pode ser desculpada",
+                    11: "O agressor pode ser preso em flagrante",
+                    12: "Condenação resulta em prisão e multa"
+                }
+            }
+        };
+
+        let leiAtual = 'consumidor';
+        let estadoOrganizar = {};
+        let artigos = [];
+
+        // FUNÇÕES DE ABAS
+        function abrirTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('ativo'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('ativo'));
+            document.getElementById(tab).classList.add('ativo');
+            event.target.classList.add('ativo');
+
+            if (tab === 'organizar') {
+                inicializarOrganizar();
+            } else {
+                document.getElementById('data').valueAsDate = new Date();
+            }
+        }
+
+        // ===== ORGANIZAR LEI =====
+        function inicializarOrganizar() {
+            carregarEstado();
+            renderizarBanco();
+            renderizarCapitulos();
+        }
+
+        function carregarEstado() {
+            const salvo = localStorage.getItem(`lei-${leiAtual}`);
+            if (salvo) {
+                estadoOrganizar = JSON.parse(salvo);
+            } else {
+                estadoOrganizar = { artigos: {} };
+                const artigosDisponiveis = Object.keys(leis[leiAtual].artigos).map(Number);
+                for (let i = artigosDisponiveis.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [artigosDisponiveis[i], artigosDisponiveis[j]] = [artigosDisponiveis[j], artigosDisponiveis[i]];
+                }
+                artigosDisponiveis.forEach(id => {
+                    estadoOrganizar.artigos[id] = null;
+                });
+            }
+        }
+
+        function salvarEstado() {
+            localStorage.setItem(`lei-${leiAtual}`, JSON.stringify(estadoOrganizar));
+        }
+
+        function renderizarBanco() {
+            const banco = document.getElementById('artigos-banco');
+            banco.innerHTML = '';
+
+            const artigosDesalocados = Object.keys(estadoOrganizar.artigos)
+                .filter(id => estadoOrganizar.artigos[id] === null)
+                .map(Number);
+
+            if (artigosDesalocados.length === 0) {
+                banco.innerHTML = '<div class="empty-state">Todas as disposições foram alocadas!</div>';
+                return;
+            }
+
+            artigosDesalocados.forEach(id => {
+                const div = document.createElement('div');
+                div.className = 'artigo-item';
+                div.draggable = true;
+                div.id = `artigo-${id}`;
+                div.textContent = leis[leiAtual].artigos[id];
+
+                div.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', id);
+                    div.classList.add('dragging');
+                });
+
+                div.addEventListener('dragend', (e) => {
+                    div.classList.remove('dragging');
+                });
+
+                banco.appendChild(div);
+            });
+
+            banco.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                banco.style.background = 'rgba(0, 51, 102, 0.05)';
+            });
+
+            banco.addEventListener('dragleave', (e) => {
+                if (e.target === banco) banco.style.background = '#f9f9f9';
+            });
+
+            banco.addEventListener('drop', (e) => {
+                e.preventDefault();
+                banco.style.background = '#f9f9f9';
+                const articuloId = parseInt(e.dataTransfer.getData('text/plain'));
+                estadoOrganizar.artigos[articuloId] = null;
+                salvarEstado();
+                renderizarBanco();
+                renderizarCapitulos();
+            });
+        }
+
+        function renderizarCapitulos() {
+            const container = document.getElementById('capitulos-container');
+            container.innerHTML = '';
+
+            leis[leiAtual].capitulos.forEach(capitulo => {
+                const div = document.createElement('div');
+                div.className = 'capitulo-box';
+                div.id = `capitulo-${capitulo.id}`;
+
+                const articulosAlocados = Object.keys(estadoOrganizar.artigos)
+                    .filter(id => estadoOrganizar.artigos[id] === capitulo.id)
+                    .map(Number);
+
+                let html = `<h3>${capitulo.titulo}</h3><p>${capitulo.descricao}</p><div class="artigos-drop" data-capitulo="${capitulo.id}">`;
+
+                if (articulosAlocados.length === 0) {
+                    html += '<div class="empty-state">Arraste as disposições aqui</div>';
+                } else {
+                    articulosAlocados.forEach(id => {
+                        html += `<div class="artigo-colocado" draggable="true" data-artigo="${id}"><span>${leis[leiAtual].artigos[id]}</span><button onclick="removerArtigo(${id})">✕</button></div>`;
+                    });
+                }
+
+                html += '</div>';
+                div.innerHTML = html;
+
+                const dropZone = div.querySelector('.artigos-drop');
+                adicionarDragListeners(dropZone);
+                container.appendChild(div);
+            });
+
+            adicionarDragListenersArtigos();
+        }
+
+        function adicionarDragListeners(zone) {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                zone.parentElement.classList.add('dragover');
+            });
+
+            zone.addEventListener('dragleave', (e) => {
+                if (e.target === zone) zone.parentElement.classList.remove('dragover');
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.parentElement.classList.remove('dragover');
+                const articuloId = parseInt(e.dataTransfer.getData('text/plain'));
+                const capituloId = parseInt(zone.dataset.capitulo);
+                estadoOrganizar.artigos[articuloId] = capituloId;
+                salvarEstado();
+                renderizarBanco();
+                renderizarCapitulos();
+            });
+        }
+
+        function adicionarDragListenersArtigos() {
+            document.querySelectorAll('.artigo-colocado').forEach(artigo => {
+                artigo.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', artigo.dataset.artigo);
+                });
+            });
+        }
+
+        function removerArtigo(articuloId) {
+            estadoOrganizar.artigos[articuloId] = null;
+            salvarEstado();
+            renderizarBanco();
+            renderizarCapitulos();
+        }
+
+        function verificarOrganizacao() {
+            const resultado = document.getElementById('resultado');
+            const todosAlocados = Object.values(estadoOrganizar.artigos).every(v => v !== null);
+
+            if (!todosAlocados) {
+                resultado.className = 'resultado erro visivel';
+                resultado.innerHTML = '❌ Nem todas as disposições foram alocadas. Verifique o banco!';
+                return;
+            }
+
+            const erros = [];
+            const capitulos = leis[leiAtual].capitulos;
+
+            for (let artigo in estadoOrganizar.artigos) {
+                artigo = parseInt(artigo);
+                const capituloCorreto = capitulos.find(c => c.artigos.includes(artigo));
+                if (!capituloCorreto || estadoOrganizar.artigos[artigo] !== capituloCorreto.id) {
+                    const capituloErrado = capitulos.find(c => c.id === estadoOrganizar.artigos[artigo]);
+                    erros.push({
+                        artigo: artigo,
+                        alocadoEm: capituloErrado ? capituloErrado.titulo : 'Desconhecido',
+                        correto: capituloCorreto.titulo
+                    });
+                }
+            }
+
+            document.querySelectorAll('.capitulo-box').forEach(cap => cap.classList.remove('erro'));
+
+            if (erros.length > 0) {
+                erros.forEach(erro => {
+                    const capitulo = leis[leiAtual].capitulos.find(c => c.titulo === erro.correto);
+                    if (capitulo) document.getElementById(`capitulo-${capitulo.id}`).classList.add('erro');
+                });
+
+                resultado.className = 'resultado erro visivel';
+                let html = '❌ <strong>Há erros!</strong><div class="erros-lista">';
+                erros.forEach(erro => {
+                    html += `<p>❌ Disposição ${erro.artigo} está em "<strong>${erro.alocadoEm}</strong>" mas deveria estar em "<strong>${erro.correto}</strong>"</p>`;
+                });
+                html += '</div>';
+                resultado.innerHTML = html;
+            } else {
+                resultado.className = 'resultado sucesso visivel';
+                resultado.textContent = '✅ Perfeito! Você organizou corretamente a lei!';
+            }
+        }
+
+        function limparTudo() {
+            if (confirm('Deseja realmente limpar tudo?')) {
+                localStorage.removeItem(`lei-${leiAtual}`);
+                estadoOrganizar = {};
+                carregarEstado();
+                renderizarBanco();
+                renderizarCapitulos();
+                document.getElementById('resultado').classList.remove('visivel');
+                document.querySelectorAll('.capitulo-box').forEach(cap => cap.classList.remove('erro'));
+            }
+        }
+
+        // ===== CRIAR LEI =====
+        function adicionarArtigo() {
+            const container = document.getElementById('artigos-lista');
+            const id = artigos.length + 1;
+
+            const div = document.createElement('div');
+            div.className = 'artigo-criado';
+            div.id = `artigo-${id}`;
+
+            div.innerHTML = `
+                <button class="btn-remover" onclick="removerArtigoLista(${id})">Remover</button>
+                <h4>Artigo ${id}º</h4>
+                <div class="form-group">
+                    <label>Disposição</label>
+                    <textarea placeholder="Escreva o que o artigo diz..."></textarea>
+                </div>
+            `;
+
+            container.appendChild(div);
+            artigos.push({
+                numero: id,
+                texto: ''
+            });
+        }
+
+        function removerArtigoLista(id) {
+            document.getElementById(`artigo-${id}`).remove();
+            artigos = artigos.filter(a => a.numero !== id);
+        }
+
+        function gerarPreview() {
+            const container = document.getElementById('preview-container');
+            const content = document.getElementById('preview-content');
+
+            // Coletar dados
+            const local = document.getElementById('local').value || 'Câmara Legislativa';
+            const data = document.getElementById('data').value || new Date().toLocaleDateString('pt-BR');
+            const objetivo = document.getElementById('objetivo').value || 'Estabelecer normas';
+            const anoLei = document.getElementById('ano-lei').value || '2024';
+            const seqLei = document.getElementById('seq-lei').value || '001';
+            const tituloLei = document.getElementById('titulo-lei').value || 'Lei sem Título';
+            const ementa = document.getElementById('ementa').value || 'Lei de interesse geral';
+            const autores = document.getElementById('autores').value || 'Autor Desconhecido';
+            const instituicao = document.getElementById('instituicao').value || 'Instituição';
+            const vigencia = document.getElementById('vigencia').value || 'Esta lei entra em vigor na data de sua publicação.';
+            const revoga = document.getElementById('revoga').value || '';
+
+            // Coletar artigos
+            let articulosHTML = '';
+            document.querySelectorAll('.artigo-criado').forEach((el, index) => {
+                const texto = el.querySelector('textarea').value;
+                if (texto) {
+                    articulosHTML += `<div class="preview-artigo"><strong>Art. ${index + 1}º</strong> - ${texto}</div>`;
+                }
+            });
+
+            // Gerar HTML
+            let html = `
+                <div class="preview-header">
+                    <p><strong>Nós,</strong> representantes do povo,</p>
+                    <p>Reunidos em <strong>${local}</strong>, em <strong>${data}</strong>,</p>
+                    <p>Com a finalidade de <strong>${objetivo}</strong>,</p>
+                    <p><strong>Estabelecemos a seguinte lei:</strong></p>
+                </div>
+
+                <div style="margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #b8860b;">
+                    <p><strong>Lei nº ${seqLei}/${anoLei}</strong></p>
+                    <p class="preview-titulo">${tituloLei}</p>
+                    <p><em>${ementa}</em></p>
+                </div>
+
+                <div style="margin-bottom: 30px;">
+                    ${articulosHTML || '<p style="color: #999;">Nenhum artigo adicionado ainda.</p>'}
+                </div>
+
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #b8860b;">
+                    <p><strong>Disposições Finais:</strong></p>
+                    <p style="margin: 10px 0;"><strong>Vigência:</strong> ${vigencia}</p>
+                    ${revoga ? `<p style="margin: 10px 0;"><strong>Revoga:</strong> ${revoga}</p>` : ''}
+                </div>
+
+                <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #999; text-align: center;">
+                    <p><strong>${autores}</strong></p>
+                    <p>${instituicao}</p>
+                </div>
+            `;
+
+            content.innerHTML = html;
+            container.style.display = 'block';
+            container.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function exportarPDF() {
+            alert('Funcionalidade de exportação em desenvolvimento! Use Ctrl+P para imprimir.');
+        }
+
+        // Inicializar
+        inicializarOrganizar();
+    </script>
+</body>
+</html>
