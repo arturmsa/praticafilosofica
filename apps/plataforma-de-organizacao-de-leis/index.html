@@ -394,6 +394,68 @@
             font-size: 0.8em;
         }
 
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #1a5490;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        .info-box p {
+            margin-bottom: 8px;
+            color: #1a5490;
+            line-height: 1.4;
+        }
+
+        .info-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .sub-elemento {
+            background: white;
+            border-left: 3px solid #b8860b;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .sub-elemento label {
+            font-size: 0.9em;
+            color: #666;
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .sub-elemento textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: 'Georgia', serif;
+            font-size: 0.9em;
+        }
+
+        .btn-sub-remover {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.75em;
+        }
+
+        .btn-sub-remover:hover {
+            background: #d32f2f;
+        }
+
         .preview {
             background: #f5f5f5;
             border: 2px solid #003366;
@@ -614,6 +676,11 @@
                     <!-- ARTIGOS -->
                     <div class="secao-criacao">
                         <h3>IV - Artigos</h3>
+                        <div class="info-box">
+                            <p><strong>Inciso:</strong> Detalha pontos específicos de um artigo (I, II, III...)</p>
+                            <p><strong>Parágrafo Único:</strong> Usado quando há apenas um parágrafo complementando o artigo</p>
+                            <p><strong>Parágrafo:</strong> Complementa o artigo com informações adicionais (§1º, §2º...)</p>
+                        </div>
                         <div class="btn-grupo">
                             <button class="btn btn-primary" onclick="adicionarArtigo()">+ Adicionar Artigo</button>
                         </div>
@@ -1020,20 +1087,126 @@
                 <h4>Artigo ${id}º</h4>
                 <div class="form-group">
                     <label>Disposição</label>
-                    <textarea placeholder="Escreva o que o artigo diz..."></textarea>
+                    <textarea placeholder="Escreva o que o artigo diz..." id="texto-artigo-${id}"></textarea>
                 </div>
+                <div class="btn-grupo">
+                    <button class="btn btn-secondary" onclick="adicionarInciso(${id})">+ Inciso</button>
+                    <button class="btn btn-secondary" onclick="adicionarParagrafoUnico(${id})">+ Parágrafo Único</button>
+                    <button class="btn btn-secondary" onclick="adicionarParagrafo(${id})">+ Parágrafo</button>
+                </div>
+                <div id="incisos-${id}"></div>
+                <div id="paragrafos-${id}"></div>
             `;
 
             container.appendChild(div);
             artigos.push({
                 numero: id,
-                texto: ''
+                texto: '',
+                incisos: [],
+                paragrafoUnico: null,
+                paragrafos: []
             });
         }
 
         function removerArtigoLista(id) {
             document.getElementById(`artigo-${id}`).remove();
             artigos = artigos.filter(a => a.numero !== id);
+        }
+
+        function adicionarInciso(artId) {
+            const artigo = artigos.find(a => a.numero === artId);
+            if (!artigo) return;
+
+            const incisoNum = artigo.incisos.length + 1;
+            const incisoId = `inciso-${artId}-${incisoNum}`;
+            const container = document.getElementById(`incisos-${artId}`);
+
+            const div = document.createElement('div');
+            div.className = 'sub-elemento';
+            div.id = incisoId;
+
+            const romanos = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+            const romano = romanos[incisoNum - 1] || 'X';
+
+            div.innerHTML = `
+                <button class="btn-sub-remover" onclick="removerInciso(${artId}, ${incisoNum})">✕</button>
+                <label>${romano}º Inciso:</label>
+                <textarea placeholder="Detalhe do inciso..."></textarea>
+            `;
+
+            container.appendChild(div);
+            artigo.incisos.push({ numero: incisoNum, texto: '' });
+        }
+
+        function removerInciso(artId, incisoNum) {
+            const artigo = artigos.find(a => a.numero === artId);
+            if (artigo) {
+                document.getElementById(`inciso-${artId}-${incisoNum}`).remove();
+                artigo.incisos = artigo.incisos.filter(i => i.numero !== incisoNum);
+            }
+        }
+
+        function adicionarParagrafoUnico(artId) {
+            const artigo = artigos.find(a => a.numero === artId);
+            if (!artigo || artigo.paragrafoUnico !== null) {
+                alert('Este artigo já tem um parágrafo único!');
+                return;
+            }
+
+            const container = document.getElementById(`paragrafos-${artId}`);
+            const div = document.createElement('div');
+            div.className = 'sub-elemento';
+            div.id = `paragrafo-unico-${artId}`;
+
+            div.innerHTML = `
+                <button class="btn-sub-remover" onclick="removerParagrafoUnico(${artId})">✕</button>
+                <label>Parágrafo Único:</label>
+                <textarea placeholder="Texto do parágrafo único..."></textarea>
+            `;
+
+            container.appendChild(div);
+            artigo.paragrafoUnico = '';
+        }
+
+        function removerParagrafoUnico(artId) {
+            const artigo = artigos.find(a => a.numero === artId);
+            if (artigo) {
+                document.getElementById(`paragrafo-unico-${artId}`).remove();
+                artigo.paragrafoUnico = null;
+            }
+        }
+
+        function adicionarParagrafo(artId) {
+            const artigo = artigos.find(a => a.numero === artId);
+            if (!artigo || artigo.paragrafoUnico !== null) {
+                alert('Remova o parágrafo único para adicionar parágrafos numerados!');
+                return;
+            }
+
+            const paraNum = artigo.paragrafos.length + 1;
+            const paraId = `paragrafo-${artId}-${paraNum}`;
+            const container = document.getElementById(`paragrafos-${artId}`);
+
+            const div = document.createElement('div');
+            div.className = 'sub-elemento';
+            div.id = paraId;
+
+            div.innerHTML = `
+                <button class="btn-sub-remover" onclick="removerParagrafo(${artId}, ${paraNum})">✕</button>
+                <label>§ ${paraNum}º Parágrafo:</label>
+                <textarea placeholder="Texto do parágrafo..."></textarea>
+            `;
+
+            container.appendChild(div);
+            artigo.paragrafos.push({ numero: paraNum, texto: '' });
+        }
+
+        function removerParagrafo(artId, paraNum) {
+            const artigo = artigos.find(a => a.numero === artId);
+            if (artigo) {
+                document.getElementById(`paragrafo-${artId}-${paraNum}`).remove();
+                artigo.paragrafos = artigo.paragrafos.filter(p => p.numero !== paraNum);
+            }
         }
 
         function gerarPreview() {
@@ -1053,12 +1226,49 @@
             const vigencia = document.getElementById('vigencia').value || 'Esta lei entra em vigor na data de sua publicação.';
             const revoga = document.getElementById('revoga').value || '';
 
-            // Coletar artigos
+            // Coletar artigos com incisos e parágrafos
             let articulosHTML = '';
             document.querySelectorAll('.artigo-criado').forEach((el, index) => {
-                const texto = el.querySelector('textarea').value;
-                if (texto) {
-                    articulosHTML += `<div class="preview-artigo"><strong>Art. ${index + 1}º</strong> - ${texto}</div>`;
+                const artId = index + 1;
+                const textoArtigo = document.getElementById(`texto-artigo-${artId}`).value;
+
+                if (textoArtigo) {
+                    articulosHTML += `<div class="preview-artigo"><strong>Art. ${artId}º</strong> - ${textoArtigo}`;
+
+                    // Coletar incisos
+                    const incisosContainer = document.getElementById(`incisos-${artId}`);
+                    if (incisosContainer) {
+                        incisosContainer.querySelectorAll('.sub-elemento').forEach((incisoEl, incisoIdx) => {
+                            const romanos = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+                            const romano = romanos[incisoIdx] || 'X';
+                            const textoInciso = incisoEl.querySelector('textarea').value;
+                            if (textoInciso) {
+                                articulosHTML += `<br><strong>${romano}</strong> - ${textoInciso}`;
+                            }
+                        });
+                    }
+
+                    // Coletar parágrafo único
+                    const paragrafoUnico = document.getElementById(`paragrafo-unico-${artId}`);
+                    if (paragrafoUnico) {
+                        const textoParagrafo = paragrafoUnico.querySelector('textarea').value;
+                        if (textoParagrafo) {
+                            articulosHTML += `<br><strong>Parágrafo Único.</strong> ${textoParagrafo}`;
+                        }
+                    }
+
+                    // Coletar parágrafos numerados
+                    const paragrafosContainer = document.getElementById(`paragrafos-${artId}`);
+                    if (paragrafosContainer) {
+                        paragrafosContainer.querySelectorAll('.sub-elemento').forEach((paraEl, paraIdx) => {
+                            const textoParagrafo = paraEl.querySelector('textarea').value;
+                            if (textoParagrafo) {
+                                articulosHTML += `<br><strong>§ ${paraIdx + 1}º</strong> ${textoParagrafo}`;
+                            }
+                        });
+                    }
+
+                    articulosHTML += '</div>';
                 }
             });
 
