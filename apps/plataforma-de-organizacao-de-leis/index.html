@@ -681,6 +681,9 @@
                             <p><strong>Parágrafo Único:</strong> Usado quando há apenas um parágrafo complementando o artigo</p>
                             <p><strong>Parágrafo:</strong> Complementa o artigo com informações adicionais (§1º, §2º...)</p>
                         </div>
+                        <div class="info-box" style="background: #fff3e0; border-left-color: #ff8f00; margin-top: 15px;">
+                            <p><strong>Elementos Opcionais:</strong> Você pode adicionar Direitos, Deveres, Garantias, Prazos, Sanções, Procedimentos, Valores e mais!</p>
+                        </div>
                         <div class="btn-grupo">
                             <button class="btn btn-primary" onclick="adicionarArtigo()">+ Adicionar Artigo</button>
                         </div>
@@ -1096,6 +1099,33 @@
                 </div>
                 <div id="incisos-${id}"></div>
                 <div id="paragrafos-${id}"></div>
+
+                <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #ddd;">
+                    <p style="font-weight: 600; color: #003366; margin-bottom: 10px;">Elementos Opcionais:</p>
+                    <div class="btn-grupo" style="flex-wrap: wrap;">
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'direito')">+ Direito</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'dever')">+ Dever</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'garantia')">+ Garantia</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'proibicao')">+ Proibição</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'excecao')">+ Exceção</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'prazo')">+ Prazo</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'periodo')">+ Período</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'data')">+ Data Limite</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'vigencia')">+ Vigência</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'multa')">+ Multa</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'pena')">+ Pena</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'advertencia')">+ Advertência</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'condicao')">+ Condição</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'procedimento')">+ Procedimento</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'documentacao')">+ Documentação</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'valor')">+ Valor (R$)</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'percentual')">+ Percentual (%)</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'idade')">+ Idade Mín./Máx.</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'orgao')">+ Órgão Responsável</button>
+                        <button class="btn btn-secondary" onclick="adicionarElemento(${id}, 'alvo')">+ Público-alvo</button>
+                    </div>
+                </div>
+                <div id="elementos-${id}"></div>
             `;
 
             container.appendChild(div);
@@ -1104,7 +1134,8 @@
                 texto: '',
                 incisos: [],
                 paragrafoUnico: null,
-                paragrafos: []
+                paragrafos: [],
+                elementos: []
             });
         }
 
@@ -1209,6 +1240,69 @@
             }
         }
 
+        const etiquetasElementos = {
+            'direito': 'Direito',
+            'dever': 'Dever',
+            'garantia': 'Garantia',
+            'proibicao': 'Proibição',
+            'excecao': 'Exceção',
+            'prazo': 'Prazo',
+            'periodo': 'Período',
+            'data': 'Data Limite',
+            'vigencia': 'Vigência',
+            'multa': 'Multa',
+            'pena': 'Pena',
+            'advertencia': 'Advertência',
+            'suspensao': 'Suspensão',
+            'cancelamento': 'Cancelamento',
+            'condicao': 'Condição',
+            'procedimento': 'Procedimento',
+            'documentacao': 'Documentação',
+            'local': 'Local de Aplicação',
+            'ambito': 'Âmbito',
+            'valor': 'Valor (R$)',
+            'percentual': 'Percentual (%)',
+            'quantidade': 'Quantidade',
+            'idade': 'Idade Mín./Máx.',
+            'jornada': 'Jornada/Carga Horária',
+            'orgao': 'Órgão Responsável',
+            'autoridade': 'Autoridade Competente',
+            'fiscalizador': 'Fiscalizador',
+            'recurso': 'Recurso/Apelação',
+            'alvo': 'Público-alvo',
+            'beneficiarios': 'Beneficiários',
+            'implementacao': 'Responsável pela Implementação',
+            'abrangencia': 'Abrangência'
+        };
+
+        function adicionarElemento(artId, tipo) {
+            const artigo = artigos.find(a => a.numero === artId);
+            if (!artigo) return;
+
+            const elementoId = `elem-${artId}-${tipo}-${Date.now()}`;
+            const container = document.getElementById(`elementos-${artId}`);
+
+            const div = document.createElement('div');
+            div.className = 'sub-elemento';
+            div.id = elementoId;
+
+            const etiqueta = etiquetasElementos[tipo] || tipo;
+
+            div.innerHTML = `
+                <button class="btn-sub-remover" onclick="removerElemento('${elementoId}')">✕</button>
+                <label>${etiqueta}:</label>
+                <textarea placeholder="Detalhe do ${etiqueta.toLowerCase()}..."></textarea>
+            `;
+
+            container.appendChild(div);
+            artigo.elementos.push({ tipo: tipo, id: elementoId, texto: '' });
+        }
+
+        function removerElemento(elementoId) {
+            const el = document.getElementById(elementoId);
+            if (el) el.remove();
+        }
+
         function gerarPreview() {
             const container = document.getElementById('preview-container');
             const content = document.getElementById('preview-content');
@@ -1264,6 +1358,18 @@
                             const textoParagrafo = paraEl.querySelector('textarea').value;
                             if (textoParagrafo) {
                                 articulosHTML += `<br><strong>§ ${paraIdx + 1}º</strong> ${textoParagrafo}`;
+                            }
+                        });
+                    }
+
+                    // Coletar elementos opcionais
+                    const elementosContainer = document.getElementById(`elementos-${artId}`);
+                    if (elementosContainer) {
+                        elementosContainer.querySelectorAll('.sub-elemento').forEach((elemEl) => {
+                            const textoElemento = elemEl.querySelector('textarea').value;
+                            const labelElemento = elemEl.querySelector('label').textContent;
+                            if (textoElemento) {
+                                articulosHTML += `<br><strong>${labelElemento}</strong> ${textoElemento}`;
                             }
                         });
                     }
