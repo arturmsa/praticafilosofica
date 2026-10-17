@@ -861,7 +861,7 @@ html,body{margin:0;background:#8a8070}
 .folha .pag+.pag{border-left:.2mm dashed #d8ccb2}
 @media print{html,body{background:#fff}.aviso{display:none}.folha{margin:0}.folha .pag+.pag{border-left:none}}
 ${PAG_CSS}
-</style></head><body>${SPRITE}
+</style></head><body>${SPRITE}${SPRITE2}
 <p class="aviso">Cordel “${esc(tituloF())}”. A janela de impressão abre sozinha; se não abrir, use Ctrl+P. Escolha A4 paisagem, frente e verso virando na borda curta, sem margens. Depois empilhe as folhas e dobre ao meio.</p>
 ${folhas.join("\n")}
 <script>addEventListener("load",function(){(document.fonts?document.fonts.ready:Promise.resolve()).then(function(){setTimeout(function(){try{print()}catch(e){}},500)})});<\/script>
