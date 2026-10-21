@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Filosofia no ENEM</title>
-  <meta name="description" content="Ranking dos filósofos mais cobrados no ENEM e questões de Aristóteles e Platão com as palavras-chave marcadas no texto, na referência e nas alternativas.">
+  <meta name="description" content="Ranking dos filósofos mais cobrados no ENEM e as questões de cada um, com as palavras-chave marcadas no texto, na referência e nas alternativas.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,650;0,7..72,700;1,7..72,400&display=swap" rel="stylesheet">
@@ -28,7 +28,7 @@
     <section class="abertura">
       <div class="abertura-texto">
         <h1>Quase sempre, a resposta já está escrita no texto</h1>
-        <p class="lead">A alternativa correta reescreve as palavras-chave do texto-fonte. Aqui elas estão marcadas, questão por questão, para Aristóteles e Platão, os dois filósofos que mais caem no ENEM.</p>
+        <p class="lead">A alternativa correta reescreve as palavras-chave do texto-fonte. Escolha um filósofo no ranking e veja as questões dele, com essas palavras marcadas.</p>
       </div>
 
       <dl class="metodo" aria-label="Como ler as marcações">
@@ -54,15 +54,18 @@
 
     <section class="secao" id="ranking" aria-labelledby="ranking-t">
       <h2 id="ranking-t">Ranking de recorrência</h2>
-      <p class="lead">Questões de filosofia do ENEM de 2005 a 2025. Uma questão conta para cada filósofo que é autor do texto, assunto do enunciado ou nome da resposta correta.</p>
+      <p class="lead">Questões de filosofia do ENEM de 2005 a 2025. Uma questão conta para cada filósofo que é autor do texto, assunto do enunciado ou nome da resposta correta. Clique no nome para abrir as questões.</p>
       <ol class="ranking" id="ranking-lista"></ol>
       <div class="unicos">
         <h3>Com uma questão cada</h3>
-        <p id="unicos-lista"></p>
+        <ul id="unicos-lista"></ul>
       </div>
     </section>
 
-    <div id="destaques"></div>
+    <div class="painel-vazio" id="painel-vazio">
+      <p>Clique num filósofo do ranking para abrir as questões dele aqui.</p>
+    </div>
+    <section class="painel" id="painel" hidden></section>
   </main>
 
   <footer class="rodape">
@@ -75,11 +78,23 @@
       </ul>
       <p>Na questão de Platão do ENEM 2025, o site Filosofia na Escola marca a alternativa D; o gabarito oficial é E.</p>
       <p><a href="../../">Voltar para o Prática Filosófica</a></p>
+
+      <div class="criador">
+        <p class="criador-rotulo">Criado por</p>
+        <p class="criador-nome">Artur Merlin</p>
+        <p class="criador-cargo">Professor de filosofia</p>
+        <nav class="criador-links" aria-label="Contatos do autor">
+          <a href="https://www.instagram.com/arturmerlins/" target="_blank" rel="noopener">Instagram</a>
+          <a href="http://lattes.cnpq.br/4544860184760544" target="_blank" rel="noopener">Currículo Lattes</a>
+          <a href="mailto:artur.merlins@gmail.com">artur.merlins@gmail.com</a>
+        </nav>
+      </div>
     </div>
   </footer>
 
   <script src="dados/ranking.js"></script>
   <script src="dados/questoes.js"></script>
+  <script src="dados/questoes-outros.js"></script>
   <script src="assets/app.js"></script>
 </body>
 </html>

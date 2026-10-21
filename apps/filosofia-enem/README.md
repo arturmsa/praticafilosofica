@@ -1,6 +1,8 @@
 # Filosofia no ENEM
 
-Site de estudo com o ranking dos filósofos mais cobrados no ENEM (2005 a 2025) e as questões de **Aristóteles** (19) e **Platão** (12) com as palavras-chave marcadas no texto, na referência e nas alternativas.
+Site de estudo com o ranking dos filósofos mais cobrados no ENEM (2005 a 2025) e as questões de cada um (47 filósofos e correntes, 152 questões), com as palavras-chave marcadas no texto, na referência e nas alternativas.
+
+No ranking, clique no nome de um filósofo: as questões dele abrem logo abaixo, uma seção por vez. O endereço muda para `#descartes`, `#kant` etc., então dá para mandar o link direto de um filósofo para a turma.
 
 ## Como ler as marcações
 
@@ -30,7 +32,8 @@ index.html          página
 assets/estilo.css   visual
 assets/app.js       monta o ranking, as questões e o modo treino
 dados/ranking.js    ranking de recorrência
-dados/questoes.js   as questões, com as marcações
+dados/questoes.js          as questões de Aristóteles e Platão, com as marcações
+dados/questoes-outros.js   as questões dos demais filósofos, no mesmo formato
 ```
 
 ## Como acrescentar uma questão
@@ -59,7 +62,7 @@ Abra `dados/questoes.js` e copie um bloco existente. Nas frases:
 }
 ```
 
-Para abrir uma seção nova (Descartes, por exemplo), acrescente o filósofo em `window.DESTAQUES` (em `dados/ranking.js`), use `filosofos: ["descartes"]` nas questões e coloque `secao: "descartes"` na linha dele no ranking.
+Cada filósofo tem um `id` em `dados/ranking.js` (por exemplo `descartes`). Para uma questão aparecer na seção dele, coloque esse id em `filosofos`. Uma questão pode ter mais de um filósofo, como `["hobbes", "rousseau"]`.
 
 ## Gabaritos
 
