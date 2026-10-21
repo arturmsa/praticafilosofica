@@ -85,29 +85,49 @@
     return "<ul>" + itens.map(function (x) { return '<li><mark class="' + cls + '">' + esc(x) + "</mark></li>"; }).join("") + "</ul>";
   }
 
-  // coluna da direita: as palavras-chave da questão
+  // coluna da direita: primeiro as palavras-chave do filósofo; o botão mostra as do texto
   function montarChaves(q) {
     var aside = el("aside", "q-chaves");
     aside.setAttribute("aria-label", "Palavras-chave da questão");
     aside.appendChild(el("h3", null, "Palavras-chave"));
 
+    var dois = q.filosofos.length > 1;
+    q.filosofos.forEach(function (id) {
+      var r = RANKING.filter(function (x) { return x.secao === id; })[0];
+      if (!r) return;
+      aside.appendChild(el("div", "ch-grupo ch-filosofo",
+        (dois ? '<p class="ch-tit">' + esc(r.nome) + "</p>" : "") +
+        "<ul>" + r.palavras.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"));
+    });
+
+    var det = el("div", "ch-detalhe");
+    det.id = q.id + "-texto";
+    det.hidden = true;
+
+    var botao = el("button", "acender", "Mostrar palavras no texto");
+    botao.type = "button";
+    botao.setAttribute("aria-expanded", "false");
+    botao.setAttribute("aria-controls", det.id);
+    aside.appendChild(botao);
+    aside.appendChild(det);
+
     var doTexto = [];
     q.textos.forEach(function (tx) { doTexto = doTexto.concat(extrair(tx.t, /\{([^}]+)\}/g)); });
     if (doTexto.length) {
-      aside.appendChild(el("div", "ch-grupo", '<p class="ch-tit">No texto</p>' + lista(doTexto, "mk")));
+      det.appendChild(el("div", "ch-grupo", '<p class="ch-tit">No texto</p>' + lista(doTexto, "mk")));
     }
 
     var refs = q.textos.filter(function (tx) { return tx.ref; }).map(function (tx) {
       return "<li><b>" + esc(tx.ref.autor) + '</b> <mark class="obra">' + esc(tx.ref.obra) + "</mark></li>";
     });
     if (refs.length) {
-      aside.appendChild(el("div", "ch-grupo", '<p class="ch-tit">Na referência</p><ul>' + refs.join("") + "</ul>"));
+      det.appendChild(el("div", "ch-grupo", '<p class="ch-tit">Na referência</p><ul>' + refs.join("") + "</ul>"));
     }
 
     var certa = q.alts.filter(function (a) { return a.ok; })[0];
     if (certa) {
       var doCerto = extrair(certa.t, /\{([^}]+)\}/g);
-      aside.appendChild(el("div", "ch-grupo ch-resposta",
+      det.appendChild(el("div", "ch-grupo ch-resposta",
         '<p class="ch-tit">Na resposta certa (' + esc(certa.l) + ")</p>" + lista(doCerto, "mk-ok")));
     }
 
@@ -119,12 +139,23 @@
       });
     });
     if (armas.length) {
-      aside.appendChild(el("div", "ch-grupo ch-armadilhas", '<p class="ch-tit">Armadilhas</p><ul>' + armas.join("") + "</ul>"));
+      det.appendChild(el("div", "ch-grupo ch-armadilhas", '<p class="ch-tit">Armadilhas</p><ul>' + armas.join("") + "</ul>"));
     }
 
-    if (q.ponte) aside.appendChild(el("p", "ponte", "<b>Ponte:</b> " + esc(q.ponte)));
-    aside.appendChild(el("p", "ch-aviso", "Responda a questão para ver as palavras da resposta e as armadilhas."));
+    if (q.ponte) det.appendChild(el("p", "ponte", "<b>Ponte:</b> " + esc(q.ponte)));
+    det.appendChild(el("p", "ch-aviso", "Responda a questão para ver as palavras da resposta e as armadilhas."));
     return aside;
+  }
+
+  function acender(art, ligar) {
+    var botao = art.querySelector(".acender");
+    var det = art.querySelector(".ch-detalhe");
+    art.classList.toggle("acesa", ligar);
+    if (det) det.hidden = !ligar;
+    if (botao) {
+      botao.setAttribute("aria-expanded", ligar ? "true" : "false");
+      botao.textContent = ligar ? "Esconder palavras no texto" : "Mostrar palavras no texto";
+    }
   }
 
   function montarQuestao(q, numero) {
@@ -281,6 +312,8 @@
     });
 
     document.addEventListener("click", function (ev) {
+      var bt = ev.target.closest(".acender");
+      if (bt) { var a = bt.closest(".q"); acender(a, !a.classList.contains("acesa")); return; }
       if (!document.body.classList.contains("treino")) return;
       var art = ev.target.closest(".q");
       if (!art) return;

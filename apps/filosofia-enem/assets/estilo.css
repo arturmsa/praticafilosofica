@@ -68,6 +68,18 @@ mark { color: inherit; background: none; }
 .obra   { background: linear-gradient(transparent 10%, var(--azul) 10%, var(--azul) 92%, transparent 92%); font-style: italic; }
 .trap   { text-decoration: underline wavy var(--vermelho); text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
 
+/* nas questões, o marca-texto só acende quando o aluno pede */
+.q .mk, .q .mk-ok, .q .obra {
+  background-repeat: no-repeat; background-size: 0% 100%;
+  transition: background-size .45s ease;
+}
+.q .trap { text-decoration-color: transparent; transition: text-decoration-color .3s ease; }
+.q.acesa .mk, .q.acesa .mk-ok, .q.acesa .obra { background-size: 100% 100%; }
+.q.acesa .trap { text-decoration-color: var(--vermelho); }
+@media (prefers-reduced-motion: reduce) {
+  .q .mk, .q .mk-ok, .q .obra, .q .trap { transition: none; }
+}
+
 /* ---------- topo ---------- */
 .barra {
   position: sticky; top: 0; z-index: 10;
@@ -191,6 +203,19 @@ main { max-width: 68rem; margin: 0 auto; padding: 0 1rem 4rem; }
   border: 1px solid var(--regra); font-size: .75rem; font-weight: 700; margin-right: .2rem;
 }
 .q-chaves .ponte { margin: 0; font-size: .92rem; }
+.ch-filosofo ul { display: flex; flex-wrap: wrap; gap: .35rem; }
+.ch-filosofo li {
+  border: 1px solid var(--regra); background: var(--papel);
+  padding: .1rem .6rem; border-radius: 999px; font-size: .9rem;
+}
+.acender {
+  justify-self: start; font: inherit; font-size: .92rem; cursor: pointer;
+  background: var(--amarelo); color: #182A3B; border: 0;
+  padding: .35rem .85rem; border-radius: 999px; font-weight: 700;
+}
+.acender[aria-expanded="true"] { background: none; color: var(--tinta); box-shadow: inset 0 0 0 1.5px var(--regra); }
+.ch-detalhe { display: grid; gap: 1rem; }
+.ch-detalhe[hidden] { display: none; }
 .ch-aviso { display: none; margin: 0; font-size: .88rem; color: var(--tinta-suave); }
 .q-num { font-family: var(--serif); font-weight: 700; font-size: 1.1rem; }
 .q-prova { color: var(--tinta-suave); }
@@ -292,5 +317,9 @@ body.treino .q.revelada .revelar { display: none; }
 @media print {
   .barra, .filtros, .revelar { display: none !important; }
   body { background: #fff; }
+  .acender { display: none !important; }
+  .ch-detalhe[hidden] { display: grid; }
+  .q .mk, .q .mk-ok, .q .obra { background-size: 100% 100%; }
+  .q .trap { text-decoration-color: var(--vermelho); }
   .q { break-inside: avoid; border-color: #bbb; }
 }

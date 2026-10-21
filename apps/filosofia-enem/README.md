@@ -11,7 +11,7 @@ Site de estudo com o ranking dos filósofos mais cobrados no ENEM (2005 a 2025) 
 | Verde | alternativa correta | a mesma ideia do texto, com outras palavras |
 | Sublinhado vermelho | alternativas erradas | a palavra que derruba a alternativa |
 
-Ao lado direito de cada questão, uma coluna reúne as palavras-chave: as do texto, a obra da referência, as da resposta certa e as armadilhas das erradas.
+Ao lado direito de cada questão, a coluna mostra primeiro só as palavras-chave do filósofo (as mesmas do ranking). Logo abaixo, o botão **Mostrar palavras no texto** acende as marcações na questão e abre a lista das palavras do texto, da referência, da resposta certa e das armadilhas.
 
 O botão **Modo treino** esconde as respostas: o aluno clica numa alternativa e o site mostra se acertou, com a explicação.
 
