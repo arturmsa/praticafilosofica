@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Filosofia no ENEM</title>
+  <meta name="description" content="Ranking dos filósofos mais cobrados no ENEM e questões de Aristóteles e Platão com as palavras-chave marcadas no texto, na referência e nas alternativas.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,650;0,7..72,700;1,7..72,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/estilo.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='9' width='28' height='14' rx='3' fill='%23FFE35A'/%3E%3Ctext x='16' y='21' font-family='Georgia' font-size='13' font-weight='700' text-anchor='middle' fill='%23182A3B'%3E%CE%A6%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+  <header class="barra">
+    <div class="barra-in">
+      <a class="marca" href="#topo">Filosofia no ENEM</a>
+      <nav class="nav" aria-label="Seções">
+        <a href="#ranking">Ranking</a>
+        <a href="#aristoteles">Aristóteles</a>
+        <a href="#platao">Platão</a>
+      </nav>
+      <button class="modo" id="modo" type="button" aria-pressed="false">Modo treino</button>
+    </div>
+  </header>
+
+  <main id="topo">
+    <section class="abertura">
+      <div class="abertura-texto">
+        <h1>Quase sempre, a resposta já está escrita no texto</h1>
+        <p class="lead">A alternativa correta reescreve as palavras-chave do texto-fonte. Aqui elas estão marcadas, questão por questão, para Aristóteles e Platão, os dois filósofos que mais caem no ENEM.</p>
+      </div>
+
+      <dl class="metodo" aria-label="Como ler as marcações">
+        <div class="metodo-linha">
+          <dt>No texto</dt>
+          <dd>a política é a <mark class="mk">arte mestra</mark>; as demais ciências <mark class="mk">estão sujeitas a ela</mark></dd>
+        </div>
+        <div class="metodo-linha">
+          <dt>Na referência</dt>
+          <dd><span class="ref"><span class="autor">ARISTÓTELES.</span> <mark class="obra">Ética a Nicômaco</mark>. São Paulo: Nova Cultural, 1991.</span></dd>
+        </div>
+        <div class="metodo-linha">
+          <dt>Na resposta certa</dt>
+          <dd>C) a política é a ciência que <mark class="mk-ok">precede todas as demais</mark></dd>
+        </div>
+        <div class="metodo-linha">
+          <dt>Nas erradas</dt>
+          <dd>E) a <span class="trap">democracia</span> protege as atividades políticas</dd>
+        </div>
+        <p class="metodo-nota">Amarelo: palavra-chave da fonte. Azul: obra de onde o texto foi tirado. Verde: a mesma ideia na alternativa correta. Sublinhado vermelho: a palavra que derruba uma alternativa errada. Em cada questão, essas palavras ficam reunidas na coluna da direita.</p>
+      </dl>
+    </section>
+
+    <section class="secao" id="ranking" aria-labelledby="ranking-t">
+      <h2 id="ranking-t">Ranking de recorrência</h2>
+      <p class="lead">Questões de filosofia do ENEM de 2005 a 2025. Uma questão conta para cada filósofo que é autor do texto, assunto do enunciado ou nome da resposta correta.</p>
+      <ol class="ranking" id="ranking-lista"></ol>
+      <div class="unicos">
+        <h3>Com uma questão cada</h3>
+        <p id="unicos-lista"></p>
+      </div>
+    </section>
+
+    <div id="destaques"></div>
+  </main>
+
+  <footer class="rodape">
+    <div class="rodape-in">
+      <h2>Sobre os gabaritos</h2>
+      <p>Os gabaritos seguem as respostas oficiais do INEP. Os mais duvidosos foram conferidos em:</p>
+      <ul>
+        <li><a href="https://descomplica.com.br/gabarito-enem/questoes/2025/primeiro-dia/o-texto-apresenta-estrutura-de-governo-da-cidade-ideal-pensada-por-platao-que-postula-uma-indisso/">Descomplica: ENEM 2025, Platão (E)</a></li>
+        <li><a href="https://aprovatotal.com.br/?p=60792">Aprova Total: ENEM 2025, Platão (E)</a></li>
+      </ul>
+      <p>Na questão de Platão do ENEM 2025, o site Filosofia na Escola marca a alternativa D; o gabarito oficial é E.</p>
+      <p><a href="../../">Voltar para o Prática Filosófica</a></p>
+    </div>
+  </footer>
+
+  <script src="dados/ranking.js"></script>
+  <script src="dados/questoes.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>

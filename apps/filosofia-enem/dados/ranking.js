@@ -1,0 +1,111 @@
+/*
+  Ranking de recorrência dos filósofos no ENEM (2005 a 2025).
+  Uma questão conta para cada filósofo que é autor do texto, assunto do enunciado
+  ou nome da resposta correta.
+  "secao" liga o filósofo à sua página de questões (por enquanto: aristoteles e platao).
+*/
+window.RANKING = [
+  { nome: "Aristóteles", n: 19, secao: "aristoteles",
+    obras: "Política, Ética a Nicômaco, Metafísica, Segundos analíticos",
+    palavras: ["bem comum", "ética e política", "eudaimonia", "virtude", "lógos", "deliberação", "justiça", "participação política", "formas de governo"] },
+  { nome: "Platão", n: 12, secao: "platao",
+    obras: "A República, Fédon, O Banquete, Mênon; Chaui e Zingano",
+    palavras: ["mundo das Ideias", "razão x sensação", "caverna", "rei-filósofo", "sociedade justa", "virtude e poder", "dialética", "amor como falta"] },
+  { nome: "Descartes", n: 11,
+    obras: "Meditações, Princípios da filosofia, Regras para a orientação do espírito",
+    palavras: ["dúvida", "ponto de partida seguro", "cogito", "conhecimento inabalável", "autonomia do sujeito", "razão humana", "dualismo"] },
+  { nome: "Pré-socráticos", n: 9, nota: "Tales, Anaxímenes, Heráclito, Demócrito, Diógenes de Apolônia",
+    obras: "Os pré-socráticos (Abril/Nova Cultural), Bornheim, Simplício",
+    palavras: ["physis", "princípio originário", "explicação racional", "cosmologia", "causa primeira", "átomo", "opostos"] },
+  { nome: "Hume", n: 8,
+    obras: "Investigação sobre o entendimento humano (todas as 8)",
+    palavras: ["experiência", "impressão", "hábito", "causa e efeito", "indução", "questões de fato"] },
+  { nome: "Kant", n: 8,
+    obras: "Fundamentação da metafísica dos costumes, Crítica da razão prática, Crítica da razão pura",
+    palavras: ["dever", "máxima universal", "imperativo categórico", "a priori", "autonomia", "esclarecimento", "revolução copernicana"] },
+  { nome: "Nietzsche", n: 6,
+    obras: "Ferry, Aprender a viver; Genealogia da moral; Assim falou Zaratustra",
+    palavras: ["eterno retorno", "afirmação do presente", "amor fati", "niilismo", "consciência da existência"] },
+  { nome: "Foucault", n: 6,
+    obras: "Vigiar e punir, Ditos e escritos, Em defesa da sociedade",
+    palavras: ["poder disciplinar", "capilarização", "ilegalidades", "sujeito contingente", "cuidado de si"] },
+  { nome: "Filosofia da ciência", n: 6, nota: "Galileu, Bacon, Copérnico, Newton, Russell",
+    obras: "Chalmers, French, Marcondes, Galileu",
+    palavras: ["indução", "hipóteses", "prova empírica", "matemática como linguagem"] },
+  { nome: "Agostinho", n: 5,
+    obras: "O livre-arbítrio, Confissões, A natureza do Bem",
+    palavras: ["livre-arbítrio", "autonomia moral", "presciência", "o mal não vem de Deus"] },
+  { nome: "Hobbes", n: 5,
+    obras: "Leviatã; Rawls",
+    palavras: ["estado de natureza", "guerra de todos contra todos", "Estado como artifício", "paz"] },
+  { nome: "Maquiavel", n: 5,
+    obras: "O Príncipe; Aranha",
+    palavras: ["verdade efetiva", "interesses", "moral política x moral pessoal", "razão autônoma"] },
+  { nome: "Sofistas", n: 5,
+    obras: "Hadot, Rachels, Vernant, Machado de Assis",
+    palavras: ["persuasão", "retórica", "relativismo", "convenções sociais"] },
+  { nome: "Helenísticos", n: 5, nota: "Epicuro, Sêneca, Epicteto, Pirro",
+    obras: "Cartas morais, Encheirídion, Doutrinas principais",
+    palavras: ["prazer moderado", "temperança", "moderação das paixões", "serenidade", "indiferença"] },
+  { nome: "Existencialismo", n: 5, nota: "Sartre, Camus",
+    obras: "O ser e o nada; Abbagnano, Introdução ao existencialismo",
+    palavras: ["existência", "transcendência", "absurdo", "realidade humana"] },
+  { nome: "Sócrates", n: 4,
+    obras: "Platão (Mênon), Xenofonte, Bréhier, Foucault",
+    palavras: ["método dialético", "examinar a própria vida", "virtude é saber"] },
+  { nome: "Tomás de Aquino", n: 4,
+    obras: "Suma teológica, Do reino; Gilson e Boehner",
+    palavras: ["fé e razão", "bem comum", "lei e razão"] },
+  { nome: "Vernant", n: 4,
+    obras: "As origens do pensamento grego (todas as 4)",
+    palavras: ["pólis", "espaço público", "isonomia"] },
+  { nome: "Rousseau", n: 3, obras: "Discursos, Devaneios", palavras: ["estado de natureza", "crítica à civilização"] },
+  { nome: "Locke", n: 3, obras: "Segundo tratado, Ensaio acerca do entendimento humano", palavras: ["direitos naturais", "consentimento"] },
+  { nome: "Merleau-Ponty", n: 3, obras: "Fenomenologia da percepção, Elogio da filosofia", palavras: ["corpo", "percepção"] },
+  { nome: "Adorno e Horkheimer", n: 3, obras: "Dialética do esclarecimento", palavras: ["indústria cultural", "padronização"] },
+  { nome: "Rawls", n: 3, obras: "Uma teoria da justiça", palavras: ["justiça como equidade", "indivíduo"] },
+  { nome: "Bentham", n: 2, obras: "Introdução aos princípios da moral e da legislação", palavras: ["utilitarismo", "maior felicidade"] },
+  { nome: "Derrida", n: 2, obras: "Força de lei, Papel-máquina", palavras: ["crise do sujeito", "direito não é justiça"] },
+  { nome: "Abbagnano", n: 2, obras: "Introdução ao existencialismo, Dicionário de filosofia", palavras: ["realidade humana", "Direito como coexistência"] }
+];
+
+window.UNICOS = [
+  ["Schopenhauer", "independência interior"],
+  ["Montesquieu", "limites ao poder"],
+  ["Bobbio", "convenções coletivas"],
+  ["Marcuse", "realidade unidimensional"],
+  ["Arendt", "construção da sociabilidade"],
+  ["Debord", "fetichização da experiência"],
+  ["Benjamin", "caráter ilusório das imagens"],
+  ["Habermas", "melhor argumento"],
+  ["Hans Jonas", "vida das novas gerações"],
+  ["Leibniz", "substância e movimento"],
+  ["Quine e Carnap", "estatuto da linguagem"],
+  ["Nagel", "solipsismo"],
+  ["Cabrera", "experiência vivida"],
+  ["Ricoeur", "perdão e autonomia"],
+  ["Comte", "Estado unificador"],
+  ["Ubuntu", "intersubjetividade"],
+  ["Fanon", "traços culturais"],
+  ["Chauí", "memória"],
+  ["Guattari", "interesses coletivos"],
+  ["Morin", "paradigma tecnológico"],
+  ["Whitehead", "aplicabilidade do saber"]
+];
+
+window.DESTAQUES = [
+  {
+    id: "aristoteles",
+    nome: "Aristóteles",
+    n: 19,
+    fio: "O fio comum é o bem comum: ética e política caminham juntas rumo à felicidade (eudaimonia).",
+    obras: "Política (7), Ética a Nicômaco (5), Metafísica e Segundos analíticos (1 cada) e comentadores (5)."
+  },
+  {
+    id: "platao",
+    nome: "Platão",
+    n: 12,
+    fio: "O fio comum é o mundo inteligível: só a razão alcança as Ideias, e quem as conhece deve governar.",
+    obras: "A República (3), Fédon, O Banquete, Mênon e comentadores (Chaui, Zingano)."
+  }
+];
