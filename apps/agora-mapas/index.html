@@ -26,28 +26,7 @@
   --f-ui:'Alegreya Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
   --barH:0px;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#12161d; --bg2:#12161d; --grid:#262e3a; --rule:#262e3a; --panel:#1a2029; --ink:#e6eaf0; --muted:#98a3b3; --line:#2e3744;
-  --accent:#7fb0e6; --accent-ink:#0e1218; --accent-soft:#1c2a3b; --accent-fill:#7fb0e6; --accent-line:#5f93cc; --ocre:#e6eaf0; --link:#a7b1bf; --danger:#ec8a93; --node-ink:#e6eaf0;
-  --shadow:0 6px 24px rgba(0,0,0,.45);
-  --tema:#e6eaf0; --tema-line:#e6eaf0; --tema-ink:#12161d;
-  --conceito:#7fb0e6; --conceito-bg:#1c2a3b; --filosofo:#9cc485; --filosofo-bg:#1f2b1a;
-  --obra:#e0b45e; --obra-bg:#2e2614; --citacao:#b8a6e0; --citacao-bg:#29233a; --periodo:#e0838d; --periodo-bg:#351c20;
-  --o-comum:#4d4210; --o-comum-line:#e8ca4c; --o-parcial:#3d2b12; --o-parcial-line:#e6a85a;
-  --o-s0:#232a33; --o-s0-line:#8d98a7; --o-s1:#1d331a; --o-s1-line:#86cf6a;
-  --o-s2:#1b2a40; --o-s2-line:#7fb0e6; --o-s3:#3a1d27; --o-s3-line:#e58aa8; --o-none:#1a2029; --o-none-line:#e6eaf0;
-  color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#12161d; --bg2:#12161d; --grid:#262e3a; --rule:#262e3a; --panel:#1a2029; --ink:#e6eaf0; --muted:#98a3b3; --line:#2e3744;
-  --accent:#7fb0e6; --accent-ink:#0e1218; --accent-soft:#1c2a3b; --accent-fill:#7fb0e6; --accent-line:#5f93cc; --ocre:#e6eaf0; --link:#a7b1bf; --danger:#ec8a93; --node-ink:#e6eaf0;
-  --shadow:0 6px 24px rgba(0,0,0,.45);
-  --tema:#e6eaf0; --tema-line:#e6eaf0; --tema-ink:#12161d;
-  --conceito:#7fb0e6; --conceito-bg:#1c2a3b; --filosofo:#9cc485; --filosofo-bg:#1f2b1a;
-  --obra:#e0b45e; --obra-bg:#2e2614; --citacao:#b8a6e0; --citacao-bg:#29233a; --periodo:#e0838d; --periodo-bg:#351c20;
-  --o-comum:#4d4210; --o-comum-line:#e8ca4c; --o-parcial:#3d2b12; --o-parcial-line:#e6a85a;
-  --o-s0:#232a33; --o-s0-line:#8d98a7; --o-s1:#1d331a; --o-s1-line:#86cf6a;
-  --o-s2:#1b2a40; --o-s2-line:#7fb0e6; --o-s3:#3a1d27; --o-s3-line:#e58aa8; --o-none:#1a2029; --o-none-line:#e6eaf0;
-  color-scheme:dark}
+:root,:root[data-theme="dark"]{color-scheme:light}
 @media (max-width:759px){:root{--barH:76px}}
 
 [hidden]{display:none!important}
