@@ -193,7 +193,8 @@ main{max-width:1200px;margin:0 auto;padding:10px 20px 40px}
 
 <script>
 // ===================== DADOS =====================
-const sel = {}; // grupo -> valor escolhido (máximo 1 por grupo)
+const sel = { artigo: 'o' }; // grupo -> valor escolhido (máximo 1 por grupo)
+const FEMININO = { 'estratégico': 'estratégica', 'significativo': 'significativa' };
 
 const QUALIFICADORES = ['crucial','relevante','significativo','estratégico','indispensável','vital'];
 const AUTORIDADE = ['De acordo com','Conforme','Segundo','Nas palavras de','Como afirma'];
@@ -265,7 +266,8 @@ function formDev(p, rotuloArg, dicaArg) {
 
 // ===================== MONTAGEM DAS ABAS =====================
 $('form-intro').innerHTML =
-  F.input('intro-tema', 'Tema / tópico frasal', 'Ex: A importância do planejamento para a Copa do Mundo de 2014') +
+  F.chips('Artigo do tema', 'artigo', [['o','O'], ['a','A']]) +
+  F.input('intro-tema', 'Tema / tópico frasal (sem artigo)', 'Ex: importância do planejamento para a Copa do Mundo de 2014') +
   F.area('intro-tese', 'Tese (sua afirmação principal)', 'Ex: é essencial para o sucesso da realização') +
   F.chips('Qualificadores (selecione 1)', 'qualificador', QUALIFICADORES) +
   F.input('intro-autoridade', 'Autoridade / repertório (quem diz?)', 'Ex: Fulano de Tal, especialista em gestão') +
@@ -302,12 +304,16 @@ function composeIntro() {
 
   if (sel.modelo !== undefined) {
     const mapa = { 'TEMA': tema, 'TESE': tese, 'AUTORIDADE': aut, 'ARGUMENTO 1': a1, 'ARGUMENTO 2': a2 };
-    return '<p>' + MODELOS[sel.modelo].replace(/\[(TEMA|TESE|AUTORIDADE|ARGUMENTO 1|ARGUMENTO 2)\]/g,
+    const art = sel.artigo || 'o';
+    const modelo = MODELOS[sel.modelo].replace(/\b(O|o) \[TEMA\]/g, (m, x) => (x === 'O' ? art.toUpperCase() : art) + ' [TEMA]');
+    return '<p>' + modelo.replace(/\[(TEMA|TESE|AUTORIDADE|ARGUMENTO 1|ARGUMENTO 2)\]/g,
       (m, k) => ph(mapa[k], k)) + '</p>';
   }
 
-  const qualificador = sel.qualificador || 'importante';
-  let t = `O ${ph(tema, 'TEMA')} é ${qualificador} para ${ph(tese, 'TESE')}. `;
+  const art = sel.artigo || 'o';
+  let qualificador = sel.qualificador || 'importante';
+  if (art === 'a' && FEMININO[qualificador]) qualificador = FEMININO[qualificador];
+  let t = `${art.toUpperCase()} ${ph(tema, 'TEMA')} é ${qualificador} para ${ph(tese, 'TESE')}. `;
   t += `${pre('autoridade')}${ph(aut, 'AUTORIDADE')}, `;
   t += `${pre('verificacao')}${ph(a1, 'ARGUMENTO 1')}, `;
   t += `${pre('adicao')}${ph(a2, 'ARGUMENTO 2')}`;
@@ -379,6 +385,7 @@ function mudarAba(id, btn) {
 }
 
 function limpar(tabId) {
+  if (tabId === 'intro') sel.artigo = 'o';
   const aba = $(tabId);
   aba.querySelectorAll('input,textarea').forEach(el => el.value = '');
   aba.querySelectorAll('[data-group]').forEach(b => delete sel[b.dataset.group]);
