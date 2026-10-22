@@ -211,11 +211,14 @@ textarea.copia{position:absolute;left:-9999px}
 .palco-relogio.pouco{color:var(--perto)}
 .palco-relogio.fim{color:var(--longe);animation:piscaTempo .7s steps(2) infinite}
 @keyframes piscaTempo{50%{opacity:.25}}
-.palco-centro{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2.4vh;position:relative;cursor:pointer;user-select:none;-webkit-user-select:none}
-.palco-titulo{font-family:var(--display);font-weight:400;font-size:clamp(1.3rem,3.6vw,2.4rem);line-height:1.1;color:var(--ocre);margin:0;text-align:center}
+.palco-centro{flex:1;min-height:0;position:relative;overflow:hidden;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 7%,#000 93%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 7%,#000 93%,transparent 100%)}
+.palco-trilho{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column;align-items:center;gap:2.4em;font-size:32px;transition:transform .9s cubic-bezier(.45,0,.2,1);will-change:transform}
+.pe{display:flex;flex-direction:column;align-items:center;gap:.5em;max-width:100%;transition:opacity .8s}
+.pe.passada{opacity:.18}
+.pe.futura{opacity:0}
+.palco-titulo{font-family:var(--display);font-weight:400;font-size:.9em;line-height:1.1;color:var(--ocre);margin:0;text-align:center}
 .palco-titulo small{display:block;font-family:var(--texto);font-style:italic;font-size:.5em;color:var(--apagado);margin-top:.3em}
-.palco-versos{--ps:min(5.6vw,4.8vh,2.9rem);font-size:max(var(--ps),1.05rem);font-style:italic;line-height:1.32;width:fit-content;max-width:min(100%,60rem)}
-.palco.m11 .palco-versos{--ps:min(3.6vw,4.8vh,2.5rem)}
+.palco-versos{font-size:1em;font-style:italic;line-height:1.32;width:fit-content;max-width:100%}
 .pv{display:grid;grid-template-columns:5.2em minmax(0,1fr);column-gap:.7em;align-items:baseline;transition:opacity .4s,transform .4s}
 .palco-versos.so-um .pv{grid-template-columns:minmax(0,1fr)}
 .palco-versos.so-um .dono{display:none}
@@ -227,6 +230,7 @@ textarea.copia{position:absolute;left:-9999px}
 .pv.dito{opacity:.55}
 .pv.atual{opacity:1}
 .pv.atual .tx{text-shadow:0 0 18px color-mix(in srgb,var(--ouro) 35%,transparent)}
+.pe.passada .pv.dito{opacity:1}
 .palco-pos{font-family:var(--mono);font-size:.75rem;letter-spacing:.06em;color:var(--apagado);text-align:center;flex:1}
 .palco-base .btn{min-width:8.5rem}
 .palco-base .btn:disabled{opacity:.35;cursor:default}
@@ -234,7 +238,7 @@ textarea.copia{position:absolute;left:-9999px}
 @media (max-width:560px){.pv{grid-template-columns:3.6em minmax(0,1fr)}.palco-base .btn{min-width:0}.palco-pos{order:-1;flex-basis:100%}}
 
 @media (prefers-reduced-motion:reduce){
-  .palco-astro svg,.pv{animation:none!important;transition:none!important}
+  .palco-astro svg,.pv,.palco-trilho,.pe{animation:none!important;transition:none!important}
   .cenario *,.emblema *,.sol-gira,.nucleo{animation:none!important}
 }
 </style>
@@ -289,6 +293,7 @@ textarea.copia{position:absolute;left:-9999px}
         <div class="seg" role="group" aria-label="Métrica">
           <button type="button" id="m7" data-m="7">Sete sílabas</button>
           <button type="button" id="m11" data-m="11">Onze sílabas</button>
+          <button type="button" id="mSx" data-m="7">Sextilha</button>
         </div>
         <p class="dica" id="dicaMetrica"></p>
       </div>
@@ -330,7 +335,7 @@ textarea.copia{position:absolute;left:-9999px}
       </div>
     </div>
 
-    <div class="passo">
+    <div class="passo" id="passoMote">
       <div class="n"><span>5</span></div>
       <p class="t">De onde vem o mote</p>
       <div class="conteudo">
@@ -366,6 +371,7 @@ textarea.copia{position:absolute;left:-9999px}
         <span>9 D</span><span class="m">A palavra é minha enxada</span>
         <span>10 C</span><span class="m">e o papel é meu roçado.</span>
       </div>
+      <p class="dica" style="margin-top:.9rem">Na sextilha são seis versos de sete sílabas e só os versos 2, 4 e 6 rimam entre si (ABCBDB). No galope à beira-mar, a décima tem onze sílabas e o mote termina sempre na beira do mar.</p>
     </details>
   </section>
 
@@ -423,7 +429,7 @@ textarea.copia{position:absolute;left:-9999px}
   </section>
 </div>
 
-<div class="palco" id="palco" hidden role="dialog" aria-modal="true" aria-labelledby="palcoTitulo">
+<div class="palco" id="palco" hidden role="dialog" aria-modal="true" aria-label="Modo palco">
   <div class="palco-astro" aria-hidden="true">
     <svg class="astro-lua" viewBox="0 0 280 280"><use href="#lua" x="70" y="70" width="140" height="140"/><use href="#lua-anel" width="280" height="280"/></svg>
     <svg class="astro-sol" viewBox="0 0 280 280"><use href="#sol-raios" width="280" height="280"/><use href="#sol-nucleo" width="280" height="280"/></svg>
@@ -443,8 +449,7 @@ textarea.copia{position:absolute;left:-9999px}
     </div>
   </div>
   <div class="palco-centro" id="palcoCentro">
-    <h2 class="palco-titulo" id="palcoTitulo"></h2>
-    <div class="palco-versos" id="palcoVersos"></div>
+    <div class="palco-trilho" id="palcoTrilho"></div>
   </div>
   <div class="palco-base">
     <button type="button" class="btn" id="palcoAnt">← Voltar</button>
@@ -747,20 +752,26 @@ const MOTES={
     ["Toda chuva no sertão","é motivo de alegria"],
     ["Cordel é voz do Nordeste","rimado no coração"],
     ["Ninguém nasce já sabendo","quem quer saber vai buscar"]],
- 11:[["Eu vim lá do mato cantando a saudade","e canto as jangadas na beira do mar"],
-    ["Quem pega num livro conhece outro mundo","e aprende a pensar sem ninguém lhe mandar"],
-    ["A filosofia nasceu da pergunta","de quem olhou pro céu querendo explicar"],
-    ["O povo do campo levanta bem cedo","e vai pro roçado com fé de plantar"],
-    ["Na escola se planta a semente do sonho","que um dia floresce se a gente regar"],
-    ["O vento de Guamaré sopra a jangada","e o pescador volta com peixe pra dar"],
-    ["Quem tem um amigo não anda sozinho","na estrada da vida tem onde apoiar"]]
+ 11:[["Eu vim lá do mato cantando a saudade","e canto a jangada na beira do mar"],
+    ["Quem pega num livro conhece outro mundo","e aprende a sonhar lá na beira do mar"],
+    ["A filosofia nasceu da pergunta","de quem olha o céu lá da beira do mar"],
+    ["O vento do norte balança a jangada","e traz o peixinho da beira do mar"],
+    ["Quem tem um amigo não anda sozinho","que a vida é mais doce na beira do mar"],
+    ["Na escola se planta a semente do sonho","que um dia floresce na beira do mar"],
+    ["Eu digo verdade, não conto mentira","quem mente se afoga na beira do mar"],
+    ["A lua de prata clareia o caminho","de quem faz seus versos na beira do mar"],
+    ["O mestre pergunta, o menino responde","e juntos aprendem na beira do mar"]]
 };
-const ESQ=["A","B","B","A","A","C","C","D","D","C"];
+const ESQ_D=["A","B","B","A","A","C","C","D","D","C"],ESQ_S=["A","B","C","B","D","B"];
+const sext=()=>S.forma==="sextilha";
+const ESQf=()=>sext()?ESQ_S:ESQ_D;
+const NL=()=>sext()?6:10;   /* versos na estrofe */
+const NE=()=>sext()?6:8;    /* versos escritos pela dupla (o resto é mote) */
 
 /* ================= estado ================= */
 const CHAVE="peleja-cordel-v3";
 /* por enquanto nada fica salvo: cada F5 começa do zero */
-function padrao(){return {metrica:7,p1:"",p2:"",n:4,origem:"sorteio",idx:{7:0,11:0},proprio:["",""],titulo:"",versos:{},divisao:"rimas",dono:{},capa:"cantadores",modo:"ilustrado"};}
+function padrao(){return {metrica:7,p1:"",p2:"",n:4,origem:"sorteio",idx:{7:0,11:0},proprio:["",""],titulo:"",versos:{},divisao:"rimas",dono:{},capa:"cantadores",modo:"ilustrado",forma:"decima"};}
 let S=padrao();
 try{["peleja-cordel-v1","peleja-cordel-v2","peleja-cordel-v3","peleja-tema"].forEach(k=>localStorage.removeItem(k));}catch(e){}
 function salva(){}
@@ -772,14 +783,15 @@ function nomeP(i){return i===0?(S.p1.trim()||"Poeta 1"):(S.p2.trim()||"Poeta 2")
 function donoLetra(e,L){
   if(S.divisao!=="rimas")return e%2;
   const d=S.dono[e];if(d&&d[L]!==undefined)return d[L];
+  if(sext())return L==="B"?e%2:1-e%2;
   return (L==="A"||L==="D")?e%2:1-e%2;
 }
-function donoLinha(e,l){return donoLetra(e,ESQ[l]);}
+function donoLinha(e,l){return donoLetra(e,ESQf()[l]);}
 function poeta(e){return S.divisao==="rimas"?nomeP(e%2)+" e "+nomeP(1-e%2):nomeP(e%2);}
 function versosDe(e){if(!S.versos[e])S.versos[e]=Array(8).fill("");return S.versos[e];}
-function linhaDe(e,l){return l<8?versosDe(e)[l]:mote()[l-8];}
-function feitos(e){return versosDe(e).filter(v=>v.trim()).length;}
-function ativa(){for(let e=0;e<S.n;e++)if(feitos(e)<8)return e;return -1;}
+function linhaDe(e,l){return l<NE()?versosDe(e)[l]:mote()[l-NE()];}
+function feitos(e){return versosDe(e).slice(0,NE()).filter(v=>v.trim()).length;}
+function ativa(){for(let e=0;e<S.n;e++)if(feitos(e)<NE())return e;return -1;}
 
 /* ================= tema ================= */
 function aplicaTema(t){document.documentElement.setAttribute("data-theme",t);$("tema").textContent=t==="dark"?"☀ Tema claro":"☾ Tema escuro";}
@@ -788,17 +800,22 @@ $("tema").onclick=()=>aplicaTema(document.documentElement.getAttribute("data-the
 
 /* ================= arrumação ================= */
 function pintaArrumacao(){
-  ["m7","m11"].forEach(id=>$(id).setAttribute("aria-pressed",String(+$(id).dataset.m===S.metrica)));
+  ["m7","m11"].forEach(id=>$(id).setAttribute("aria-pressed",String(!sext()&&+$(id).dataset.m===S.metrica)));
+  $("mSx").setAttribute("aria-pressed",String(sext()));
+  $("passoMote").hidden=sext();
   ["n2","n4","n6","n8"].forEach(id=>$(id).setAttribute("aria-pressed",String(+$(id).dataset.n===S.n)));
   $("dvInteira").setAttribute("aria-pressed",String(S.divisao==="inteira"));
   $("dvRimas").setAttribute("aria-pressed",String(S.divisao==="rimas"));
   $("dicaDivisao").textContent=S.divisao==="rimas"
-    ?"Os dois escrevem a mesma estrofe: um fica com as rimas A e D, o outro com B e C (quatro versos cada). Os papéis trocam na estrofe seguinte e podem ser ajustados em cada estrofe."
+    ?(sext()?"Os dois escrevem a mesma estrofe: um fica com os versos que rimam (2, 4 e 6), o outro com os versos livres (1, 3 e 5). Os papéis trocam na estrofe seguinte e podem ser ajustados em cada estrofe."
+      :"Os dois escrevem a mesma estrofe: um fica com as rimas A e D, o outro com B e C (quatro versos cada). Os papéis trocam na estrofe seguinte e podem ser ajustados em cada estrofe.")
     :"Cada poeta escreve uma estrofe inteira e a vez passa para o outro.";
   $("moSorteio").setAttribute("aria-pressed",String(S.origem==="sorteio"));
   $("moProprio").setAttribute("aria-pressed",String(S.origem==="proprio"));
   $("caixaSorteio").hidden=S.origem!=="sorteio";$("caixaProprio").hidden=S.origem!=="proprio";
-  $("dicaMetrica").textContent=S.metrica===7?"Redondilha maior: sete sílabas poéticas por verso, o metro mais comum do cordel.":"Onze sílabas, no balanço do galope: tônicas na 2ª, 5ª, 8ª e 11ª.";
+  $("dicaMetrica").textContent=sext()?"Sextilha: seis versos de sete sílabas, com rima só nos versos 2, 4 e 6 (ABCBDB). Não usa mote: a dupla escreve a estrofe inteira."
+    :S.metrica===7?"Décima em redondilha maior: sete sílabas poéticas por verso, o metro mais comum do cordel."
+    :"Galope à beira-mar: décima de onze sílabas, com tônicas na 2ª, 5ª, 8ª e 11ª. O mote sempre termina na beira do mar.";
   const m=MOTES[S.metrica][S.idx[S.metrica]%MOTES[S.metrica].length];
   $("moteSorteado").innerHTML=esc(m[0])+"<br>"+esc(m[1]);
   pintaContaMote();
@@ -817,45 +834,47 @@ function montaEstrofes(){
       h+=`<div class="donos">`+["A","B","C","D"].map(L=>{const d=donoLetra(e,L);
         return `<button type="button" id="dn-${e}-${L}" class="d${d}" data-L="${L}" aria-label="Rima ${L}: ${esc(nomeP(d))}. Toque para trocar"><b>${L}</b>${esc(nomeP(d))}</button>`;}).join("")+`<span class="dica">toque para trocar</span></div>`;
     }
-    for(let l=0;l<10;l++){
-      if(l===5||l===8)h+=`<div class="sep"></div>`;
-      const d=l<8?donoLinha(e,l):null;
-      const campo=l<8
+    for(let l=0;l<NL();l++){
+      if(!sext()&&(l===5||l===8))h+=`<div class="sep"></div>`;
+      const d=l<NE()?donoLinha(e,l):null;
+      const campo=l<NE()
         ?`<input type="text" id="v-${e}-${l}" autocomplete="off" placeholder="verso de ${esc(nomeP(d))}" aria-label="Estrofe ${e+1}, verso ${l+1}, de ${esc(nomeP(d))}">`
         :`<div class="fixo" id="fx-${e}-${l}"></div>`;
-      h+=`<div class="verso${l<8?" d"+d:""}"><div class="num"><b>${l+1}</b>${ESQ[l]}</div><div class="corpo">${campo}<div class="rimahint" id="rh-${e}-${l}"></div></div><div class="sil" id="sl-${e}-${l}">·</div></div>`;
+      h+=`<div class="verso${l<NE()?" d"+d:""}"><div class="num"><b>${l+1}</b>${ESQf()[l]}</div><div class="corpo">${campo}<div class="rimahint" id="rh-${e}-${l}"></div></div><div class="sil" id="sl-${e}-${l}">·</div></div>`;
     }
     art.innerHTML=h;box.appendChild(art);
     art.querySelectorAll(".donos button").forEach(btn=>btn.onclick=()=>{
       const L=btn.dataset.L;if(!S.dono[e])S.dono[e]={};S.dono[e][L]=1-donoLetra(e,L);salva();montaEstrofes();
       const nb=$(`dn-${e}-${L}`);if(nb)nb.focus();});
     $(`dc-${e}`).onclick=()=>abrePalco(e);
-    $(`cp-${e}`).onclick=()=>{const b=$(`cp-${e}`);const txt=[...Array(10)].map((_,l)=>(linhaDe(e,l)||"").trim()).join("\n");
+    $(`cp-${e}`).onclick=()=>{const b=$(`cp-${e}`);const txt=[...Array(NL())].map((_,l)=>(linhaDe(e,l)||"").trim()).join("\n");
       copiaTexto(txt,()=>{b.textContent="Copiada ✓";b.classList.add("ok");setTimeout(()=>{b.textContent="Copiar estrofe";b.classList.remove("ok");},2000);},
         ()=>{b.textContent="Não deu para copiar";setTimeout(()=>b.textContent="Copiar estrofe",2500);});};
-    for(let l=0;l<8;l++){const inp=$(`v-${e}-${l}`);inp.value=versosDe(e)[l];
+    for(let l=0;l<NE();l++){const inp=$(`v-${e}-${l}`);inp.value=versosDe(e)[l];
       inp.addEventListener("input",ev=>{S.versos[e][l]=ev.target.value;salva();atualiza(e);estados();agendaFolheto();});}
   }
   for(let e=0;e<S.n;e++)atualiza(e);
   estados();folheto();
 }
 function atualiza(e){
-  const alvo=S.metrica,rimas=[];
-  for(let l=0;l<10;l++){const t=linhaDe(e,l)||"";const a=analisa(t);rimas[l]=t.trim()?a.rima:"";
-    if(l>=8){const f=$(`fx-${e}-${l}`);if(f)f.textContent=t||"(escreva o mote acima)";}
+  const alvo=S.metrica,rimas=[],E=ESQf(),nl=NL(),ne=NE();
+  for(let l=0;l<nl;l++){const t=linhaDe(e,l)||"";const a=analisa(t);rimas[l]=t.trim()?a.rima:"";
+    if(l>=ne){const f=$(`fx-${e}-${l}`);if(f)f.textContent=t||"(escreva o mote acima)";}
     const sl=$(`sl-${e}-${l}`);if(!sl)continue;
     if(!t.trim()){sl.textContent="·";sl.className="sil";}
     else{const d=Math.abs(a.sil-alvo);sl.textContent=a.sil;sl.className="sil "+(d===0?"ok":d===1?"perto":"longe");sl.title=a.sil+" sílabas (meta: "+alvo+")";}
   }
-  const ancora={C:{l:9,r:rimas[9]},D:{l:8,r:rimas[8]}};
-  ["A","B"].forEach(L=>{for(let l=0;l<8;l++)if(ESQ[l]===L&&rimas[l]){ancora[L]={l,r:rimas[l]};break;}});
-  for(let l=0;l<10;l++){const rh=$(`rh-${e}-${l}`);if(!rh)continue;
+  const ancora={};
+  for(let l=ne;l<nl;l++)ancora[E[l]]={l,r:rimas[l]};
+  for(let l=0;l<ne;l++){const L=E[l];if(!ancora[L]&&rimas[l])ancora[L]={l,r:rimas[l]};}
+  for(let l=0;l<nl;l++){const rh=$(`rh-${e}-${l}`);if(!rh)continue;
     rh.className="rimahint";rh.textContent="";
-    if(l>=8)continue;
-    const L=ESQ[l],an=ancora[L];
+    if(l>=ne)continue;
+    const L=E[l],an=ancora[L];
+    if(E.filter(x=>x===L).length<2)continue;
     if(!an||!an.r)continue;
-    if(an.l===l){if(L!=="C"&&L!=="D")rh.textContent="define a rima "+L+": -"+an.r;continue;}
-    const alvoTxt=(L==="C"||L==="D")?`rima com o mote: -${an.r}`:`rima com o verso ${an.l+1}: -${an.r}`;
+    if(an.l===l){rh.textContent="define a rima "+L+": -"+an.r;continue;}
+    const alvoTxt=an.l>=ne?`rima com o mote: -${an.r}`:`rima com o verso ${an.l+1}: -${an.r}`;
     if(!rimas[l])rh.textContent=alvoTxt;
     else if(rimam(rimas[l],an.r)){rh.textContent="rimou ✓ -"+rimas[l];rh.className="rimahint bate";}
     else{rh.textContent="-"+rimas[l]+" não bate com -"+an.r;rh.className="rimahint nao";}
@@ -866,10 +885,10 @@ function estados(){
   for(let e=0;e<S.n;e++){const f=feitos(e),st=$("st-"+e),art=$("est-"+e);if(!st)continue;
     $("quem-"+e).textContent="· "+poeta(e);
     art.classList.toggle("ativa",e===at);
-    if(f===8){st.textContent="completa";st.className="estado feita";}
-    else if(e===at){const v=versosDe(e);let l=0;while(l<8&&v[l].trim())l++;
+    if(f===NE()){st.textContent="completa";st.className="estado feita";}
+    else if(e===at){const v=versosDe(e);let l=0;while(l<NE()&&v[l].trim())l++;
       st.textContent="vez de "+nomeP(donoLinha(e,l))+(S.divisao==="rimas"?" · verso "+(l+1):"");st.className="estado vez";}
-    else{st.textContent=f+" de 8 versos";st.className="estado";}
+    else{st.textContent=f+" de "+NE()+" versos";st.className="estado";}
   }
 }
 
@@ -893,16 +912,16 @@ function vinheta(){return `<svg viewBox="0 0 200 120" fill="currentColor" xmlns=
 function paginas(){
   const pl=planoPaginas(),E=estrofesUsadas(),m=mote(),cls="m"+S.metrica+(pl.spp===2?" s2":"");
   const out=[];
-  out.push({rot:"capa",html:`<div class="pag capa"><div class="pi"><div class="moldura"><h3 class="capa-t">${esc(tituloF())}</h3>${desenhar()?`<div class="grav-vazia"><span>espaço para a xilogravura</span></div>`:`<div class="grav">${cena(S.capa)}</div>`}<p class="autores">${esc(nomeP(0))} e ${esc(nomeP(1))}<small>Peleja em décimas de ${S.metrica} sílabas</small></p></div></div></div>`});
-  if(pl.rosto){const i=out.length;out.push({rot:"abertura",html:pagina(`<div class="miolo rosto"><h4>${esc(tituloF())}</h4><p class="de">peleja de ${esc(nomeP(0))} e ${esc(nomeP(1))}</p><span class="r">Mote</span><p class="mote-g">${mt(m[0])}<br>${mt(m[1])}</p></div>`,i+1,i)});}
+  out.push({rot:"capa",html:`<div class="pag capa"><div class="pi"><div class="moldura"><h3 class="capa-t">${esc(tituloF())}</h3>${desenhar()?`<div class="grav-vazia"><span>espaço para a xilogravura</span></div>`:`<div class="grav">${cena(S.capa)}</div>`}<p class="autores">${esc(nomeP(0))} e ${esc(nomeP(1))}<small>${sext()?"Peleja em sextilhas":S.metrica===11?"Peleja em galope à beira-mar":"Peleja em décimas de 7 sílabas"}</small></p></div></div></div>`});
+  if(pl.rosto){const i=out.length;out.push({rot:"abertura",html:pagina(`<div class="miolo rosto"><h4>${esc(tituloF())}</h4><p class="de">peleja de ${esc(nomeP(0))} e ${esc(nomeP(1))}</p>${sext()?"":`<span class="r">Mote</span><p class="mote-g">${mt(m[0])}<br>${mt(m[1])}</p>`}</div>`,i+1,i)});}
   for(let k=0;k<E.length;k+=pl.spp){const i=out.length,grupo=E.slice(k,k+pl.spp);
-    const ests=grupo.map(e=>{const ls=[];for(let l=0;l<10;l++){const v=(linhaDe(e,l)||"").trim();ls.push(v?`<span${l>=8?' class="m"':""}>${esc(v)}</span>`:`<span class="lin"></span>`);}
+    const ests=grupo.map(e=>{const ls=[];for(let l=0;l<NL();l++){const v=(linhaDe(e,l)||"").trim();ls.push(v?`<span${l>=NE()?' class="m"':""}>${esc(v)}</span>`:`<span class="lin"></span>`);}
       return `<div class="est"><h5>Estrofe ${e+1} · ${esc(poeta(e))}</h5><div class="vv">${ls.join("")}</div></div>`;}).join("");
     out.push({rot:"estrofes",html:pagina(`<div class="miolo">${ests}</div>`,i+1,i,cls)});}
   for(let p=0;p<pl.pad;p++){const i=out.length;out.push({rot:"vinheta",html:pagina(desenhar()?`<div class="miolo"><div class="vinh-vazia grande"><span>espaço para desenho</span></div></div>`:`<div class="miolo contra"><div class="vinh">${vinheta()}</div><span class="fim">✦ ◆ ✦</span></div>`,i+1,i)});}
   const i=out.length;
-  const esqHTML=ESQ.map((L,k)=>`<b${k>=8?' class="m"':""}>${L}</b>`).join("");
-  out.push({rot:"contracapa",html:pagina(`<div class="miolo contra"><span class="r">O mote</span><p class="mote-g">${mt(m[0])}<br>${mt(m[1])}</p><span class="r">A décima</span><div class="esq">${esqHTML}</div><p class="exp">Dez versos de ${S.metrica} sílabas. Os dois últimos são o mote; o verso 8 rima com o 9, e os versos 6 e 7 rimam com o 10.</p>${desenhar()?`<div class="vinh-vazia"><span>vinheta</span></div>`:`<div class="vinh">${vinheta()}</div>`}</div>`,"",i)});
+  const esqHTML=ESQf().map((L,k)=>`<b${k>=NE()||(sext()&&L==="B")?' class="m"':""}>${L}</b>`).join("");
+  out.push({rot:"contracapa",html:pagina(`<div class="miolo contra">${sext()?"":`<span class="r">O mote</span><p class="mote-g">${mt(m[0])}<br>${mt(m[1])}</p>`}<span class="r">${sext()?"A sextilha":S.metrica===11?"O galope à beira-mar":"A décima"}</span><div class="esq">${esqHTML}</div><p class="exp">${sext()?"Seis versos de 7 sílabas. Rimam entre si os versos 2, 4 e 6; os versos 1, 3 e 5 ficam livres.":`Dez versos de ${S.metrica} sílabas. Os dois últimos são o mote; o verso 8 rima com o 9, e os versos 6 e 7 rimam com o 10.`}</p>${desenhar()?`<div class="vinh-vazia"><span>vinheta</span></div>`:`<div class="vinh">${vinheta()}</div>`}</div>`,"",i)});
   return out;
 }
 function folheto(){
@@ -966,7 +985,7 @@ async function imprimir(){
 function textoCordel(){
   let out=tituloF().toUpperCase()+"\n"+nomeP(0)+" e "+nomeP(1)+"\n";
   for(let e=0;e<S.n;e++){if(!feitos(e))continue;out+="\n"+poeta(e).toUpperCase()+"\n";
-    for(let l=0;l<10;l++)out+=(linhaDe(e,l)||"").trim()+"\n";}
+    for(let l=0;l<NL();l++)out+=(linhaDe(e,l)||"").trim()+"\n";}
   return out.trim();
 }
 function copiaTexto(txt,ok,falha){
@@ -977,7 +996,8 @@ function copiaTexto(txt,ok,falha){
 
 /* ================= eventos ================= */
 const refaz=()=>{pintaArrumacao();for(let e=0;e<S.n;e++)atualiza(e);estados();folheto();};
-["m7","m11"].forEach(id=>$(id).onclick=()=>{S.metrica=+$(id).dataset.m;salva();refaz();});
+["m7","m11"].forEach(id=>$(id).onclick=()=>{const mudou=sext();S.forma="decima";S.metrica=+$(id).dataset.m;if(mudou){pintaArrumacao();montaEstrofes();}else refaz();});
+$("mSx").onclick=()=>{S.forma="sextilha";S.metrica=7;pintaArrumacao();montaEstrofes();};
 ["n2","n4","n6","n8"].forEach(id=>$(id).onclick=()=>{S.n=+$(id).dataset.n;salva();pintaArrumacao();montaEstrofes();});
 ["dvInteira","dvRimas"].forEach(id=>$(id).onclick=()=>{S.divisao=$(id).dataset.d;salva();pintaArrumacao();montaEstrofes();});
 ["moSorteio","moProprio"].forEach(id=>$(id).onclick=()=>{S.origem=$(id).dataset.o;salva();refaz();});
@@ -1005,8 +1025,9 @@ function pintaModo(){
 const palco={e:0,l:0,origem:null,tempo:0,resta:0,tick:null,wake:null};
 function abrePalco(e){
   palco.e=Math.min(e,S.n-1);palco.l=0;palco.origem=document.activeElement;
-  $("palco").hidden=false;$("palco").classList.toggle("m11",S.metrica===11);document.body.style.overflow="hidden";
-  paraTempo(true);pintaPalco();$("palcoProx").focus();
+  $("palco").hidden=false;document.body.style.overflow="hidden";
+  paraTempo(true);montaPalco();pintaPalco(true);$("palcoProx").focus();
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{if(!$("palco").hidden){ajustaFonte();posiciona(true);}});
   try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(w=>palco.wake=w,()=>{});}catch(err){}
 }
 function fechaPalco(){
@@ -1015,35 +1036,64 @@ function fechaPalco(){
   try{palco.wake&&palco.wake.release();}catch(err){}palco.wake=null;
   if(palco.origem&&palco.origem.focus)palco.origem.focus();
 }
-function pintaPalco(){
-  const e=palco.e,l=palco.l,rimas=S.divisao==="rimas";
-  $("palcoTitulo").innerHTML=`Estrofe ${e+1}<small>${esc(poeta(e))}${l===0?" · toque na tela para começar":""}</small>`;
-  let h="";
-  for(let k=0;k<10;k++){
-    const t=(linhaDe(e,k)||"").trim()||"· · ·",mote=k>=8,d=mote?null:donoLinha(e,k);
-    const est=k>=l?"oculto":(k===l-1?"atual":"dito");
-    h+=`<div class="pv ${est}${mote?" pmote":" d"+d}"><span class="dono">${mote?"mote":esc(nomeP(d))}</span><span class="tx">${esc(t)}</span></div>`;
+/* todas as estrofes ficam empilhadas num trilho; a atual é centralizada e as anteriores sobem */
+function montaPalco(){
+  const rimas=S.divisao==="rimas",ne=NE();let h="";
+  for(let e=0;e<S.n;e++){
+    let v="";
+    for(let k=0;k<NL();k++){const t=(linhaDe(e,k)||"").trim()||"· · ·",mote=k>=ne,d=mote?null:donoLinha(e,k);
+      v+=`<div class="pv oculto${mote?" pmote":" d"+d}" id="pv-${e}-${k}"><span class="dono">${mote?"mote":esc(nomeP(d))}</span><span class="tx">${esc(t)}</span></div>`;}
+    h+=`<section class="pe futura" id="pe-${e}"><h2 class="palco-titulo">Estrofe ${e+1}<small>${esc(poeta(e))}</small></h2><div class="palco-versos${rimas?"":" so-um"}">${v}</div></section>`;
   }
-  $("palcoVersos").innerHTML=h;$("palcoVersos").classList.toggle("so-um",!rimas);
+  $("palcoTrilho").innerHTML=h;ajustaFonte();
+}
+/* a letra encolhe até a estrofe mais alta caber inteira na área do palco */
+function ajustaFonte(){
+  const c=$("palcoCentro"),tr=$("palcoTrilho"),H=c.clientHeight,W=c.clientWidth;if(!H||!W)return;
+  const largo=S.metrica===11&&!sext();
+  let fs=Math.min(52,H/(NL()*1.32+2.6),W/(largo?22:16));
+  const blocos=[...tr.children];
+  for(let i=0;i<16;i++){
+    tr.style.fontSize=fs.toFixed(1)+"px";
+    const alto=Math.max(...blocos.map(b=>b.offsetHeight));
+    if(alto<=H*.86||fs<=12)break;
+    fs*=.94;
+  }
+}
+function posiciona(sem){
+  const c=$("palcoCentro"),tr=$("palcoTrilho"),b=$("pe-"+palco.e);if(!b)return;
+  const y=b.offsetTop-(c.clientHeight-b.offsetHeight)/2;
+  if(sem){tr.style.transition="none";tr.style.transform=`translateY(${-y}px)`;void tr.offsetHeight;tr.style.transition="";}
+  else tr.style.transform=`translateY(${-y}px)`;
+}
+function pintaPalco(sem){
+  const e=palco.e,l=palco.l,nl=NL(),ne=NE();
+  for(let i=0;i<S.n;i++){
+    const b=$("pe-"+i);if(!b)continue;b.className="pe "+(i<e?"passada":i>e?"futura":"atual");
+    for(let k=0;k<nl;k++){const el=$(`pv-${i}-${k}`);
+      const est=i<e?"dito":i>e?"oculto":(k>=l?"oculto":(k===l-1?"atual":"dito"));
+      el.classList.remove("oculto","dito","atual");el.classList.add(est);}
+  }
   const q=$("palcoQuem");
-  if(l<10){const mote=l>=8,d=mote?null:donoLinha(e,l);
+  if(l<nl){const mote=l>=ne,d=mote?null:donoLinha(e,l);
     q.textContent=mote?"Mote: a dupla junta":"Vez de "+nomeP(d);q.className="palco-quem "+(mote?"mote":"d"+d);}
   else{q.textContent=e<S.n-1?"Estrofe completa ✦":"Fim da peleja ✦";q.className="palco-quem";}
-  $("palcoPos").textContent=`Estrofe ${e+1} de ${S.n} · verso ${l} de 10`;
+  $("palcoPos").textContent=(l===0?"Toque na tela para começar · ":"")+`Estrofe ${e+1} de ${S.n} · verso ${l} de ${nl}`;
   $("palcoAnt").disabled=e===0&&l===0;
-  $("palcoTudo").hidden=l>=10;
-  $("palcoProx").textContent=l<10?"Próximo verso →":(e<S.n-1?"Próxima estrofe →":"Encerrar ✦");
+  $("palcoTudo").hidden=l>=nl;
+  $("palcoProx").textContent=l<nl?"Próximo verso →":(e<S.n-1?"Próxima estrofe →":"Encerrar ✦");
   ["pt0","pt30","pt60","pt120"].forEach(id=>$(id).setAttribute("aria-pressed",String(+$(id).dataset.t===palco.tempo)));
-  pintaRelogio();
+  posiciona(sem);pintaRelogio();
 }
 function proxPalco(){
-  if(palco.l<10){palco.l++;if(palco.l===1)iniciaTempo();if(palco.l===10){notasPalco();clearInterval(palco.tick);palco.tick=null;}}
+  const nl=NL();
+  if(palco.l<nl){palco.l++;if(palco.l===1)iniciaTempo();if(palco.l===nl){notasPalco();clearInterval(palco.tick);palco.tick=null;}}
   else if(palco.e<S.n-1){palco.e++;palco.l=0;paraTempo(true);}
   else{fechaPalco();return;}
   pintaPalco();
 }
 function antPalco(){
-  if(palco.l>0)palco.l--;else if(palco.e>0){palco.e--;palco.l=10;}
+  if(palco.l>0)palco.l--;else if(palco.e>0){palco.e--;palco.l=NL();}
   if(palco.l===0)paraTempo(true);
   pintaPalco();
 }
@@ -1069,11 +1119,14 @@ function notasPalco(){
     const a=n.animate([{transform:"translate(0,0)",opacity:0},{opacity:.9,offset:.15},{transform:`translate(${dir*(40+Math.random()*80)}px,${-(140+Math.random()*120)}px) rotate(${dir*20}deg)`,opacity:0}],{duration:3800,delay:k*300+lado*150,easing:"ease-out",fill:"both"});
     a.onfinish=()=>n.remove();}));
 }
+let tAjuste=null;
+function reajusta(){clearTimeout(tAjuste);tAjuste=setTimeout(()=>{if(!$("palco").hidden){ajustaFonte();posiciona(true);}},120);}
+addEventListener("resize",reajusta);
 $("abrePalco").onclick=()=>abrePalco(0);
 $("abrePalco2").onclick=()=>abrePalco(0);
 $("palcoProx").onclick=proxPalco;
 $("palcoAnt").onclick=antPalco;
-$("palcoTudo").onclick=()=>{palco.l=10;clearInterval(palco.tick);palco.tick=null;pintaPalco();};
+$("palcoTudo").onclick=()=>{palco.l=NL();clearInterval(palco.tick);palco.tick=null;pintaPalco();};
 $("palcoSair").onclick=fechaPalco;
 $("palcoCentro").onclick=proxPalco;
 $("palcoTela").onclick=()=>{
@@ -1082,9 +1135,9 @@ $("palcoTela").onclick=()=>{
   if(el.requestFullscreen)el.requestFullscreen().catch(()=>{$("palcoTela").textContent="Tela cheia indisponível";});
   else $("palcoTela").textContent="Tela cheia indisponível";
 };
-document.addEventListener("fullscreenchange",()=>{$("palcoTela").textContent=document.fullscreenElement?"Sair da tela cheia":"Tela cheia";});
+document.addEventListener("fullscreenchange",()=>{$("palcoTela").textContent=document.fullscreenElement?"Sair da tela cheia":"Tela cheia";reajusta();});
 ["pt0","pt30","pt60","pt120"].forEach(id=>$(id).onclick=()=>{palco.tempo=+$(id).dataset.t;
-  if(palco.l>0&&palco.l<10)iniciaTempo();else paraTempo(true);pintaPalco();});
+  if(palco.l>0&&palco.l<NL())iniciaTempo();else paraTempo(true);pintaPalco();});
 document.addEventListener("keydown",ev=>{
   if($("palco").hidden)return;
   const k=ev.key,emBotao=ev.target&&ev.target.tagName==="BUTTON";
