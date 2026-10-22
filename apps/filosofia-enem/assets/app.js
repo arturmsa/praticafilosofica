@@ -126,8 +126,8 @@
         (dois ? '<p class="ch-nome">' + esc(f.nome) + "</p>" : "") +
         (conc.length ? '<p class="ch-tit">Conceitos do autor</p><ul class="ch-conceitos">' +
           conc.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") +
-        '<p class="ch-tit">Caem no ENEM</p>' +
-        "<ul>" + f.palavras.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"));
+        '<div class="ch-enem"><p class="ch-tit">Caem no ENEM</p>' +
+        "<ul>" + f.palavras.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul></div>"));
     });
 
     var det = el("div", "ch-detalhe");
@@ -255,6 +255,7 @@
     if (!f || !painel) return false;
     if (atualId === id) return true;
     atualId = id;
+    painel.classList.remove("teste");
 
     var qs = questoesDe(id);
     painel.innerHTML = "";
@@ -345,9 +346,111 @@
     return true;
   }
 
+  /* ---------- teste: 10 questões sorteadas ---------- */
+  var TOTAL_TESTE = 10;
+
+  function sortear(n) {
+    var vistos = {}, unicas = [];
+    QUESTOES.forEach(function (q) { if (!vistos[q.id]) { vistos[q.id] = 1; unicas.push(q); } });
+    for (var i = unicas.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = unicas[i]; unicas[i] = unicas[j]; unicas[j] = t;
+    }
+    return unicas.slice(0, n);
+  }
+
+  function novoTeste() {
+    var painel = document.getElementById("painel");
+    if (!painel) return;
+    atualId = "teste";
+    var qs = sortear(TOTAL_TESTE);
+    painel.innerHTML = "";
+    painel.classList.add("teste");
+    painel.setAttribute("aria-labelledby", "painel-t");
+
+    var topo = el("div", "p-topo");
+    var nav = el("nav", "p-nav");
+    nav.setAttribute("aria-label", "Voltar");
+    nav.innerHTML = '<a class="p-volta" href="#ranking">Ranking</a>';
+    topo.appendChild(nav);
+    var h2 = el("h2", null, "Teste: " + TOTAL_TESTE + " questões sorteadas");
+    h2.id = "painel-t";
+    h2.tabIndex = -1;
+    topo.appendChild(h2);
+    topo.appendChild(el("p", "lead", "Clique na alternativa que você acha correta. A resposta e a explicação aparecem na hora, e o resultado sai no fim."));
+    painel.appendChild(topo);
+
+    var placar = el("div", "teste-placar");
+    placar.setAttribute("aria-live", "polite");
+    placar.innerHTML = '<span class="t-resp">0 de ' + qs.length + ' respondidas</span><span class="t-barra"><span></span></span><span class="t-acertos">0 acertos</span>';
+    painel.appendChild(placar);
+
+    var listaQ = el("div", "q-lista");
+    qs.forEach(function (q, i) {
+      var art = montarQuestao(q, i + 1, q.filosofos[0]);
+      var f = POR_ID[q.filosofos[0]];
+      if (f) art.querySelector(".q-cab").insertBefore(el("span", "q-filo", esc(f.nome)), art.querySelector(".q-temas"));
+      listaQ.appendChild(art);
+    });
+    painel.appendChild(listaQ);
+
+    var fim = el("div", "teste-resultado");
+    fim.hidden = true;
+    painel.appendChild(fim);
+
+    painel.hidden = false;
+    var vazio = document.getElementById("painel-vazio");
+    if (vazio) vazio.hidden = true;
+    document.querySelectorAll("[data-filo]").forEach(function (li) {
+      li.classList.remove("atual");
+      var a = li.querySelector("a");
+      if (a) a.removeAttribute("aria-current");
+    });
+    document.title = "Teste · Filosofia no ENEM";
+    prepararTreino(painel);
+  }
+
+  function atualizarPlacar() {
+    var painel = document.getElementById("painel");
+    if (!painel || !painel.classList.contains("teste")) return;
+    var qs = painel.querySelectorAll(".q");
+    var resp = painel.querySelectorAll(".q.revelada").length;
+    var acertos = painel.querySelectorAll(".q.revelada .alt.ok.escolhida").length;
+    painel.querySelector(".t-resp").textContent = resp + " de " + qs.length + " respondidas";
+    painel.querySelector(".t-acertos").textContent = acertos + (acertos === 1 ? " acerto" : " acertos");
+    painel.querySelector(".t-barra span").style.width = Math.round((resp / qs.length) * 100) + "%";
+    if (resp < qs.length) return;
+
+    var erros = [];
+    qs.forEach(function (art, i) {
+      if (!art.querySelector(".alt.ok.escolhida")) {
+        var nome = art.querySelector(".q-filo");
+        erros.push('<li><a href="#' + art.id + '-ir" data-ir="' + art.id + '">Questão ' + (i + 1) + "</a>" + (nome ? " (" + nome.textContent + ")" : "") + "</li>");
+      }
+    });
+    var msg = acertos >= 8 ? "Excelente! Você está pronto para a prova." :
+              acertos >= 5 ? "Bom resultado. Revise as questões que errou." :
+              "Vale revisar: abra os filósofos das questões que você errou.";
+    var fim = painel.querySelector(".teste-resultado");
+    fim.innerHTML = "<h3>Você acertou " + acertos + " de " + qs.length + "</h3><p>" + msg + "</p>" +
+      (erros.length ? "<p>Para revisar:</p><ul>" + erros.join("") + "</ul>" : "") +
+      '<button class="botao-teste" type="button" data-novo-teste>Fazer outro teste</button>';
+    fim.hidden = false;
+    fim.scrollIntoView({ block: "center" });
+  }
+
   function rota(rolar) {
     var h = decodeURIComponent(location.hash.slice(1));
     if (!h) return;
+    if (h === "teste") {
+      if (atualId !== "teste") novoTeste();
+      if (rolar) {
+        document.getElementById("painel").scrollIntoView({ block: "start" });
+        var tt = document.getElementById("painel-t");
+        if (tt) tt.focus({ preventScroll: true });
+      }
+      return;
+    }
     if (POR_ID[h]) {
       abrir(h);
       if (rolar) {
@@ -374,8 +477,9 @@
   var CHAVE = "filosofia-enem-modo";
 
   function prepararTreino(escopo) {
-    var treino = document.body.classList.contains("treino");
+    var global = document.body.classList.contains("treino");
     escopo.querySelectorAll(".q").forEach(function (art) {
+      var treino = global || !!art.closest(".teste");
       art.classList.remove("revelada");
       var fb = art.querySelector(".feedback");
       if (fb) { fb.textContent = ""; fb.className = "feedback"; }
@@ -409,6 +513,7 @@
         ? "Certo: alternativa " + escolhida.dataset.letra + "."
         : "Você marcou " + escolhida.dataset.letra + ". A correta é " + (correta ? correta.dataset.letra : "") + ".";
     }
+    atualizarPlacar();
   }
 
   function ligarEventos() {
@@ -420,9 +525,21 @@
     document.addEventListener("click", function (ev) {
       var bt = ev.target.closest(".acender");
       if (bt) { var a = bt.closest(".q"); acender(a, !a.classList.contains("acesa")); return; }
-      if (!document.body.classList.contains("treino")) return;
+      if (ev.target.closest("[data-novo-teste]")) {
+        novoTeste();
+        document.getElementById("painel").scrollIntoView({ block: "start" });
+        return;
+      }
+      var ir = ev.target.closest("[data-ir]");
+      if (ir) {
+        ev.preventDefault();
+        var alvoQ = document.getElementById(ir.dataset.ir);
+        if (alvoQ) alvoQ.scrollIntoView({ block: "start" });
+        return;
+      }
       var art = ev.target.closest(".q");
       if (!art) return;
+      if (!document.body.classList.contains("treino") && !art.closest(".teste")) return;
       if (ev.target.closest(".revelar")) { revelar(art, null); return; }
       var alt = ev.target.closest(".alt");
       if (alt && !art.classList.contains("revelada")) revelar(art, alt);

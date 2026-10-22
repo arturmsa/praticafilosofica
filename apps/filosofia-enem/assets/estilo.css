@@ -303,24 +303,25 @@ main { max-width: 68rem; margin: 0 auto; padding: 0 1rem 4rem; }
 .revelar { display: none; }
 
 /* ---------- modo treino ---------- */
-body.treino .q:not(.revelada) .alt.ok { background: transparent; border-color: var(--regra); }
-body.treino .q:not(.revelada) .alt.ok .letra { background: transparent; border-color: var(--regra); color: inherit; }
-body.treino .q:not(.revelada) .selo,
-body.treino .q:not(.revelada) .nota,
-body.treino .q:not(.revelada) .ponte,
-body.treino .q:not(.revelada) .ch-resposta,
-body.treino .q:not(.revelada) .ch-armadilhas { display: none; }
-body.treino .q:not(.revelada) .ch-aviso { display: block; }
-body.treino .q:not(.revelada) .alt .mk-ok { background: none; padding: 0; }
-body.treino .q:not(.revelada) .trap { text-decoration: none; }
-body.treino .q:not(.revelada) .alt { cursor: pointer; border-color: var(--regra); }
-body.treino .q:not(.revelada) .alt:hover { background: var(--caneta-fundo); }
-body.treino .revelar {
+:is(body.treino, .teste) .q:not(.revelada) .alt.ok { background: transparent; border-color: var(--regra); }
+:is(body.treino, .teste) .q:not(.revelada) .alt.ok .letra { background: transparent; border-color: var(--regra); color: inherit; }
+:is(body.treino, .teste) .q:not(.revelada) .selo,
+:is(body.treino, .teste) .q:not(.revelada) .nota,
+:is(body.treino, .teste) .q:not(.revelada) .ponte,
+:is(body.treino, .teste) .q:not(.revelada) .ch-resposta,
+:is(body.treino, .teste) .q:not(.revelada) .ch-armadilhas,
+:is(body.treino, .teste) .q:not(.revelada) .ch-enem { display: none; }
+:is(body.treino, .teste) .q:not(.revelada) .ch-aviso { display: block; }
+:is(body.treino, .teste) .q:not(.revelada) .alt .mk-ok { background: none; padding: 0; }
+:is(body.treino, .teste) .q:not(.revelada) .trap { text-decoration: none; }
+:is(body.treino, .teste) .q:not(.revelada) .alt { cursor: pointer; border-color: var(--regra); }
+:is(body.treino, .teste) .q:not(.revelada) .alt:hover { background: var(--caneta-fundo); }
+:is(body.treino, .teste) .revelar {
   display: inline-block; margin-top: .9rem; font: inherit; font-size: .95rem; cursor: pointer;
   background: none; border: 1.5px solid var(--caneta); color: var(--caneta);
   padding: .3rem .8rem; border-radius: 999px;
 }
-body.treino .q.revelada .revelar { display: none; }
+:is(body.treino, .teste) .q.revelada .revelar { display: none; }
 .alt.escolhida:not(.ok) { border-color: var(--vermelho); }
 .alt.escolhida:not(.ok) .letra { border-color: var(--vermelho); color: var(--vermelho); }
 .feedback { margin: .8rem 0 0; font-weight: 700; }
@@ -378,3 +379,32 @@ body.treino .q.revelada .revelar { display: none; }
   .q { break-inside: avoid; border-color: #bbb; }
 }
 .p-topo { margin-bottom: 1.6rem; }
+
+/* ---------- teste ---------- */
+.teste-placar {
+  position: sticky; top: 4.2rem; z-index: 5;
+  display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1.4rem;
+  background: var(--folha); border: 1px solid var(--regra); border-radius: 10px;
+  padding: .7rem 1rem; margin: 1rem 0 1.4rem; font-weight: 700;
+}
+.teste-placar .t-barra { flex: 1; min-width: 8rem; height: .55rem; background: var(--regra); border-radius: 999px; overflow: hidden; }
+.teste-placar .t-barra span { display: block; height: 100%; width: 0; background: var(--caneta); transition: width .3s ease; }
+.q-filo { font-size: .8rem; font-weight: 700; color: var(--caneta); background: var(--caneta-fundo); padding: .05rem .55rem; border-radius: 999px; }
+.teste-resultado {
+  margin-top: 1.6rem; padding: 1.4rem 1.5rem; border-radius: 10px;
+  background: var(--folha); border: 2px solid var(--caneta);
+}
+.teste-resultado h3 { font-family: var(--serif); font-size: 1.6rem; margin: 0 0 .4rem; }
+.teste-resultado p { margin: 0 0 .8rem; color: var(--tinta-suave); }
+.teste-resultado ul { margin: 0 0 1rem; padding-left: 1.1rem; }
+.botao-teste {
+  font: inherit; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block;
+  background: var(--caneta); color: var(--folha); border: 0; padding: .55rem 1.1rem; border-radius: 999px;
+}
+.botao-teste:hover { filter: brightness(1.1); }
+.chamada-teste { margin: 1.4rem 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: .6rem 1rem; }
+.chamada-teste span { color: var(--tinta-suave); }
+@media (prefers-reduced-motion: reduce) { .teste-placar .t-barra span { transition: none; } }
+
+.ch-enem { display: flex; flex-direction: column; gap: .35rem; margin-top: .5rem; }
+.ch-enem .ch-tit { margin: 0; }

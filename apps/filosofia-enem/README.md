@@ -15,6 +15,8 @@ No ranking, clique no nome de um filósofo: as questões dele abrem logo abaixo,
 
 Ao lado direito de cada questão, a coluna mostra primeiro só as palavras-chave do filósofo (as mesmas do ranking). Logo abaixo, o botão **Mostrar palavras no texto** acende as marcações na questão e abre a lista das palavras do texto, da referência, da resposta certa e das armadilhas.
 
+O **Teste** (menu do topo ou botão na abertura) sorteia 10 questões entre todos os filósofos. O aluno responde na mesma interface, acompanha o placar e no fim vê quantas acertou e quais deve revisar. O botão "Fazer outro teste" sorteia novas questões.
+
 O botão **Modo treino** esconde as respostas: o aluno clica numa alternativa e o site mostra se acertou, com a explicação.
 
 ## Onde fica publicado
