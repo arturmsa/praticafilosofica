@@ -194,7 +194,19 @@ main{max-width:1200px;margin:0 auto;padding:10px 20px 40px}
 <script>
 // ===================== DADOS =====================
 const sel = { artigo: 'o' }; // grupo -> valor escolhido (máximo 1 por grupo)
-const FEMININO = { 'estratégico': 'estratégica', 'significativo': 'significativa' };
+const SING_FEM = { 'estratégico': 'estratégica', 'significativo': 'significativa' };
+const PLURAL = { 'crucial': 'cruciais', 'relevante': 'relevantes', 'significativo': 'significativos', 'estratégico': 'estratégicos', 'indispensável': 'indispensáveis', 'vital': 'vitais', 'importante': 'importantes' };
+const PLURAL_FEM = { 'estratégico': 'estratégicas', 'significativo': 'significativas' };
+
+// concordância do artigo escolhido: nenhum | o | a | os | as
+function artigoInfo() {
+  const a = sel.artigo || 'o';
+  return { a, fem: a === 'a' || a === 'as', plu: a === 'os' || a === 'as' };
+}
+function adjetivo(q, info) {
+  if (!info.plu) return info.fem && SING_FEM[q] ? SING_FEM[q] : q;
+  return info.fem && PLURAL_FEM[q] ? PLURAL_FEM[q] : (PLURAL[q] || q);
+}
 
 const QUALIFICADORES = ['crucial','relevante','significativo','estratégico','indispensável','vital'];
 const AUTORIDADE = ['De acordo com','Conforme','Segundo','Nas palavras de','Como afirma'];
@@ -266,7 +278,7 @@ function formDev(p, rotuloArg, dicaArg) {
 
 // ===================== MONTAGEM DAS ABAS =====================
 $('form-intro').innerHTML =
-  F.chips('Artigo do tema', 'artigo', [['o','O'], ['a','A']]) +
+  F.chips('Artigo do tema', 'artigo', [['nenhum','Nenhum'], ['o','O'], ['a','A'], ['os','OS'], ['as','AS']]) +
   F.input('intro-tema', 'Tema / tópico frasal (sem artigo)', 'Ex: importância do planejamento para a Copa do Mundo de 2014') +
   F.area('intro-tese', 'Tese (sua afirmação principal)', 'Ex: é essencial para o sucesso da realização') +
   F.chips('Qualificadores (selecione 1)', 'qualificador', QUALIFICADORES) +
@@ -301,19 +313,34 @@ $('form-conc').innerHTML =
 function composeIntro() {
   const tema = val('intro-tema'), tese = val('intro-tese'), aut = val('intro-autoridade');
   const a1 = val('intro-arg1'), a2 = val('intro-arg2');
+  const info = artigoInfo();
 
   if (sel.modelo !== undefined) {
-    const mapa = { 'TEMA': tema, 'TESE': tese, 'AUTORIDADE': aut, 'ARGUMENTO 1': a1, 'ARGUMENTO 2': a2 };
-    const art = sel.artigo || 'o';
-    const modelo = MODELOS[sel.modelo].replace(/\b(O|o) \[TEMA\]/g, (m, x) => (x === 'O' ? art.toUpperCase() : art) + ' [TEMA]');
-    return '<p>' + modelo.replace(/\[(TEMA|TESE|AUTORIDADE|ARGUMENTO 1|ARGUMENTO 2)\]/g,
-      (m, k) => ph(mapa[k], k)) + '</p>';
+    let m = MODELOS[sel.modelo];
+    // artigo antes do tema
+    const artTxt = info.a === 'nenhum' ? '' : info.a.toUpperCase();
+    m = m.replace(/\b(O|o) \[TEMA\]/g, (x, c) => {
+      const art = info.a === 'nenhum' ? '' : (c === 'O' ? artTxt : info.a) + ' ';
+      return art + '[TEMA]';
+    });
+    // concordância do verbo no plural
+    if (info.plu) {
+      m = m.replace(' é essencial', ' são essenciais')
+           .replace(' demonstra que', ' demonstram que')
+           .replace(' constitui ', ' constituem ');
+    }
+    // sem artigo, o tema abre a frase nos modelos 1 e 3 e ganha maiúscula
+    const temaModelo = info.a === 'nenhum' && sel.modelo !== '1' ? cap(tema) : tema;
+    const mapa = { 'TEMA': temaModelo, 'TESE': tese, 'AUTORIDADE': aut, 'ARGUMENTO 1': a1, 'ARGUMENTO 2': a2 };
+    return '<p>' + m.replace(/\[(TEMA|TESE|AUTORIDADE|ARGUMENTO 1|ARGUMENTO 2)\]/g,
+      (x, k) => ph(mapa[k], k)) + '</p>';
   }
 
-  const art = sel.artigo || 'o';
-  let qualificador = sel.qualificador || 'importante';
-  if (art === 'a' && FEMININO[qualificador]) qualificador = FEMININO[qualificador];
-  let t = `${art.toUpperCase()} ${ph(tema, 'TEMA')} é ${qualificador} para ${ph(tese, 'TESE')}. `;
+  const q = adjetivo(sel.qualificador || 'importante', info);
+  const verbo = info.plu ? 'são' : 'é';
+  const artTxt = info.a === 'nenhum' ? '' : info.a.toUpperCase() + ' ';
+  const temaTxt = info.a === 'nenhum' ? cap(tema) : tema;
+  let t = `${artTxt}${ph(temaTxt, 'TEMA')} ${verbo} ${q} para ${ph(tese, 'TESE')}. `;
   t += `${pre('autoridade')}${ph(aut, 'AUTORIDADE')}, `;
   t += `${pre('verificacao')}${ph(a1, 'ARGUMENTO 1')}, `;
   t += `${pre('adicao')}${ph(a2, 'ARGUMENTO 2')}`;
