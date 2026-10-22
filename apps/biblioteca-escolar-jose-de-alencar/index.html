@@ -1,705 +1,714 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biblioteca José de Alencar</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f5; color: #333; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        header { text-align: center; margin-bottom: 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { font-size: 32px; font-weight: 600; margin-bottom: 5px; }
-        .subtitle { font-size: 16px; opacity: 0.9; }
-        
-        .tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #ddd; flex-wrap: wrap; background: white; padding: 10px; border-radius: 8px; }
-        .tab-btn { padding: 12px 20px; background: none; border: none; cursor: pointer; font-size: 14px; color: #666; border-bottom: 3px solid transparent; transition: all 0.3s; font-weight: 500; }
-        .tab-btn.active { color: #667eea; border-bottom-color: #667eea; }
-        .tab-btn:hover { color: #667eea; }
-        
-        .tab-content { display: none; background: white; padding: 20px; border-radius: 8px; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s; }
-        
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
-        .form-group { margin-bottom: 16px; }
-        label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #333; }
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-family: inherit; background: #fafafa; color: #333; transition: all 0.2s; }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: #667eea; background: white; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
-        textarea { resize: vertical; min-height: 80px; }
-        
-        .btn { padding: 12px 18px; border: 1px solid #ddd; background: white; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600; color: #333; transition: all 0.2s; }
-        .btn:hover { background: #f9f9f9; border-color: #bbb; }
-        .btn-primary { background: #667eea; color: white; border: none; }
-        .btn-primary:hover { background: #5568d3; box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4); }
-        .btn-danger { background: #ff6b6b; color: white; border: none; }
-        .btn-danger:hover { background: #ff5252; }
-        .btn-success { background: #51cf66; color: white; border: none; }
-        .btn-success:hover { background: #40c057; }
-        
-        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } }
-        
-        .card { background: #fafafa; border: 1px solid #e9e9e9; border-radius: 8px; padding: 18px; margin-bottom: 14px; transition: all 0.2s; }
-        .card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        .card-title { font-weight: 600; font-size: 16px; margin-bottom: 10px; color: #333; }
-        .card-info { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px; margin-bottom: 10px; }
-        .card-label { color: #999; font-size: 12px; }
-        .card-value { font-weight: 500; margin-top: 3px; }
-        
-        .badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-right: 8px; margin-bottom: 10px; }
-        .badge-disponivel { background: #d3f9d8; color: #2f9e44; }
-        .badge-emprestado { background: #fff3bf; color: #d09c00; }
-        .badge-ativo { background: #bfefff; color: #0b7285; }
-        .badge-inativo { background: #e7e7e7; color: #666; }
-        .badge-vencido { background: #ffe7e7; color: #c92a2a; }
-        
-        .table { width: 100%; border-collapse: collapse; font-size: 13px; }
-        .table th { background: #f0f0f0; padding: 12px; text-align: left; font-weight: 600; border-bottom: 2px solid #ddd; }
-        .table td { padding: 12px; border-bottom: 1px solid #e9e9e9; }
-        .table tr:hover { background: #f9f9f9; }
-        
-        .empty-state { text-align: center; padding: 60px 20px; color: #999; }
-        .empty-state-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.6; }
-        
-        .action-group { display: flex; gap: 8px; margin-top: 12px; }
-        .action-group button { flex: 1; }
-        
-        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
-        .modal.active { display: flex; }
-        .modal-content { background: white; border-radius: 12px; padding: 30px; max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
-        .modal-header { font-size: 20px; font-weight: 600; margin-bottom: 20px; color: #333; }
-        .modal-footer { margin-top: 24px; display: flex; gap: 12px; }
-        .modal-footer button { flex: 1; }
-        
-        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 20px; }
-        .stat-card { background: white; border: 2px solid #e9e9e9; border-radius: 8px; padding: 20px; text-align: center; transition: all 0.2s; }
-        .stat-card:hover { border-color: #667eea; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1); }
-        .stat-value { font-size: 32px; font-weight: 700; color: #667eea; }
-        .stat-label { font-size: 13px; color: #999; margin-top: 8px; }
-        
-        .section-title { font-size: 20px; font-weight: 600; margin-bottom: 16px; color: #333; }
-        
-        @media (max-width: 768px) {
-            h1 { font-size: 24px; }
-            .tabs { flex-direction: column; }
-            .tab-btn { width: 100%; text-align: left; }
-            .stats { grid-template-columns: repeat(2, 1fr); }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteca José de Alencar</title>
+<meta name="description" content="Acervo, inscrições e empréstimos da Biblioteca Escolar José de Alencar.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root{
+  --fundo:#faf8f5; --cartao:#ffffff; --tinta:#121212; --apagado:#5d5751;
+  --borda:#e2ddd5; --destaque:#c1272d; --destaque-suave:#f7e2e2;
+  --ok:#2a7d5f; --ok-suave:#e3f2ec; --alerta:#b0651f; --alerta-suave:#f8ecdd;
+}
+:root{color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Inter",system-ui,sans-serif;background:var(--fundo);color:var(--tinta);min-height:100vh;line-height:1.55;font-size:15px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 18px 60px}
+
+header{padding:56px 0 28px;text-align:center}
+.selo{display:inline-block;font-size:.74rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--destaque);padding-bottom:6px;border-bottom:2px solid var(--destaque);margin-bottom:20px}
+h1{font-family:"Fraunces",Georgia,serif;font-weight:800;font-size:clamp(2.2rem,6vw,3.6rem);line-height:1.05;letter-spacing:-.02em}
+h1 span{color:var(--destaque);font-style:italic}
+.sub{margin:14px auto 0;max-width:520px;color:var(--apagado);font-size:1rem}
+
+nav{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 22px;border-top:1px solid var(--tinta);border-bottom:1px solid var(--borda);margin:8px 0 32px;padding:6px 0}
+.tab-btn{font:inherit;font-size:.92rem;font-weight:500;color:var(--apagado);background:none;border:none;cursor:pointer;padding:12px 2px;border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
+.tab-btn:hover{color:var(--tinta)}
+.tab-btn.active{color:var(--tinta);border-bottom-color:var(--destaque)}
+
+.tab-content{display:none}
+.tab-content.active{display:block;animation:surge .3s ease}
+@keyframes surge{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+.topo{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.section-title{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:1.45rem;letter-spacing:-.01em}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:0;border:1px solid var(--borda);border-radius:6px;background:var(--cartao);margin-bottom:36px;overflow:hidden}
+.stat{padding:22px 20px;border-right:1px solid var(--borda)}
+.stat:last-child{border-right:none}
+.stat-value{font-family:"Fraunces",Georgia,serif;font-size:2.1rem;font-weight:600;line-height:1}
+.stat-label{font-size:.8rem;color:var(--apagado);margin-top:8px;text-transform:uppercase;letter-spacing:.08em}
+
+.form-group{margin-bottom:16px}
+label{display:block;font-size:.82rem;font-weight:600;margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 13px;border:1px solid var(--borda);border-radius:4px;font:inherit;font-size:.95rem;background:var(--cartao);color:var(--tinta)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--destaque);box-shadow:0 0 0 3px var(--destaque-suave)}
+textarea{resize:vertical;min-height:80px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:640px){.form-row{grid-template-columns:1fr}}
+
+.btn{font:inherit;font-size:.9rem;font-weight:500;padding:10px 16px;border:1px solid var(--borda);background:var(--cartao);border-radius:4px;cursor:pointer;color:var(--tinta);transition:border-color .2s,background .2s}
+.btn:hover{border-color:var(--tinta)}
+.btn-primary{background:var(--tinta);border-color:var(--tinta);color:#fff}
+.btn-primary:hover{background:var(--destaque);border-color:var(--destaque)}
+.btn-danger{color:var(--destaque);border-color:transparent;background:none;padding:6px 8px}
+.btn-danger:hover{background:var(--destaque-suave);border-color:transparent}
+.btn-success{color:var(--ok);border-color:var(--ok);background:none}
+.btn-success:hover{background:var(--ok-suave)}
+.btn-pequeno{font-size:.8rem;padding:6px 10px}
+
+.lista{border-top:1px solid var(--borda)}
+.item{display:grid;grid-template-columns:1fr auto;gap:16px;padding:20px 4px;border-bottom:1px solid var(--borda);align-items:start}
+.item-titulo{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:1.1rem;line-height:1.3}
+.item-sub{font-size:.88rem;color:var(--apagado);margin-top:2px}
+.item-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 22px;margin-top:12px;font-size:.86rem}
+.info-label{font-size:.72rem;color:var(--apagado);text-transform:uppercase;letter-spacing:.06em}
+.info-valor{font-weight:500;margin-top:2px;word-break:break-word}
+.item-acoes{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.item-obs{grid-column:1/-1;font-size:.88rem;color:var(--apagado);border-left:2px solid var(--borda);padding-left:12px;margin-top:4px}
+
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:600;padding:3px 10px;border-radius:999px;margin-bottom:4px}
+.tag::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.tag-ok{color:var(--ok);background:var(--ok-suave)}
+.tag-alerta{color:var(--alerta);background:var(--alerta-suave)}
+.tag-neutro{color:var(--apagado);background:var(--fundo2,#f0ece6)}
+.tag-perigo{color:var(--destaque);background:var(--destaque-suave)}
+
+.vazio{text-align:center;padding:56px 20px;color:var(--apagado);border:1px dashed var(--borda);border-radius:6px}
+
+table{width:100%;border-collapse:collapse;font-size:.9rem;background:var(--cartao);border:1px solid var(--borda);border-radius:6px;overflow:hidden}
+th{text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--apagado);font-weight:600;padding:12px 14px;border-bottom:1px solid var(--borda);background:var(--fundo)}
+td{padding:14px;border-bottom:1px solid var(--borda)}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--fundo)}
+.tabela-wrap{overflow-x:auto}
+
+.modal{display:none;position:fixed;inset:0;background:rgba(18,18,18,.45);z-index:1000;justify-content:center;align-items:center;padding:20px}
+.modal.active{display:flex}
+.modal-content{background:var(--cartao);border-radius:8px;padding:30px;max-width:520px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:0 20px 50px rgba(0,0,0,.18)}
+.modal-header{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:1.4rem;margin-bottom:22px}
+.modal-footer{margin-top:24px;display:flex;gap:12px;justify-content:flex-end}
+.info-box{background:var(--fundo);border-left:2px solid var(--destaque);padding:12px 14px;border-radius:2px;margin-bottom:16px;font-size:.88rem}
+
+@media (max-width:640px){
+  header{padding:40px 0 22px}
+  .stat{border-right:none;border-bottom:1px solid var(--borda)}
+  .stat:last-child{border-bottom:none}
+  .item{grid-template-columns:1fr}
+  .item-acoes{flex-direction:row;align-items:center;justify-content:flex-start}
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>📚 Biblioteca José de Alencar</h1>
-            <p class="subtitle">Sistema de Gestão de Acervo, Inscrições e Empréstimos</p>
-        </header>
-        
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab(event, 'dashboard')">📊 Dashboard</button>
-            <button class="tab-btn" onclick="switchTab(event, 'livros')">📖 Livros</button>
-            <button class="tab-btn" onclick="switchTab(event, 'inscricao')">✍️ Inscrições</button>
-            <button class="tab-btn" onclick="switchTab(event, 'emprestimo')">🔄 Empréstimos</button>
-            <button class="tab-btn" onclick="switchTab(event, 'membros')">👥 Membros</button>
-        </div>
-        
-        <!-- DASHBOARD -->
-        <div id="dashboard" class="tab-content active">
-            <div class="stats">
-                <div class="stat-card">
-                    <div class="stat-value" id="stat-livros">0</div>
-                    <div class="stat-label">Livros no Acervo</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="stat-disponiveis">0</div>
-                    <div class="stat-label">Disponíveis</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="stat-emprestados">0</div>
-                    <div class="stat-label">Emprestados</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="stat-membros">0</div>
-                    <div class="stat-label">Membros Ativos</div>
-                </div>
-            </div>
-            
-            <h2 class="section-title">⚠️ Empréstimos Vencidos</h2>
-            <div id="vencidos-list"></div>
-        </div>
-        
-        <!-- LIVROS -->
-        <div id="livros" class="tab-content">
-            <div style="margin-bottom: 20px;">
-                <button class="btn btn-primary" onclick="openLivroModal()">+ Adicionar Livro</button>
-            </div>
-            <div id="livros-list"></div>
-        </div>
-        
-        <!-- INSCRIÇÕES -->
-        <div id="inscricao" class="tab-content">
-            <div style="margin-bottom: 20px;">
-                <button class="btn btn-primary" onclick="openInscricaoModal()">+ Nova Inscrição</button>
-            </div>
-            <div id="inscricoes-list"></div>
-        </div>
-        
-        <!-- EMPRÉSTIMOS -->
-        <div id="emprestimo" class="tab-content">
-            <div style="margin-bottom: 20px;">
-                <button class="btn btn-primary" onclick="openEmprestimoModal()">+ Novo Empréstimo</button>
-            </div>
-            <div id="emprestimos-list"></div>
-        </div>
-        
-        <!-- MEMBROS -->
-        <div id="membros" class="tab-content">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Email</th>
-                        <th>Telefone</th>
-                        <th>Status</th>
-                        <th>Data Inscrição</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="membros-table"></tbody>
-            </table>
-        </div>
-    </div>
-    
-    <!-- MODAL LIVRO -->
-    <div id="livroModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">➕ Adicionar Livro</div>
-            <div class="form-group">
-                <label>Título *</label>
-                <input type="text" id="livro-titulo" placeholder="Ex: O Guarani">
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Autor *</label>
-                    <input type="text" id="livro-autor" placeholder="Ex: José de Alencar">
-                </div>
-                <div class="form-group">
-                    <label>ISBN</label>
-                    <input type="text" id="livro-isbn" placeholder="13 dígitos">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Ano Publicação</label>
-                    <input type="number" id="livro-ano" placeholder="2024">
-                </div>
-                <div class="form-group">
-                    <label>Editora</label>
-                    <input type="text" id="livro-editora">
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Categoria</label>
-                <select id="livro-categoria">
-                    <option>Romance</option>
-                    <option>Poesia</option>
-                    <option>Ficção Científica</option>
-                    <option>Filosofia</option>
-                    <option>História</option>
-                    <option>Educação</option>
-                    <option>Técnico</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Quantidade</label>
-                <input type="number" id="livro-quantidade" value="1" min="1">
-            </div>
-            <div class="modal-footer">
-                <button class="btn" onclick="closeLivroModal()">Cancelar</button>
-                <button class="btn btn-primary" onclick="saveLivro()">Salvar</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- MODAL INSCRIÇÃO -->
-    <div id="inscricaoModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">✍️ Ficha de Inscrição</div>
-            <div class="form-group">
-                <label>Nome Completo *</label>
-                <input type="text" id="membro-nome" placeholder="Ex: João da Silva">
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Email *</label>
-                    <input type="email" id="membro-email" placeholder="joao@email.com">
-                </div>
-                <div class="form-group">
-                    <label>Telefone</label>
-                    <input type="tel" id="membro-telefone" placeholder="(85) 98765-4321">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>CPF</label>
-                    <input type="text" id="membro-cpf" placeholder="123.456.789-00">
-                </div>
-                <div class="form-group">
-                    <label>Endereço</label>
-                    <input type="text" id="membro-endereco" placeholder="Rua, número">
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Observações</label>
-                <textarea id="membro-obs" placeholder="Informações adicionais..."></textarea>
-            </div>
-            <div class="modal-footer">
-                <button class="btn" onclick="closeInscricaoModal()">Cancelar</button>
-                <button class="btn btn-primary" onclick="saveInscricao()">Confirmar Inscrição</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- MODAL EMPRÉSTIMO -->
-    <div id="emprestimoModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">🔄 Registrar Empréstimo</div>
-            <div class="form-group">
-                <label>Membro *</label>
-                <select id="emprestimo-membro" onchange="updateMemberInfo()">
-                    <option value="">Selecione um membro</option>
-                </select>
-            </div>
-            <div id="memberInfo" style="display:none; background: #f0f7ff; padding: 14px; border-radius: 6px; margin-bottom: 16px; font-size: 13px; border-left: 4px solid #667eea;">
-                <div><strong>📧 Email:</strong> <span id="memberEmail"></span></div>
-                <div><strong>📱 Telefone:</strong> <span id="memberPhone"></span></div>
-            </div>
-            <div class="form-group">
-                <label>Livro *</label>
-                <select id="emprestimo-livro">
-                    <option value="">Selecione um livro</option>
-                </select>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Data Empréstimo *</label>
-                    <input type="date" id="emprestimo-data">
-                </div>
-                <div class="form-group">
-                    <label>Data Devolução Prevista *</label>
-                    <input type="date" id="emprestimo-devolucao">
-                </div>
-            </div>
-            <div class="form-group">
-                <label>Observações</label>
-                <textarea id="emprestimo-obs" placeholder="Condições do livro, etc..."></textarea>
-            </div>
-            <div class="modal-footer">
-                <button class="btn" onclick="closeEmprestimoModal()">Cancelar</button>
-                <button class="btn btn-primary" onclick="saveEmprestimo()">Registrar Empréstimo</button>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        // Data Storage
-        let biblioteca = {
-            livros: [],
-            membros: [],
-            emprestimos: []
-        };
-        
-        // Initialize with default data
-        function initData() {
-            biblioteca.livros = [
-                { id: 1, titulo: 'O Guarani', autor: 'José de Alencar', isbn: '9788535916140', ano: 1857, editora: 'Companhia das Letras', categoria: 'Romance', quantidade: 3, disponivel: 3 },
-                { id: 2, titulo: 'Iracema', autor: 'José de Alencar', isbn: '9788535916157', ano: 1865, editora: 'Companhia das Letras', categoria: 'Romance', quantidade: 2, disponivel: 1 },
-                { id: 3, titulo: 'Dom Casmurro', autor: 'Machado de Assis', isbn: '9788535916164', ano: 1899, editora: 'Companhia das Letras', categoria: 'Romance', quantidade: 2, disponivel: 2 },
-                { id: 4, titulo: 'Memórias Póstumas de Brás Cubas', autor: 'Machado de Assis', isbn: '9788535916171', ano: 1881, editora: 'Companhia das Letras', categoria: 'Romance', quantidade: 1, disponivel: 1 },
-                { id: 5, titulo: 'Grande Sertão: Veredas', autor: 'Guimarães Rosa', isbn: '9788535916188', ano: 1956, editora: 'Nova Fronteira', categoria: 'Romance', quantidade: 2, disponivel: 2 },
-                { id: 6, titulo: 'Capitães da Areia', autor: 'Jorge Amado', isbn: '9788535916195', ano: 1937, editora: 'Companhia das Letras', categoria: 'Romance', quantidade: 2, disponivel: 2 }
-            ];
-            
-            biblioteca.membros = [
-                { id: 1, nome: 'Maria Silva', email: 'maria@email.com', telefone: '(85) 98765-4321', cpf: '123.456.789-00', endereco: 'Rua A, 100', status: 'ativo', dataInscricao: '2024-01-15' },
-                { id: 2, nome: 'João Santos', email: 'joao@email.com', telefone: '(85) 99876-5432', cpf: '987.654.321-00', endereco: 'Rua B, 200', status: 'ativo', dataInscricao: '2024-02-10' },
-                { id: 3, nome: 'Ana Costa', email: 'ana@email.com', telefone: '(85) 97654-3210', cpf: '456.789.123-00', endereco: 'Rua C, 300', status: 'ativo', dataInscricao: '2024-03-05' }
-            ];
-            
-            biblioteca.emprestimos = [
-                { id: 1, membroId: 1, membroNome: 'Maria Silva', livroId: 2, livroTitulo: 'Iracema', dataEmprestimo: '2024-07-01', dataDevolucaoPrevista: '2024-07-15', dataDevolucao: null, status: 'ativo' },
-                { id: 2, membroId: 2, membroNome: 'João Santos', livroId: 4, livroTitulo: 'Memórias Póstumas de Brás Cubas', dataEmprestimo: '2024-07-05', dataDevolucaoPrevista: '2024-07-19', dataDevolucao: null, status: 'ativo' }
-            ];
-            
-            loadData();
-        }
-        
-        // VALIDAÇÕES
-        function validarCPF(cpf) {
-            const n = cpf.replace(/\D/g, '');
-            if (n.length !== 11 || /^(\d)\1{10}$/.test(n)) return false;
-            for (let t = 9; t < 11; t++) {
-                let soma = 0;
-                for (let i = 0; i < t; i++) soma += parseInt(n[i]) * (t + 1 - i);
-                const digito = ((soma * 10) % 11) % 10;
-                if (digito !== parseInt(n[t])) return false;
-            }
-            return true;
-        }
+<div class="wrap">
+  <header>
+    <span class="selo">Biblioteca escolar</span>
+    <h1>Biblioteca <span>José de Alencar</span></h1>
+    <p class="sub">Acervo, inscrições e empréstimos em um só lugar.</p>
+  </header>
 
-        function validarEmail(email) {
-            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-        }
+  <nav>
+    <button class="tab-btn active" onclick="switchTab(event, 'dashboard')">Painel</button>
+    <button class="tab-btn" onclick="switchTab(event, 'livros')">Acervo</button>
+    <button class="tab-btn" onclick="switchTab(event, 'inscricao')">Inscrições</button>
+    <button class="tab-btn" onclick="switchTab(event, 'emprestimo')">Empréstimos</button>
+    <button class="tab-btn" onclick="switchTab(event, 'membros')">Membros</button>
+  </nav>
 
-        // ISBN-13 opcional: vazio é aceito; se preenchido, precisa de 13 dígitos e dígito verificador correto
-        function validarISBN(isbn) {
-            if (!isbn) return true;
-            if (!/^\d{13}$/.test(isbn)) return false;
+  <!-- PAINEL -->
+  <section id="dashboard" class="tab-content active">
+    <div class="stats">
+      <div class="stat"><div class="stat-value" id="stat-livros">0</div><div class="stat-label">Exemplares</div></div>
+      <div class="stat"><div class="stat-value" id="stat-disponiveis">0</div><div class="stat-label">Disponíveis</div></div>
+      <div class="stat"><div class="stat-value" id="stat-emprestados">0</div><div class="stat-label">Emprestados</div></div>
+      <div class="stat"><div class="stat-value" id="stat-membros">0</div><div class="stat-label">Membros ativos</div></div>
+    </div>
+    <div class="topo"><h2 class="section-title">Empréstimos vencidos</h2></div>
+    <div id="vencidos-list" class="lista"></div>
+  </section>
+
+  <!-- ACERVO -->
+  <section id="livros" class="tab-content">
+    <div class="topo">
+      <h2 class="section-title">Acervo</h2>
+      <button class="btn btn-primary" onclick="openLivroModal()">Adicionar livro</button>
+    </div>
+    <div id="livros-list" class="lista"></div>
+  </section>
+
+  <!-- INSCRIÇÕES -->
+  <section id="inscricao" class="tab-content">
+    <div class="topo">
+      <h2 class="section-title">Inscrições</h2>
+      <button class="btn btn-primary" onclick="openInscricaoModal()">Nova inscrição</button>
+    </div>
+    <div id="inscricoes-list" class="lista"></div>
+  </section>
+
+  <!-- EMPRÉSTIMOS -->
+  <section id="emprestimo" class="tab-content">
+    <div class="topo">
+      <h2 class="section-title">Empréstimos</h2>
+      <button class="btn btn-primary" onclick="openEmprestimoModal()">Novo empréstimo</button>
+    </div>
+    <div id="emprestimos-list" class="lista"></div>
+  </section>
+
+  <!-- MEMBROS -->
+  <section id="membros" class="tab-content">
+    <div class="topo"><h2 class="section-title">Membros</h2></div>
+    <div class="tabela-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>E-mail</th>
+            <th>Telefone</th>
+            <th>Situação</th>
+            <th>Inscrição</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="membros-table"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<!-- MODAL LIVRO -->
+<div id="livroModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">Adicionar livro</div>
+    <div class="form-group">
+      <label for="livro-titulo">Título *</label>
+      <input type="text" id="livro-titulo" placeholder="Ex: O Guarani">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="livro-autor">Autor *</label>
+        <input type="text" id="livro-autor" placeholder="Ex: José de Alencar">
+      </div>
+      <div class="form-group">
+        <label for="livro-isbn">ISBN</label>
+        <input type="text" id="livro-isbn" placeholder="13 dígitos">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="livro-ano">Ano de publicação</label>
+        <input type="number" id="livro-ano" placeholder="2024">
+      </div>
+      <div class="form-group">
+        <label for="livro-editora">Editora</label>
+        <input type="text" id="livro-editora">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="livro-categoria">Categoria</label>
+        <select id="livro-categoria">
+          <option>Romance</option>
+          <option>Poesia</option>
+          <option>Ficção Científica</option>
+          <option>Filosofia</option>
+          <option>História</option>
+          <option>Educação</option>
+          <option>Técnico</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="livro-quantidade">Quantidade</label>
+        <input type="number" id="livro-quantidade" value="1" min="1">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeLivroModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveLivro()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL INSCRIÇÃO -->
+<div id="inscricaoModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">Ficha de inscrição</div>
+    <div class="form-group">
+      <label for="membro-nome">Nome completo *</label>
+      <input type="text" id="membro-nome" placeholder="Ex: João da Silva">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="membro-email">E-mail *</label>
+        <input type="email" id="membro-email" placeholder="joao@email.com">
+      </div>
+      <div class="form-group">
+        <label for="membro-telefone">Telefone</label>
+        <input type="tel" id="membro-telefone" placeholder="(85) 98765-4321">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="membro-cpf">CPF</label>
+        <input type="text" id="membro-cpf" placeholder="000.000.000-00">
+      </div>
+      <div class="form-group">
+        <label for="membro-endereco">Endereço</label>
+        <input type="text" id="membro-endereco" placeholder="Rua, número">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="membro-obs">Observações</label>
+      <textarea id="membro-obs" placeholder="Informações adicionais..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeInscricaoModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveInscricao()">Confirmar inscrição</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EMPRÉSTIMO -->
+<div id="emprestimoModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">Registrar empréstimo</div>
+    <div class="form-group">
+      <label for="emprestimo-membro">Membro *</label>
+      <select id="emprestimo-membro" onchange="updateMemberInfo()">
+        <option value="">Selecione um membro</option>
+      </select>
+    </div>
+    <div id="memberInfo" class="info-box" style="display:none;">
+      <div><strong>E-mail:</strong> <span id="memberEmail"></span></div>
+      <div><strong>Telefone:</strong> <span id="memberPhone"></span></div>
+    </div>
+    <div class="form-group">
+      <label for="emprestimo-livro">Livro *</label>
+      <select id="emprestimo-livro">
+        <option value="">Selecione um livro</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="emprestimo-data">Data do empréstimo *</label>
+        <input type="date" id="emprestimo-data">
+      </div>
+      <div class="form-group">
+        <label for="emprestimo-devolucao">Devolução prevista *</label>
+        <input type="date" id="emprestimo-devolucao">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="emprestimo-obs">Observações</label>
+      <textarea id="emprestimo-obs" placeholder="Condições do livro, etc..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeEmprestimoModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEmprestimo()">Registrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+    // Data Storage
+    let biblioteca = {
+        livros: [],
+        membros: [],
+        emprestimos: []
+    };
+
+    // Initialize with default data
+    function initData() {
+        biblioteca.livros = [
+            { id: 1, titulo: 'O Guarani', autor: 'José de Alencar', isbn: '9788535916140', ano: 1857, editora: 'Companhia das Letras', categoria: 'Romance', quantidade: 3, disponivel: 3 },
+            { id: 2, titulo: 'Iracema', autor: 'José de Alencar', isbn: '9788535916157', ano: 1865, editora: 'Companhia das Letras', categoria: 'Romance', quantidade: 2, disponivel: 1 },
+            { id: 3, titulo: 'Dom Casmurro', autor: 'Machado de Assis', isbn: '9788535916164', ano: 1899, editora: 'Companhia das Letras', categoria: 'Romance', quantidade: 2, disponivel: 2 },
+            { id: 4, titulo: 'Memórias Póstumas de Brás Cubas', autor: 'Machado de Assis', isbn: '9788535916171', ano: 1881, editora: 'Companhia das Letras', categoria: 'Romance', quantidade: 1, disponivel: 1 },
+            { id: 5, titulo: 'Grande Sertão: Veredas', autor: 'Guimarães Rosa', isbn: '9788535916188', ano: 1956, editora: 'Nova Fronteira', categoria: 'Romance', quantidade: 2, disponivel: 2 },
+            { id: 6, titulo: 'Capitães da Areia', autor: 'Jorge Amado', isbn: '9788535916195', ano: 1937, editora: 'Companhia das Letras', categoria: 'Romance', quantidade: 2, disponivel: 2 }
+        ];
+
+        biblioteca.membros = [
+            { id: 1, nome: 'Maria Silva', email: 'maria@email.com', telefone: '(85) 98765-4321', cpf: '123.456.789-00', endereco: 'Rua A, 100', status: 'ativo', dataInscricao: '2024-01-15' },
+            { id: 2, nome: 'João Santos', email: 'joao@email.com', telefone: '(85) 99876-5432', cpf: '987.654.321-00', endereco: 'Rua B, 200', status: 'ativo', dataInscricao: '2024-02-10' },
+            { id: 3, nome: 'Ana Costa', email: 'ana@email.com', telefone: '(85) 97654-3210', cpf: '456.789.123-00', endereco: 'Rua C, 300', status: 'ativo', dataInscricao: '2024-03-05' }
+        ];
+
+        biblioteca.emprestimos = [
+            { id: 1, membroId: 1, membroNome: 'Maria Silva', livroId: 2, livroTitulo: 'Iracema', dataEmprestimo: '2024-07-01', dataDevolucaoPrevista: '2024-07-15', dataDevolucao: null, status: 'ativo' },
+            { id: 2, membroId: 2, membroNome: 'João Santos', livroId: 4, livroTitulo: 'Memórias Póstumas de Brás Cubas', dataEmprestimo: '2024-07-05', dataDevolucaoPrevista: '2024-07-19', dataDevolucao: null, status: 'ativo' }
+        ];
+
+        loadData();
+    }
+
+    // VALIDAÇÕES
+    function validarCPF(cpf) {
+        const n = cpf.replace(/\D/g, '');
+        if (n.length !== 11 || /^(\d)\1{10}$/.test(n)) return false;
+        for (let t = 9; t < 11; t++) {
             let soma = 0;
-            for (let i = 0; i < 12; i++) soma += parseInt(isbn[i]) * (i % 2 === 0 ? 1 : 3);
-            return (10 - (soma % 10)) % 10 === parseInt(isbn[12]);
+            for (let i = 0; i < t; i++) soma += parseInt(n[i]) * (t + 1 - i);
+            const digito = ((soma * 10) % 11) % 10;
+            if (digito !== parseInt(n[t])) return false;
         }
+        return true;
+    }
 
-        function saveData() {
-            localStorage.setItem('biblioteca', JSON.stringify(biblioteca));
-        }
-        
-        function loadData() {
-            const saved = localStorage.getItem('biblioteca');
-            if (saved) biblioteca = JSON.parse(saved);
-            renderAll();
-        }
-        
-        function switchTab(event, tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
-        
-        // DASHBOARD
-        function updateStats() {
-            const totalLivros = biblioteca.livros.reduce((sum, l) => sum + l.quantidade, 0);
-            const totalDisponiveis = biblioteca.livros.reduce((sum, l) => sum + l.disponivel, 0);
-            const totalEmprestados = totalLivros - totalDisponiveis;
-            const totalMembros = biblioteca.membros.filter(m => m.status === 'ativo').length;
-            
-            document.getElementById('stat-livros').textContent = totalLivros;
-            document.getElementById('stat-disponiveis').textContent = totalDisponiveis;
-            document.getElementById('stat-emprestados').textContent = totalEmprestados;
-            document.getElementById('stat-membros').textContent = totalMembros;
-            
-            // Vencidos
-            const hoje = new Date().toISOString().split('T')[0];
-            const vencidos = biblioteca.emprestimos.filter(e => e.status === 'ativo' && e.dataDevolucaoPrevista < hoje);
-            
-            let html = '';
-            if (vencidos.length === 0) {
-                html = '<div class="empty-state"><div class="empty-state-icon">✓</div>Nenhum empréstimo vencido</div>';
-            } else {
-                html = vencidos.map(e => {
-                    const diasVencidos = Math.floor((new Date(hoje) - new Date(e.dataDevolucaoPrevista)) / 86400000);
-                    return `
-                    <div class="card" style="border-left: 4px solid #ff6b6b;">
-                        <div class="card-title">📕 ${e.livroTitulo}</div>
-                        <div style="margin-bottom: 8px;">
-                            <span class="badge badge-vencido">⚠️ Vencido há ${diasVencidos} dias</span>
-                        </div>
-                        <div class="card-info">
-                            <div class="card-info-item"><div class="card-label">Membro</div><div class="card-value">${e.membroNome}</div></div>
-                            <div class="card-info-item"><div class="card-label">Devolução Prevista</div><div class="card-value">${e.dataDevolucaoPrevista}</div></div>
-                        </div>
-                    </div>
-                `;
-                }).join('');
-            }
-            document.getElementById('vencidos-list').innerHTML = html;
-        }
-        
-        // LIVROS
-        function renderLivros() {
-            const html = biblioteca.livros.map(livro => `
-                <div class="card">
-                    <div class="card-title">📖 ${livro.titulo}</div>
-                    <div style="margin-bottom: 8px;">
-                        <span class="badge ${livro.disponivel > 0 ? 'badge-disponivel' : 'badge-emprestado'}">
-                            ${livro.disponivel > 0 ? '✓ Disponível' : '✗ Indisponível'} (${livro.disponivel}/${livro.quantidade})
-                        </span>
-                    </div>
-                    <div class="card-info">
-                        <div class="card-info-item"><div class="card-label">Autor</div><div class="card-value">${livro.autor}</div></div>
-                        <div class="card-info-item"><div class="card-label">Categoria</div><div class="card-value">${livro.categoria}</div></div>
-                        <div class="card-info-item"><div class="card-label">Ano</div><div class="card-value">${livro.ano}</div></div>
-                        <div class="card-info-item"><div class="card-label">Editora</div><div class="card-value">${livro.editora}</div></div>
-                    </div>
-                    <div class="action-group">
-                        <button class="btn btn-danger" onclick="deleteLivro(${livro.id})">🗑️ Remover</button>
-                    </div>
-                </div>
-            `).join('');
-            document.getElementById('livros-list').innerHTML = html || '<div class="empty-state"><div class="empty-state-icon">📚</div>Nenhum livro cadastrado</div>';
-        }
-        
-        function openLivroModal() {
-            document.getElementById('livroModal').classList.add('active');
-        }
-        
-        function closeLivroModal() {
-            document.getElementById('livroModal').classList.remove('active');
-            document.getElementById('livro-titulo').value = '';
-            document.getElementById('livro-autor').value = '';
-            document.getElementById('livro-isbn').value = '';
-            document.getElementById('livro-ano').value = '';
-            document.getElementById('livro-editora').value = '';
-            document.getElementById('livro-quantidade').value = '1';
-        }
-        
-        function saveLivro() {
-            const titulo = document.getElementById('livro-titulo').value;
-            const autor = document.getElementById('livro-autor').value;
-            if (!titulo || !autor) { alert('Título e Autor são obrigatórios'); return; }
-            const isbn = document.getElementById('livro-isbn').value.replace(/[-\s]/g, '');
-            const quantidade = parseInt(document.getElementById('livro-quantidade').value);
-            if (!(quantidade >= 1)) { alert('A quantidade deve ser pelo menos 1'); return; }
-            if (!validarISBN(isbn)) { alert('ISBN inválido. Use 13 dígitos corretos ou deixe em branco'); return; }
-            if (isbn && biblioteca.livros.some(l => l.isbn === isbn)) { alert('Já existe um livro com este ISBN'); return; }
+    function validarEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
 
-            const novoLivro = {
-                id: Math.max(...biblioteca.livros.map(l => l.id), 0) + 1,
-                titulo,
-                autor,
-                isbn,
-                ano: parseInt(document.getElementById('livro-ano').value) || new Date().getFullYear(),
-                editora: document.getElementById('livro-editora').value,
-                categoria: document.getElementById('livro-categoria').value,
-                quantidade: parseInt(document.getElementById('livro-quantidade').value),
-                disponivel: parseInt(document.getElementById('livro-quantidade').value)
-            };
-            
-            biblioteca.livros.push(novoLivro);
-            saveData();
-            closeLivroModal();
-        }
-        
-        function deleteLivro(id) {
-            if (biblioteca.emprestimos.some(e => e.status === 'ativo' && e.livroId === id)) { alert('Este livro tem empréstimo ativo e não pode ser removido'); return; }
-            if (confirm('Remover este livro?')) {
-                biblioteca.livros = biblioteca.livros.filter(l => l.id !== id);
-                saveData();
-            }
-        }
-        
-        // MEMBROS/INSCRIÇÕES
-        function renderInscricoes() {
-            const html = biblioteca.membros.map(m => `
-                <div class="card">
-                    <div class="card-title">👤 ${m.nome}</div>
-                    <div style="margin-bottom: 8px;">
-                        <span class="badge ${m.status === 'ativo' ? 'badge-ativo' : 'badge-inativo'}">
-                            ${m.status === 'ativo' ? '✓ Ativo' : '✗ Inativo'}
-                        </span>
+    // ISBN-13 opcional: vazio é aceito; se preenchido, precisa de 13 dígitos e dígito verificador correto
+    function validarISBN(isbn) {
+        if (!isbn) return true;
+        if (!/^\d{13}$/.test(isbn)) return false;
+        let soma = 0;
+        for (let i = 0; i < 12; i++) soma += parseInt(isbn[i]) * (i % 2 === 0 ? 1 : 3);
+        return (10 - (soma % 10)) % 10 === parseInt(isbn[12]);
+    }
+
+    function saveData() {
+        localStorage.setItem('biblioteca', JSON.stringify(biblioteca));
+    }
+
+    function loadData() {
+        const saved = localStorage.getItem('biblioteca');
+        if (saved) biblioteca = JSON.parse(saved);
+        renderAll();
+    }
+
+    function switchTab(event, tabName) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        document.getElementById(tabName).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    // PAINEL
+    function updateStats() {
+        const totalLivros = biblioteca.livros.reduce((sum, l) => sum + l.quantidade, 0);
+        const totalDisponiveis = biblioteca.livros.reduce((sum, l) => sum + l.disponivel, 0);
+        const totalEmprestados = totalLivros - totalDisponiveis;
+        const totalMembros = biblioteca.membros.filter(m => m.status === 'ativo').length;
+
+        document.getElementById('stat-livros').textContent = totalLivros;
+        document.getElementById('stat-disponiveis').textContent = totalDisponiveis;
+        document.getElementById('stat-emprestados').textContent = totalEmprestados;
+        document.getElementById('stat-membros').textContent = totalMembros;
+
+        const hoje = new Date().toISOString().split('T')[0];
+        const vencidos = biblioteca.emprestimos.filter(e => e.status === 'ativo' && e.dataDevolucaoPrevista < hoje);
+
+        let html = '';
+        if (vencidos.length === 0) {
+            html = '<div class="vazio">Nenhum empréstimo vencido.</div>';
+        } else {
+            html = vencidos.map(e => {
+                const diasVencidos = Math.floor((new Date(hoje) - new Date(e.dataDevolucaoPrevista)) / 86400000);
+                return `
+                <div class="item">
+                    <div>
+                        <span class="tag tag-perigo">Vencido há ${diasVencidos} dias</span>
+                        <div class="item-titulo">${e.livroTitulo}</div>
+                        <div class="item-sub">${e.membroNome}</div>
+                        <div class="item-info">
+                            <div><div class="info-label">Devolução prevista</div><div class="info-valor">${e.dataDevolucaoPrevista}</div></div>
+                        </div>
                     </div>
-                    <div class="card-info">
-                        <div class="card-info-item"><div class="card-label">Email</div><div class="card-value">${m.email}</div></div>
-                        <div class="card-info-item"><div class="card-label">Telefone</div><div class="card-value">${m.telefone || '-'}</div></div>
-                        <div class="card-info-item"><div class="card-label">CPF</div><div class="card-value">${m.cpf || '-'}</div></div>
-                        <div class="card-info-item"><div class="card-label">Inscrição</div><div class="card-value">${m.dataInscricao}</div></div>
-                        ${m.obs ? `<div class="card-info-item" style="grid-column: 1 / -1;"><div class="card-label">Observações</div><div class="card-value">${m.obs}</div></div>` : ''}
-                    </div>
-                    <div class="action-group">
-                        <button class="btn btn-danger" onclick="deleteMembro(${m.id})">🗑️ Remover</button>
+                </div>`;
+            }).join('');
+        }
+        document.getElementById('vencidos-list').innerHTML = html;
+    }
+
+    // ACERVO
+    function renderLivros() {
+        const html = biblioteca.livros.map(livro => `
+            <div class="item">
+                <div>
+                    <span class="tag ${livro.disponivel > 0 ? 'tag-ok' : 'tag-alerta'}">
+                        ${livro.disponivel > 0 ? 'Disponível' : 'Indisponível'} (${livro.disponivel}/${livro.quantidade})
+                    </span>
+                    <div class="item-titulo">${livro.titulo}</div>
+                    <div class="item-sub">${livro.autor}</div>
+                    <div class="item-info">
+                        <div><div class="info-label">Categoria</div><div class="info-valor">${livro.categoria}</div></div>
+                        <div><div class="info-label">Ano</div><div class="info-valor">${livro.ano}</div></div>
+                        <div><div class="info-label">Editora</div><div class="info-valor">${livro.editora || '-'}</div></div>
+                        <div><div class="info-label">ISBN</div><div class="info-valor">${livro.isbn || '-'}</div></div>
                     </div>
                 </div>
-            `).join('');
-            document.getElementById('inscricoes-list').innerHTML = html || '<div class="empty-state"><div class="empty-state-icon">✍️</div>Nenhum membro inscrito</div>';
-        }
-        
-        function renderMembrosTable() {
-            const html = biblioteca.membros.map(m => `
-                <tr>
-                    <td><strong>${m.nome}</strong></td>
-                    <td>${m.email}</td>
-                    <td>${m.telefone || '-'}</td>
-                    <td><span class="badge ${m.status === 'ativo' ? 'badge-ativo' : 'badge-inativo'}">${m.status}</span></td>
-                    <td>${m.dataInscricao}</td>
-                    <td>
-                        <button class="btn" onclick="deleteMembro(${m.id})" style="padding: 8px 12px; font-size: 12px;">🗑️ Remover</button>
-                    </td>
-                </tr>
-            `).join('');
-            document.getElementById('membros-table').innerHTML = html || '<tr><td colspan="6" style="text-align: center; padding: 40px;">Nenhum membro</td></tr>';
-        }
-        
-        function openInscricaoModal() {
-            document.getElementById('inscricaoModal').classList.add('active');
-        }
-        
-        function closeInscricaoModal() {
-            document.getElementById('inscricaoModal').classList.remove('active');
-            document.getElementById('membro-nome').value = '';
-            document.getElementById('membro-email').value = '';
-            document.getElementById('membro-telefone').value = '';
-            document.getElementById('membro-cpf').value = '';
-            document.getElementById('membro-endereco').value = '';
-            document.getElementById('membro-obs').value = '';
-        }
-        
-        function saveInscricao() {
-            const nome = document.getElementById('membro-nome').value;
-            const email = document.getElementById('membro-email').value;
-            const cpf = document.getElementById('membro-cpf').value.trim();
-            if (!nome || !email) { alert('Nome e Email são obrigatórios'); return; }
-            if (!validarEmail(email)) { alert('E-mail inválido'); return; }
-            if (cpf && !validarCPF(cpf)) { alert('CPF inválido'); return; }
-            if (biblioteca.membros.some(m => m.email.toLowerCase() === email.toLowerCase())) { alert('Já existe um membro com este e-mail'); return; }
-            if (cpf && biblioteca.membros.some(m => m.cpf === cpf)) { alert('Já existe um membro com este CPF'); return; }
-            
-            const novoMembro = {
-                id: Math.max(...biblioteca.membros.map(m => m.id), 0) + 1,
-                nome,
-                email,
-                telefone: document.getElementById('membro-telefone').value,
-                cpf: document.getElementById('membro-cpf').value,
-                endereco: document.getElementById('membro-endereco').value,
-                obs: document.getElementById('membro-obs').value.trim(),
-                status: 'ativo',
-                dataInscricao: new Date().toISOString().split('T')[0]
-            };
-            
-            biblioteca.membros.push(novoMembro);
-            saveData();
-            closeInscricaoModal();
-        }
-        
-        function deleteMembro(id) {
-            if (biblioteca.emprestimos.some(e => e.status === 'ativo' && e.membroId === id)) { alert('Este membro tem empréstimo ativo e não pode ser removido'); return; }
-            if (confirm('Remover este membro?')) {
-                biblioteca.membros = biblioteca.membros.filter(m => m.id !== id);
-                saveData();
-            }
-        }
-        
-        // EMPRÉSTIMOS
-        function renderEmprestimos() {
-            const html = biblioteca.emprestimos.map(e => `
-                <div class="card">
-                    <div class="card-title">📕 ${e.livroTitulo} → ${e.membroNome}</div>
-                    <div style="margin-bottom: 8px;">
-                        <span class="badge ${e.status === 'ativo' ? 'badge-emprestado' : 'badge-disponivel'}">
-                            ${e.status === 'ativo' ? '⏳ Emprestado' : '✓ Devolvido'}
-                        </span>
-                    </div>
-                    <div class="card-info">
-                        <div class="card-info-item"><div class="card-label">Empréstimo</div><div class="card-value">${e.dataEmprestimo}</div></div>
-                        <div class="card-info-item"><div class="card-label">Devolução Prevista</div><div class="card-value">${e.dataDevolucaoPrevista}</div></div>
-                    </div>
-                    ${e.status === 'ativo' ? `<div class="action-group"><button class="btn btn-success" onclick="registrarDevolucao(${e.id})">✓ Registrar Devolução</button></div>` : ''}
+                <div class="item-acoes">
+                    <button class="btn btn-danger btn-pequeno" onclick="deleteLivro(${livro.id})">Remover</button>
                 </div>
-            `).join('');
-            document.getElementById('emprestimos-list').innerHTML = html || '<div class="empty-state"><div class="empty-state-icon">🔄</div>Nenhum empréstimo</div>';
+            </div>
+        `).join('');
+        document.getElementById('livros-list').innerHTML = html || '<div class="vazio">Nenhum livro cadastrado.</div>';
+    }
+
+    function openLivroModal() {
+        document.getElementById('livroModal').classList.add('active');
+    }
+
+    function closeLivroModal() {
+        document.getElementById('livroModal').classList.remove('active');
+        document.getElementById('livro-titulo').value = '';
+        document.getElementById('livro-autor').value = '';
+        document.getElementById('livro-isbn').value = '';
+        document.getElementById('livro-ano').value = '';
+        document.getElementById('livro-editora').value = '';
+        document.getElementById('livro-quantidade').value = '1';
+    }
+
+    function saveLivro() {
+        const titulo = document.getElementById('livro-titulo').value;
+        const autor = document.getElementById('livro-autor').value;
+        if (!titulo || !autor) { alert('Título e Autor são obrigatórios'); return; }
+        const isbn = document.getElementById('livro-isbn').value.replace(/[-\s]/g, '');
+        const quantidade = parseInt(document.getElementById('livro-quantidade').value);
+        if (!(quantidade >= 1)) { alert('A quantidade deve ser pelo menos 1'); return; }
+        if (!validarISBN(isbn)) { alert('ISBN inválido. Use 13 dígitos corretos ou deixe em branco'); return; }
+        if (isbn && biblioteca.livros.some(l => l.isbn === isbn)) { alert('Já existe um livro com este ISBN'); return; }
+
+        const novoLivro = {
+            id: Math.max(...biblioteca.livros.map(l => l.id), 0) + 1,
+            titulo,
+            autor,
+            isbn,
+            ano: parseInt(document.getElementById('livro-ano').value) || new Date().getFullYear(),
+            editora: document.getElementById('livro-editora').value,
+            categoria: document.getElementById('livro-categoria').value,
+            quantidade: quantidade,
+            disponivel: quantidade
+        };
+
+        biblioteca.livros.push(novoLivro);
+        saveData();
+        closeLivroModal();
+    }
+
+    function deleteLivro(id) {
+        if (biblioteca.emprestimos.some(e => e.status === 'ativo' && e.livroId === id)) { alert('Este livro tem empréstimo ativo e não pode ser removido'); return; }
+        if (confirm('Remover este livro?')) {
+            biblioteca.livros = biblioteca.livros.filter(l => l.id !== id);
+            saveData();
         }
-        
-        function openEmprestimoModal() {
-            updateEmprestimoSelects();
-            document.getElementById('emprestimoModal').classList.add('active');
-            const hoje = new Date().toISOString().split('T')[0];
-            document.getElementById('emprestimo-data').value = hoje;
-            const devolucao = new Date();
-            devolucao.setDate(devolucao.getDate() + 14);
-            document.getElementById('emprestimo-devolucao').value = devolucao.toISOString().split('T')[0];
+    }
+
+    // INSCRIÇÕES
+    function renderInscricoes() {
+        const html = biblioteca.membros.map(m => `
+            <div class="item">
+                <div>
+                    <span class="tag ${m.status === 'ativo' ? 'tag-ok' : 'tag-neutro'}">${m.status === 'ativo' ? 'Ativo' : 'Inativo'}</span>
+                    <div class="item-titulo">${m.nome}</div>
+                    <div class="item-info">
+                        <div><div class="info-label">E-mail</div><div class="info-valor">${m.email}</div></div>
+                        <div><div class="info-label">Telefone</div><div class="info-valor">${m.telefone || '-'}</div></div>
+                        <div><div class="info-label">CPF</div><div class="info-valor">${m.cpf || '-'}</div></div>
+                        <div><div class="info-label">Inscrição</div><div class="info-valor">${m.dataInscricao}</div></div>
+                    </div>
+                    ${m.obs ? `<div class="item-obs">${m.obs}</div>` : ''}
+                </div>
+                <div class="item-acoes">
+                    <button class="btn btn-danger btn-pequeno" onclick="deleteMembro(${m.id})">Remover</button>
+                </div>
+            </div>
+        `).join('');
+        document.getElementById('inscricoes-list').innerHTML = html || '<div class="vazio">Nenhum membro inscrito.</div>';
+    }
+
+    function renderMembrosTable() {
+        const html = biblioteca.membros.map(m => `
+            <tr>
+                <td><strong>${m.nome}</strong></td>
+                <td>${m.email}</td>
+                <td>${m.telefone || '-'}</td>
+                <td><span class="tag ${m.status === 'ativo' ? 'tag-ok' : 'tag-neutro'}">${m.status}</span></td>
+                <td>${m.dataInscricao}</td>
+                <td style="text-align:right;">
+                    <button class="btn btn-danger btn-pequeno" onclick="deleteMembro(${m.id})">Remover</button>
+                </td>
+            </tr>
+        `).join('');
+        document.getElementById('membros-table').innerHTML = html || '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--apagado);">Nenhum membro cadastrado.</td></tr>';
+    }
+
+    function openInscricaoModal() {
+        document.getElementById('inscricaoModal').classList.add('active');
+    }
+
+    function closeInscricaoModal() {
+        document.getElementById('inscricaoModal').classList.remove('active');
+        document.getElementById('membro-nome').value = '';
+        document.getElementById('membro-email').value = '';
+        document.getElementById('membro-telefone').value = '';
+        document.getElementById('membro-cpf').value = '';
+        document.getElementById('membro-endereco').value = '';
+        document.getElementById('membro-obs').value = '';
+    }
+
+    function saveInscricao() {
+        const nome = document.getElementById('membro-nome').value;
+        const email = document.getElementById('membro-email').value;
+        const cpf = document.getElementById('membro-cpf').value.trim();
+        if (!nome || !email) { alert('Nome e Email são obrigatórios'); return; }
+        if (!validarEmail(email)) { alert('E-mail inválido'); return; }
+        if (cpf && !validarCPF(cpf)) { alert('CPF inválido'); return; }
+        if (biblioteca.membros.some(m => m.email.toLowerCase() === email.toLowerCase())) { alert('Já existe um membro com este e-mail'); return; }
+        if (cpf && biblioteca.membros.some(m => m.cpf === cpf)) { alert('Já existe um membro com este CPF'); return; }
+
+        const novoMembro = {
+            id: Math.max(...biblioteca.membros.map(m => m.id), 0) + 1,
+            nome,
+            email,
+            telefone: document.getElementById('membro-telefone').value,
+            cpf: cpf,
+            endereco: document.getElementById('membro-endereco').value,
+            obs: document.getElementById('membro-obs').value.trim(),
+            status: 'ativo',
+            dataInscricao: new Date().toISOString().split('T')[0]
+        };
+
+        biblioteca.membros.push(novoMembro);
+        saveData();
+        closeInscricaoModal();
+    }
+
+    function deleteMembro(id) {
+        if (biblioteca.emprestimos.some(e => e.status === 'ativo' && e.membroId === id)) { alert('Este membro tem empréstimo ativo e não pode ser removido'); return; }
+        if (confirm('Remover este membro?')) {
+            biblioteca.membros = biblioteca.membros.filter(m => m.id !== id);
+            saveData();
         }
-        
-        function closeEmprestimoModal() {
-            document.getElementById('emprestimoModal').classList.remove('active');
-            document.getElementById('emprestimo-membro').value = '';
-            document.getElementById('emprestimo-livro').value = '';
-            document.getElementById('emprestimo-data').value = '';
-            document.getElementById('emprestimo-devolucao').value = '';
-            document.getElementById('emprestimo-obs').value = '';
+    }
+
+    // EMPRÉSTIMOS
+    function renderEmprestimos() {
+        const html = biblioteca.emprestimos.map(e => `
+            <div class="item">
+                <div>
+                    <span class="tag ${e.status === 'ativo' ? 'tag-alerta' : 'tag-ok'}">${e.status === 'ativo' ? 'Emprestado' : 'Devolvido'}</span>
+                    <div class="item-titulo">${e.livroTitulo}</div>
+                    <div class="item-sub">${e.membroNome}</div>
+                    <div class="item-info">
+                        <div><div class="info-label">Empréstimo</div><div class="info-valor">${e.dataEmprestimo}</div></div>
+                        <div><div class="info-label">Devolução prevista</div><div class="info-valor">${e.dataDevolucaoPrevista}</div></div>
+                    </div>
+                </div>
+                <div class="item-acoes">
+                    ${e.status === 'ativo' ? `<button class="btn btn-success btn-pequeno" onclick="registrarDevolucao(${e.id})">Registrar devolução</button>` : ''}
+                </div>
+            </div>
+        `).join('');
+        document.getElementById('emprestimos-list').innerHTML = html || '<div class="vazio">Nenhum empréstimo registrado.</div>';
+    }
+
+    function openEmprestimoModal() {
+        updateEmprestimoSelects();
+        document.getElementById('emprestimoModal').classList.add('active');
+        const hoje = new Date().toISOString().split('T')[0];
+        document.getElementById('emprestimo-data').value = hoje;
+        const devolucao = new Date();
+        devolucao.setDate(devolucao.getDate() + 14);
+        document.getElementById('emprestimo-devolucao').value = devolucao.toISOString().split('T')[0];
+    }
+
+    function closeEmprestimoModal() {
+        document.getElementById('emprestimoModal').classList.remove('active');
+        document.getElementById('emprestimo-membro').value = '';
+        document.getElementById('emprestimo-livro').value = '';
+        document.getElementById('emprestimo-data').value = '';
+        document.getElementById('emprestimo-devolucao').value = '';
+        document.getElementById('emprestimo-obs').value = '';
+        document.getElementById('memberInfo').style.display = 'none';
+    }
+
+    function updateEmprestimoSelects() {
+        const membroSelect = document.getElementById('emprestimo-membro');
+        const livroSelect = document.getElementById('emprestimo-livro');
+
+        membroSelect.innerHTML = '<option value="">Selecione um membro</option>' +
+            biblioteca.membros.filter(m => m.status === 'ativo').map(m =>
+                `<option value="${m.id}">${m.nome}</option>`
+            ).join('');
+
+        livroSelect.innerHTML = '<option value="">Selecione um livro</option>' +
+            biblioteca.livros.filter(l => l.disponivel > 0).map(l =>
+                `<option value="${l.id}">${l.titulo} (${l.disponivel} disp.)</option>`
+            ).join('');
+    }
+
+    function updateMemberInfo() {
+        const membroId = document.getElementById('emprestimo-membro').value;
+        if (!membroId) {
             document.getElementById('memberInfo').style.display = 'none';
+            return;
         }
-        
-        function updateEmprestimoSelects() {
-            const membroSelect = document.getElementById('emprestimo-membro');
-            const livroSelect = document.getElementById('emprestimo-livro');
-            
-            membroSelect.innerHTML = '<option value="">Selecione um membro</option>' + 
-                biblioteca.membros.filter(m => m.status === 'ativo').map(m => 
-                    `<option value="${m.id}">${m.nome}</option>`
-                ).join('');
-            
-            livroSelect.innerHTML = '<option value="">Selecione um livro</option>' + 
-                biblioteca.livros.filter(l => l.disponivel > 0).map(l => 
-                    `<option value="${l.id}">${l.titulo} (${l.disponivel} disp.)</option>`
-                ).join('');
+        const membro = biblioteca.membros.find(m => m.id == membroId);
+        document.getElementById('memberEmail').textContent = membro.email;
+        document.getElementById('memberPhone').textContent = membro.telefone || '-';
+        document.getElementById('memberInfo').style.display = 'block';
+    }
+
+    function saveEmprestimo() {
+        const membroId = document.getElementById('emprestimo-membro').value;
+        const livroId = document.getElementById('emprestimo-livro').value;
+        const dataDevolucaoPrevista = document.getElementById('emprestimo-devolucao').value;
+
+        if (!membroId || !livroId || !dataDevolucaoPrevista) {
+            alert('Preencha todos os campos obrigatórios');
+            return;
         }
-        
-        function updateMemberInfo() {
-            const membroId = document.getElementById('emprestimo-membro').value;
-            if (!membroId) {
-                document.getElementById('memberInfo').style.display = 'none';
-                return;
-            }
-            const membro = biblioteca.membros.find(m => m.id == membroId);
-            document.getElementById('memberEmail').textContent = membro.email;
-            document.getElementById('memberPhone').textContent = membro.telefone || '-';
-            document.getElementById('memberInfo').style.display = 'block';
-        }
-        
-        function saveEmprestimo() {
-            const membroId = document.getElementById('emprestimo-membro').value;
-            const livroId = document.getElementById('emprestimo-livro').value;
-            const dataDevolucaoPrevista = document.getElementById('emprestimo-devolucao').value;
-            
-            if (!membroId || !livroId || !dataDevolucaoPrevista) {
-                alert('Preencha todos os campos obrigatórios');
-                return;
-            }
-            
-            const membro = biblioteca.membros.find(m => m.id == membroId);
-            const livro = biblioteca.livros.find(l => l.id == livroId);
-            
-            const novoEmprestimo = {
-                id: Math.max(...biblioteca.emprestimos.map(e => e.id), 0) + 1,
-                membroId: parseInt(membroId),
-                membroNome: membro.nome,
-                livroId: parseInt(livroId),
-                livroTitulo: livro.titulo,
-                dataEmprestimo: document.getElementById('emprestimo-data').value,
-                dataDevolucaoPrevista,
-                dataDevolucao: null,
-                obs: document.getElementById('emprestimo-obs').value.trim(),
-                status: 'ativo'
-            };
-            
-            biblioteca.emprestimos.push(novoEmprestimo);
-            livro.disponivel--;
-            
-            saveData();
-            closeEmprestimoModal();
-        }
-        
-        function registrarDevolucao(emprestimoId) {
-            const emprestimo = biblioteca.emprestimos.find(e => e.id === emprestimoId);
-            const livro = biblioteca.livros.find(l => l.id === emprestimo.livroId);
-            
-            emprestimo.status = 'devolvido';
-            emprestimo.dataDevolucao = new Date().toISOString().split('T')[0];
-            livro.disponivel++;
-            
-            saveData();
-        }
-        
-        function renderAll() {
-            updateStats();
-            renderLivros();
-            renderInscricoes();
-            renderEmprestimos();
-            renderMembrosTable();
-        }
-        
-        // Initialize
-        initData();
-    </script>
+
+        const membro = biblioteca.membros.find(m => m.id == membroId);
+        const livro = biblioteca.livros.find(l => l.id == livroId);
+
+        const novoEmprestimo = {
+            id: Math.max(...biblioteca.emprestimos.map(e => e.id), 0) + 1,
+            membroId: parseInt(membroId),
+            membroNome: membro.nome,
+            livroId: parseInt(livroId),
+            livroTitulo: livro.titulo,
+            dataEmprestimo: document.getElementById('emprestimo-data').value,
+            dataDevolucaoPrevista,
+            dataDevolucao: null,
+            obs: document.getElementById('emprestimo-obs').value.trim(),
+            status: 'ativo'
+        };
+
+        biblioteca.emprestimos.push(novoEmprestimo);
+        livro.disponivel--;
+
+        saveData();
+        closeEmprestimoModal();
+    }
+
+    function registrarDevolucao(emprestimoId) {
+        const emprestimo = biblioteca.emprestimos.find(e => e.id === emprestimoId);
+        const livro = biblioteca.livros.find(l => l.id === emprestimo.livroId);
+
+        emprestimo.status = 'devolvido';
+        emprestimo.dataDevolucao = new Date().toISOString().split('T')[0];
+        livro.disponivel++;
+
+        saveData();
+    }
+
+    function renderAll() {
+        updateStats();
+        renderLivros();
+        renderInscricoes();
+        renderEmprestimos();
+        renderMembrosTable();
+    }
+
+    // Initialize
+    initData();
+</script>
 </body>
 </html>
