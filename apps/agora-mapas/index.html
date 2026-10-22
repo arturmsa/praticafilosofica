@@ -83,6 +83,11 @@ a.btn{text-decoration:none}
 .seg{display:flex;gap:4px}
 .seg .tb{flex:1;justify-content:center}
 .sep{display:none}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.cols .tb{min-width:0}
+.cols .tb{justify-content:flex-start;padding:6px 8px;font-size:13px}
+.cols .sw{width:18px;height:18px;border-radius:50%}
+.cols .tb.on .sw{box-shadow:0 0 0 2px var(--panel),0 0 0 4px var(--accent)}
 .th{display:flex;align-items:center;justify-content:space-between;gap:6px}
 .th h2{margin:0;font-family:var(--f-node);font-weight:600;font-size:20px;color:var(--ocre)}
 .th .tb{padding:6px}
@@ -104,6 +109,8 @@ a.btn{text-decoration:none}
   .types{display:flex;gap:2px}
   .tb{flex-direction:column;gap:3px;font-size:12px;padding:5px 7px;min-width:58px;justify-content:center;text-align:center}
   .seg{gap:2px}
+  .cols{display:flex;gap:2px}
+  .cols .tb{flex-direction:column;justify-content:center;min-width:52px}
   .sep{display:block;flex:none;width:1px;background:var(--line);margin:8px 4px}
   .th h2{display:none}
   .th .tb{padding:5px 7px}
@@ -243,6 +250,10 @@ textarea,.sheet input[type=text]{width:100%;font:16px var(--f-node);color:var(--
           <button class="tb" data-s="curva" title="Curva"><svg class="ic"><use href="#i-curve"/></svg><span>Curva</span></button>
           <button class="tb" data-s="reta" title="Reta"><svg class="ic"><use href="#i-line"/></svg><span>Reta</span></button>
         </div>
+      </div>
+      <i class="sep"></i>
+      <div class="tg"><div class="tlbl">Cores</div>
+        <div class="cols" id="tColors"></div>
       </div>
       <i class="sep"></i>
       <div class="tg"><div class="tlbl">Mapa</div>
@@ -389,6 +400,7 @@ ${OK.map(k=>`.origem .lk.o-${k}{stroke:var(--o-${k}-line)} .arh-${k}{fill:var(--
 .t-obra rect.box{fill:var(--obra-bg);stroke:var(--obra)} .t-obra .tl{fill:var(--obra)}
 .t-citacao rect.box{fill:var(--citacao-bg);stroke:var(--citacao)} .t-citacao .tl{fill:var(--citacao)}
 .t-periodo rect.box{fill:var(--periodo-bg);stroke:var(--periodo)} .t-periodo .tl{fill:var(--periodo)}
+.node.c-amarelo rect.box{fill:#fff1b8;stroke:#b8930a;stroke-width:2} .node.c-amarelo .tx{fill:var(--node-ink)} .node.c-amarelo .tl{fill:#b8930a} .node.c-verde rect.box{fill:#d8f0cf;stroke:#3f8a2e;stroke-width:2} .node.c-verde .tx{fill:var(--node-ink)} .node.c-verde .tl{fill:#3f8a2e} .node.c-azul rect.box{fill:#d6e6fa;stroke:#2c64b0;stroke-width:2} .node.c-azul .tx{fill:var(--node-ink)} .node.c-azul .tl{fill:#2c64b0} .node.c-laranja rect.box{fill:#fde0c4;stroke:#c46a12;stroke-width:2} .node.c-laranja .tx{fill:var(--node-ink)} .node.c-laranja .tl{fill:#c46a12} .node.c-rosa rect.box{fill:#f9d6e2;stroke:#b0406a;stroke-width:2} .node.c-rosa .tx{fill:var(--node-ink)} .node.c-rosa .tl{fill:#b0406a}
 .calmo .node rect.box{fill:var(--panel);stroke:var(--muted)} .calmo .tl{fill:var(--muted)}
 .calmo .t-tema rect.box{fill:var(--panel);stroke:var(--ink);stroke-width:2.6} .calmo .t-tema .tx{fill:var(--ink)}
 ${OK.map(k=>`.origem .node.o-${k} rect.box{fill:var(--o-${k});stroke:var(--o-${k}-line);stroke-width:2}`).join('\n')}
@@ -564,7 +576,7 @@ const origemOn=()=>st.view==='origem'&&st.sources.length>=2;
 /* ---------- desenho ---------- */
 const MARKERS='<defs>'+['','2',...OK.map(k=>'-'+k)].map(k=>`<marker id="ar${k}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="${k==='2'?6:7}" markerHeight="${k==='2'?6:7}" orient="auto-start-reverse"><path class="arh${k}" d="M0,0L10,5L0,10z"/></marker>`).join('')+'</defs>';
 function nodeSvg(n,o){const l=L[n.id],x0=-l.w/2,y0=-l.h/2;let y=y0+14,s='';const ok=origemOn()?' o-'+oKey(n.src):'';
-  s+=`<g class="node t-${n.type}${ok}${o.sel?' sel':''}${o.from?' from':''}" data-node="${n.id}" transform="translate(${r1(n.x)},${r1(n.y)})"><rect class="box" x="${r1(x0)}" y="${r1(y0)}" width="${r1(l.w)}" height="${r1(l.h)}" rx="10"/>`;
+  s+=`<g class="node t-${n.type}${n.color&&COLORS[n.color]?" c-"+n.color:""}${ok}${o.sel?' sel':''}${o.from?' from':''}" data-node="${n.id}" transform="translate(${r1(n.x)},${r1(n.y)})"><rect class="box" x="${r1(x0)}" y="${r1(y0)}" width="${r1(l.w)}" height="${r1(l.h)}" rx="10"/>`;
   if(n.img){s+=`<clipPath id="cp${n.id}"><rect x="${r1(x0+8)}" y="${r1(y0+8)}" width="${r1(l.w-16)}" height="${l.imgH}" rx="7"/></clipPath><image href="${n.img}" x="${r1(x0+8)}" y="${r1(y0+8)}" width="${r1(l.w-16)}" height="${l.imgH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#cp${n.id})"/>`;y=y0+8+l.imgH+12}
   if(l.label){s+=`<text class="tl" x="0" y="${r1(y+9)}" text-anchor="middle">${TYPES[n.type].toUpperCase()}</text>`;y+=16}
   s+=`<text class="tx" text-anchor="middle" font-size="${l.fs}" font-weight="${l.tema?600:400}"${n.type==='citacao'?' font-style="italic"':''}>`;
@@ -612,7 +624,14 @@ function renderLegend(){const lg=$('legend');if(st.sources.length<2||present!=nu
 /* ---------- ferramentas ---------- */
 $('types').innerHTML=Object.entries(TYPES).map(([k,v])=>`<button class="tb" data-new="${k}" title="Novo ${v.toLowerCase()}"><i class="sw" style="background:var(--${k==='tema'?'tema':k+'-bg'});border-color:var(--${k==='tema'?'tema-line':k})"></i><span>${v}</span></button>`).join('');
 $('types').addEventListener('click',e=>{const b=e.target.closest('[data-new]');if(b)addNode(b.dataset.new)});
+const COLORS={"amarelo": ["Amarelo", "#fff1b8", "#b8930a"], "verde": ["Verde", "#d8f0cf", "#3f8a2e"], "azul": ["Azul", "#d6e6fa", "#2c64b0"], "laranja": ["Laranja", "#fde0c4", "#c46a12"], "rosa": ["Rosa", "#f9d6e2", "#b0406a"]};
+let curColor='';
+$('tColors').innerHTML='<button class="tb" data-c="" title="Cor do tipo"><i class="sw" style="background:var(--panel);border-color:var(--muted);border-style:dashed"></i><span>Padrão</span></button>'+
+  Object.entries(COLORS).map(([k,[nm,bg,ln]])=>`<button class="tb" data-c="${k}" title="${nm}"><i class="sw" style="background:${bg};border-color:${ln}"></i><span>${nm}</span></button>`).join('');
+$('tColors').addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(!b)return;const c=b.dataset.c;curColor=c;
+  const n=selNode&&byId(selNode);if(n){pushHist();if(c)n.color=c;else delete n.color;commit()}else{renderTools();toast(c?'Os próximos nós nascem na cor '+COLORS[c][0].toLowerCase()+'.':'Os próximos nós usam a cor do tipo.')}});
 function renderTools(){const has=!!(selNode||selLink);
+  {const sn=selNode&&byId(selNode),cc=sn?(sn.color||''):curColor;document.querySelectorAll('#tColors [data-c]').forEach(b=>b.classList.toggle('on',b.dataset.c===cc))}
   $('tLink').classList.toggle('on',!!linkFrom);$('tUnite').classList.toggle('on',!!uniteFrom);
   $('tUnite').disabled=!!selLink;$('tDel').disabled=!has;
   document.querySelectorAll('#tStyles [data-s]').forEach(b=>b.classList.toggle('on',b.dataset.s===linkStyle));
@@ -674,7 +693,7 @@ function mergeMaps(B,nameA,nameB,unify){
   const idm={},anchors=[],fresh=[],oldN=st.nodes.slice();
   for(const b of B.nodes){const k=norm(b.text),a=unify&&k&&byKey[k];
     if(a){idm[b.id]=a.id;a.src=uniq([...(a.src||[]),...mapSrc(b.src)]);if(!a.img&&b.img)a.img=b.img;if(a.wiki===undefined&&b.wiki!==undefined)a.wiki=b.wiki;anchors.push({b,a})}
-    else{const n={id:uid(),text:b.text,type:TYPES[b.type]?b.type:'conceito',x:+b.x||0,y:+b.y||0,src:mapSrc(b.src)};if(b.img)n.img=b.img;if(b.wiki!==undefined)n.wiki=b.wiki;
+    else{const n={id:uid(),text:b.text,type:TYPES[b.type]?b.type:'conceito',x:+b.x||0,y:+b.y||0,src:mapSrc(b.src)};if(b.img)n.img=b.img;if(b.wiki!==undefined)n.wiki=b.wiki;if(b.color)n.color=b.color;
       idm[b.id]=n.id;fresh.push({b,n});st.nodes.push(n);if(k&&!byKey[k])byKey[k]=n}}
   if(anchors.length){for(const f of fresh){let best=null,bd=1e18;for(const an of anchors){const d=(an.b.x-f.b.x)**2+(an.b.y-f.b.y)**2;if(d<bd){bd=d;best=an}}
     f.n.x=best.a.x+(f.b.x-best.b.x);f.n.y=best.a.y+(f.b.y-best.b.y)}}
@@ -742,7 +761,7 @@ function addNode(type){if(present!=null)return;pushHist();const base=selNode?byI
   else{const{r,left,right,top,bottom}=insets(),c=toWorld(r.left+left+(r.width-left-right)/2,r.top+top+(r.height-top-bottom)/2);x=c.x;y=c.y}
   x=Math.round(x);y=Math.round(y);let g=0;while(g++<30&&st.nodes.some(n=>Math.abs(n.x-x)<120&&Math.abs(n.y-y)<55))y+=70;
   const ph={conceito:'Novo conceito',filosofo:'Nome do filósofo',obra:'Título da obra',citacao:'Escreva a citação',periodo:'Período',tema:'Tema'};
-  const n={id:uid(),x,y,text:ph[type]||'Novo conceito',type:type||'conceito'};st.nodes.push(n);
+  const n={id:uid(),x,y,text:ph[type]||'Novo conceito',type:type||'conceito'};if(curColor)n.color=curColor;st.nodes.push(n);
   if(base){st.links.push({id:uid(),from:base.id,to:n.id,label:''})}
   selNode=n.id;selLink=null;commit();openEditor(n.id,true)}
 function delNode(id){pushHist();st.nodes=st.nodes.filter(n=>n.id!==id);st.links=st.links.filter(l=>l.from!==id&&l.to!==id);selNode=null;closeSheets(true);commit()}
