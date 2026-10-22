@@ -43,6 +43,8 @@ Abra `dados/questoes.js` e copie um bloco existente. Nas frases:
 - `{palavra}` marca uma palavra-chave (amarelo no texto, verde na alternativa correta);
 - `~palavra~` marca a armadilha numa alternativa errada.
 
+Os conceitos essenciais de cada autor ficam em `dados/conceitos.js`.
+
 ```js
 {
   id: "a-2026-exemplo",

@@ -196,8 +196,15 @@ main { max-width: 68rem; margin: 0 auto; padding: 0 1rem 4rem; }
 .p-topo .lead { color: var(--tinta-suave); margin: 0 0 .4rem; max-width: var(--medida); }
 .p-nota { margin: 0 0 .4rem; color: var(--tinta-suave); font-size: .95rem; }
 .p-obras { margin: 0 0 .8rem; color: var(--tinta-suave); font-size: .95rem; max-width: var(--medida); }
-.p-chaves { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .35rem; }
+.p-chaves { list-style: none; margin: 0 0 .2rem; padding: 0; display: flex; flex-wrap: wrap; gap: .35rem; }
 .p-chaves li { background: var(--amarelo); padding: .1rem .6rem; border-radius: 4px; font-size: .95rem; }
+.p-rotulo { margin: .9rem 0 .35rem; font-size: .88rem; color: var(--tinta-suave); }
+.p-conceitos li { background: var(--folha); border: 1px solid var(--caneta); color: var(--tinta); }
+.ch-nome { margin: 0 0 .3rem; font-family: var(--serif); font-weight: 650; }
+.ch-filosofo .ch-tit { margin-top: .5rem; }
+.ch-filosofo .ch-nome + .ch-tit { margin-top: 0; }
+.ch-filosofo > .ch-tit:first-child { margin-top: 0; }
+.ch-conceitos li { border-color: var(--caneta) !important; background: var(--caneta-fundo) !important; }
 .p-nav { display: flex; flex-wrap: wrap; gap: .4rem 1.2rem; font-size: .95rem; }
 .p-nav a { color: var(--tinta-suave); text-decoration: none; }
 .p-nav a:hover { color: var(--caneta); text-decoration: underline; }
@@ -370,3 +377,4 @@ body.treino .q.revelada .revelar { display: none; }
   .q .trap { text-decoration-color: var(--vermelho); }
   .q { break-inside: avoid; border-color: #bbb; }
 }
+.p-topo { margin-bottom: 1.6rem; }

@@ -4,6 +4,7 @@
   var QUESTOES = window.QUESTOES || [];
   var RANKING = window.RANKING || [];
   var UNICOS = window.UNICOS || [];
+  var CONCEITOS = window.CONCEITOS || {};
 
   /* ---------- filósofos: ranking + autores com uma questão ---------- */
   var FILOSOFOS = RANKING.map(function (r) {
@@ -120,8 +121,12 @@
     ids.forEach(function (id) {
       var f = POR_ID[id];
       if (!f) return;
+      var conc = CONCEITOS[id] || [];
       aside.appendChild(el("div", "ch-grupo ch-filosofo",
-        (dois ? '<p class="ch-tit">' + esc(f.nome) + "</p>" : "") +
+        (dois ? '<p class="ch-nome">' + esc(f.nome) + "</p>" : "") +
+        (conc.length ? '<p class="ch-tit">Conceitos do autor</p><ul class="ch-conceitos">' +
+          conc.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>" : "") +
+        '<p class="ch-tit">Caem no ENEM</p>' +
         "<ul>" + f.palavras.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>"));
     });
 
@@ -272,6 +277,12 @@
     if (f.nota) topo.appendChild(el("p", "p-nota", esc(f.nota)));
     topo.appendChild(el("p", "lead", esc(qs.length + (qs.length === 1 ? " questão." : " questões.") + (f.fio ? " " + f.fio : ""))));
     topo.appendChild(el("p", "p-obras", "Obras-fonte: " + esc(f.obras)));
+    var conc = CONCEITOS[id] || [];
+    if (conc.length) {
+      topo.appendChild(el("p", "p-rotulo", "Conceitos do autor"));
+      topo.appendChild(el("ul", "p-chaves p-conceitos", conc.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("")));
+    }
+    topo.appendChild(el("p", "p-rotulo", "Caem no ENEM (palavras das respostas certas)"));
     topo.appendChild(el("ul", "p-chaves", f.palavras.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("")));
     painel.appendChild(topo);
 
