@@ -35,7 +35,11 @@ nav.tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding:16px
 main{max-width:1200px;margin:0 auto;padding:10px 20px 40px}
 .tab-content{display:none}
 .tab-content.active{display:block}
-.info{background:var(--peach);border-radius:12px;padding:12px 16px;font-size:14px;color:#6b4a3a;margin-bottom:18px}
+.info{background:#fbf3ee;border:1px solid #f1e0d6;border-radius:12px;padding:8px 14px;font-size:13px;color:#7a5a4a;margin-bottom:16px}
+.info summary{cursor:pointer;font-weight:600;color:#8a6a5a;list-style:none}
+.info summary::before{content:"+ ";color:#b08a7a}
+.info[open] summary::before{content:"– "}
+.info p{margin:8px 0 2px;line-height:1.6}
 
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
 .stack{display:flex;flex-direction:column;gap:22px}
@@ -106,6 +110,7 @@ main{max-width:1200px;margin:0 auto;padding:10px 20px 40px}
 
   <!-- INTRODUÇÃO -->
   <section id="intro" class="tab-content active">
+    <details class="info"><summary>Como funciona</summary><p>Preencha tema, tese, autoridade e argumentos. Clique nos conectivos para inseri-los no visor. Os fechamentos são opcionais. Ao escolher um modelo, o visor passa a usar o esquema escolhido, com os campos já preenchidos.</p></details>
     <div class="grid">
       <div class="card">
         <h2>Introdução</h2>
@@ -127,7 +132,7 @@ main{max-width:1200px;margin:0 auto;padding:10px 20px 40px}
 
   <!-- DESENVOLVIMENTO 1 -->
   <section id="dev1" class="tab-content">
-    <div class="info"><strong>Como funciona:</strong> desenvolva o Argumento 1 com fundamentação, dados e aplicação prática.</div>
+    <details class="info"><summary>Como funciona</summary><p>O argumento 1 vem da introdução. Os conectivos e verbos entram no visor ao clicar. O parágrafo sai nesta ordem: conectivo inicial, argumento, fonte com verbo e fundamentação, explicação com dados, aplicação prática e finalidade.</p></details>
     <div class="grid">
       <div class="card"><h2>Desenvolvimento 1</h2><div id="form-dev1"></div></div>
       <div class="card visor-card">
@@ -140,7 +145,7 @@ main{max-width:1200px;margin:0 auto;padding:10px 20px 40px}
 
   <!-- DESENVOLVIMENTO 2 -->
   <section id="dev2" class="tab-content">
-    <div class="info"><strong>Como funciona:</strong> desenvolva o Argumento 2 com fundamentação, dados e aplicação prática.</div>
+    <details class="info"><summary>Como funciona</summary><p>O argumento 2 vem da introdução. Os conectivos e verbos entram no visor ao clicar. O parágrafo sai nesta ordem: conectivo inicial, argumento, fonte com verbo e fundamentação, explicação com dados, aplicação prática e finalidade.</p></details>
     <div class="grid">
       <div class="card"><h2>Desenvolvimento 2</h2><div id="form-dev2"></div></div>
       <div class="card visor-card">
@@ -153,7 +158,7 @@ main{max-width:1200px;margin:0 auto;padding:10px 20px 40px}
 
   <!-- CONCLUSÃO -->
   <section id="conc" class="tab-content">
-    <div class="info"><strong>Como funciona:</strong> retome a tese, sintetize os argumentos e apresente a proposta de intervenção.</div>
+    <details class="info"><summary>Como funciona</summary><p>A retomada puxa a tese da introdução. Depois vêm a síntese dos argumentos e a proposta de intervenção: escolha o verbo e preencha agente, ação, meio e finalidade.</p></details>
     <div class="grid">
       <div class="card"><h2>Conclusão</h2><div id="form-conc"></div></div>
       <div class="stack">
@@ -176,7 +181,7 @@ main{max-width:1200px;margin:0 auto;padding:10px 20px 40px}
 
   <!-- REDAÇÃO COMPLETA -->
   <section id="total" class="tab-content">
-    <div class="info"><strong>Visão geral:</strong> a redação inteira, com todas as partes unidas. Use o botão para copiar.</div>
+    <details class="info"><summary>Como funciona</summary><p>Esta aba reúne as quatro partes em sequência, como ficará no papel. Confira a ordem e use o botão para copiar. Campos vazios aparecem entre colchetes.</p></details>
     <div class="card">
       <h2>Redação completa</h2>
       <div class="visor" id="visor-total" style="min-height:420px"></div>
