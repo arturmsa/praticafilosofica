@@ -82,6 +82,7 @@ main{max-width:1200px;margin:0 auto;padding:10px 20px 40px}
 .btn-clear{background:#f7e8e2;color:#7a4a3a;border-color:#ebd0c5}
 .btn-clear:hover{background:#f3ddd3}
 
+.visor-card{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow-y:auto}
 .guide{font-size:14px;color:var(--ink-2);line-height:1.7;margin:0;padding-left:18px}
 .guide li{margin-bottom:4px}
 </style>
@@ -98,6 +99,7 @@ main{max-width:1200px;margin:0 auto;padding:10px 20px 40px}
   <button class="tab-btn" onclick="mudarAba('dev1',this)">Desenvolvimento 1</button>
   <button class="tab-btn" onclick="mudarAba('dev2',this)">Desenvolvimento 2</button>
   <button class="tab-btn" onclick="mudarAba('conc',this)">Conclusão</button>
+  <button class="tab-btn" onclick="mudarAba('total',this)">Redação completa</button>
 </nav>
 
 <main>
@@ -110,7 +112,7 @@ main{max-width:1200px;margin:0 auto;padding:10px 20px 40px}
         <div id="form-intro"></div>
       </div>
       <div class="stack">
-        <div class="card">
+        <div class="card visor-card">
           <h2>Visor da Introdução</h2>
           <div class="visor" id="visor-intro"></div>
           <div class="row-btns"><button class="btn btn-copy" onclick="copiar('visor-intro',this)">Copiar</button></div>
@@ -128,7 +130,7 @@ main{max-width:1200px;margin:0 auto;padding:10px 20px 40px}
     <div class="info"><strong>Como funciona:</strong> desenvolva o Argumento 1 com fundamentação, dados e aplicação prática.</div>
     <div class="grid">
       <div class="card"><h2>Desenvolvimento 1</h2><div id="form-dev1"></div></div>
-      <div class="card">
+      <div class="card visor-card">
         <h2>Visor do Desenvolvimento 1</h2>
         <div class="visor" id="visor-dev1"></div>
         <div class="row-btns"><button class="btn btn-copy" onclick="copiar('visor-dev1',this)">Copiar</button></div>
@@ -141,7 +143,7 @@ main{max-width:1200px;margin:0 auto;padding:10px 20px 40px}
     <div class="info"><strong>Como funciona:</strong> desenvolva o Argumento 2 com fundamentação, dados e aplicação prática.</div>
     <div class="grid">
       <div class="card"><h2>Desenvolvimento 2</h2><div id="form-dev2"></div></div>
-      <div class="card">
+      <div class="card visor-card">
         <h2>Visor do Desenvolvimento 2</h2>
         <div class="visor" id="visor-dev2"></div>
         <div class="row-btns"><button class="btn btn-copy" onclick="copiar('visor-dev2',this)">Copiar</button></div>
@@ -155,7 +157,7 @@ main{max-width:1200px;margin:0 auto;padding:10px 20px 40px}
     <div class="grid">
       <div class="card"><h2>Conclusão</h2><div id="form-conc"></div></div>
       <div class="stack">
-        <div class="card">
+        <div class="card visor-card">
           <h2>Visor da Conclusão</h2>
           <div class="visor" id="visor-conc"></div>
           <div class="row-btns"><button class="btn btn-copy" onclick="copiar('visor-conc',this)">Copiar</button></div>
@@ -169,6 +171,16 @@ main{max-width:1200px;margin:0 auto;padding:10px 20px 40px}
           </ol>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- REDAÇÃO COMPLETA -->
+  <section id="total" class="tab-content">
+    <div class="info"><strong>Visão geral:</strong> a redação inteira, com todas as partes unidas. Use o botão para copiar.</div>
+    <div class="card">
+      <h2>Redação completa</h2>
+      <div class="visor" id="visor-total" style="min-height:420px"></div>
+      <div class="row-btns"><button class="btn btn-copy" onclick="copiar('visor-total',this)">Copiar redação</button></div>
     </div>
   </section>
 
@@ -334,6 +346,7 @@ function refresh() {
   $('visor-dev1').innerHTML = composeDev('dev1');
   $('visor-dev2').innerHTML = composeDev('dev2');
   $('visor-conc').innerHTML = composeConc();
+  $('visor-total').innerHTML = composeIntro() + composeDev('dev1') + composeDev('dev2') + composeConc();
 }
 
 document.addEventListener('click', e => {
