@@ -194,7 +194,47 @@ summary{cursor:pointer;color:var(--ouro);font-family:var(--display);font-size:1r
 .nota-imp{border-left:3px solid var(--ocre);padding:.2rem 0 .2rem .8rem}
 textarea.copia{position:absolute;left:-9999px}
 
+[hidden]{display:none!important}
+/* ---------- modo palco ---------- */
+.palco{position:fixed;inset:0;z-index:50;background:radial-gradient(ellipse 120% 80% at 50% 0%,var(--fundo2),var(--fundo) 70%);background-color:var(--fundo);color:var(--tinta);display:flex;flex-direction:column;gap:.6rem;padding:calc(env(safe-area-inset-top,0px) + 12px) 16px calc(env(safe-area-inset-bottom,0px) + 12px);overflow:hidden}
+.palco-astro{position:absolute;top:50%;left:50%;width:min(80vh,90vw);aspect-ratio:1;transform:translate(-50%,-50%);opacity:.08;color:var(--ouro);pointer-events:none;--corte:var(--fundo)}
+.palco-astro svg{position:absolute;inset:0;width:100%;height:100%;animation:girar 140s linear infinite}
+.palco-astro .astro-sol{display:none}
+:root[data-theme="light"] .palco-astro .astro-sol{display:block}
+:root[data-theme="light"] .palco-astro .astro-lua{display:none}
+.palco-topo,.palco-base{display:flex;justify-content:space-between;align-items:center;gap:.6rem;flex-wrap:wrap;position:relative}
+.palco-ctrl{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center}
+.palco .seg button,.palco .tema{padding:.3rem .65rem;font-size:.85rem}
+.palco-quem{font-family:var(--display);font-size:clamp(1rem,2.4vw,1.4rem);color:var(--ouro)}
+.palco-quem.d0{color:var(--p1)}.palco-quem.d1{color:var(--p2)}.palco-quem.mote{color:var(--mote)}
+.palco-relogio{font-family:var(--mono);font-size:1.5rem;min-width:4.5ch;text-align:center;color:var(--ouro);font-variant-numeric:tabular-nums}
+.palco-relogio.pouco{color:var(--perto)}
+.palco-relogio.fim{color:var(--longe);animation:piscaTempo .7s steps(2) infinite}
+@keyframes piscaTempo{50%{opacity:.25}}
+.palco-centro{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2.4vh;position:relative;cursor:pointer;user-select:none;-webkit-user-select:none}
+.palco-titulo{font-family:var(--display);font-weight:400;font-size:clamp(1.3rem,3.6vw,2.4rem);line-height:1.1;color:var(--ocre);margin:0;text-align:center}
+.palco-titulo small{display:block;font-family:var(--texto);font-style:italic;font-size:.5em;color:var(--apagado);margin-top:.3em}
+.palco-versos{--ps:min(5.6vw,4.8vh,2.9rem);font-size:max(var(--ps),1.05rem);font-style:italic;line-height:1.32;width:fit-content;max-width:min(100%,60rem)}
+.palco.m11 .palco-versos{--ps:min(3.6vw,4.8vh,2.5rem)}
+.pv{display:grid;grid-template-columns:5.2em minmax(0,1fr);column-gap:.7em;align-items:baseline;transition:opacity .4s,transform .4s}
+.palco-versos.so-um .pv{grid-template-columns:minmax(0,1fr)}
+.palco-versos.so-um .dono{display:none}
+.pv .dono{font-family:var(--mono);font-style:normal;font-size:.34em;letter-spacing:.08em;text-transform:uppercase;text-align:right;color:var(--apagado);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pv.d0 .dono{color:var(--p1)}.pv.d1 .dono{color:var(--p2)}.pv.pmote .dono{color:var(--mote)}
+.pv .tx{padding-left:1.2em;text-indent:-1.2em;min-width:0}
+.pv.pmote .tx{color:var(--mote);font-weight:600}
+.pv.oculto{visibility:hidden;opacity:0;transform:translateY(.35em)}
+.pv.dito{opacity:.55}
+.pv.atual{opacity:1}
+.pv.atual .tx{text-shadow:0 0 18px color-mix(in srgb,var(--ouro) 35%,transparent)}
+.palco-pos{font-family:var(--mono);font-size:.75rem;letter-spacing:.06em;color:var(--apagado);text-align:center;flex:1}
+.palco-base .btn{min-width:8.5rem}
+.palco-base .btn:disabled{opacity:.35;cursor:default}
+.palco .nota{z-index:2}
+@media (max-width:560px){.pv{grid-template-columns:3.6em minmax(0,1fr)}.palco-base .btn{min-width:0}.palco-pos{order:-1;flex-basis:100%}}
+
 @media (prefers-reduced-motion:reduce){
+  .palco-astro svg,.pv{animation:none!important;transition:none!important}
   .cenario *,.emblema *,.sol-gira,.nucleo{animation:none!important}
 }
 </style>
@@ -334,6 +374,7 @@ textarea.copia{position:absolute;left:-9999px}
   <section class="painel" aria-labelledby="t-peleja">
     <div class="topo-peleja">
       <h2 id="t-peleja">A peleja<small>Cada verso mostra as sílabas e se a rima bateu.</small></h2>
+      <button type="button" class="btn cheio" id="abrePalco">Modo palco</button>
       <div class="legenda"><span><i style="color:var(--ok)">7</i>métrica certa</span><span><i style="color:var(--perto)">8</i>sobra ou falta 1</span><span><i style="color:var(--longe)">10</i>fora</span></div>
     </div>
     <p class="dica">A contagem vai até a última sílaba forte e junta vogais entre palavras (sinalefa). É uma ajuda aproximada: na dúvida, vale o ouvido de quem declama.</p>
@@ -374,11 +415,43 @@ textarea.copia{position:absolute;left:-9999px}
     <p class="dica nota-imp">O folheto sai em folhas A4 deitadas, com duas páginas por lado. Imprima frente e verso virando na borda curta, empilhe as folhas na ordem e dobre ao meio.</p>
     <div class="barra">
       <button type="button" class="btn cheio" id="imprimir">Imprimir o folheto</button>
+      <button type="button" class="btn" id="abrePalco2">Modo palco</button>
       <button type="button" class="btn" id="copiar">Copiar o cordel</button>
       <button type="button" class="btn" id="limpar">Limpar tudo</button>
       <span class="aviso" id="aviso" aria-live="polite"></span>
     </div>
   </section>
+</div>
+
+<div class="palco" id="palco" hidden role="dialog" aria-modal="true" aria-labelledby="palcoTitulo">
+  <div class="palco-astro" aria-hidden="true">
+    <svg class="astro-lua" viewBox="0 0 280 280"><use href="#lua" x="70" y="70" width="140" height="140"/><use href="#lua-anel" width="280" height="280"/></svg>
+    <svg class="astro-sol" viewBox="0 0 280 280"><use href="#sol-raios" width="280" height="280"/><use href="#sol-nucleo" width="280" height="280"/></svg>
+  </div>
+  <div class="palco-topo">
+    <span class="palco-quem" id="palcoQuem" aria-live="polite"></span>
+    <div class="palco-ctrl">
+      <div class="seg" role="group" aria-label="Tempo por estrofe">
+        <button type="button" id="pt0" data-t="0">Sem tempo</button>
+        <button type="button" id="pt30" data-t="30">30 s</button>
+        <button type="button" id="pt60" data-t="60">1 min</button>
+        <button type="button" id="pt120" data-t="120">2 min</button>
+      </div>
+      <span class="palco-relogio" id="palcoRelogio" role="timer"></span>
+      <button type="button" class="tema" id="palcoTela">Tela cheia</button>
+      <button type="button" class="tema" id="palcoSair">Sair ✕</button>
+    </div>
+  </div>
+  <div class="palco-centro" id="palcoCentro">
+    <h2 class="palco-titulo" id="palcoTitulo"></h2>
+    <div class="palco-versos" id="palcoVersos"></div>
+  </div>
+  <div class="palco-base">
+    <button type="button" class="btn" id="palcoAnt">← Voltar</button>
+    <span class="palco-pos" id="palcoPos"></span>
+    <button type="button" class="btn" id="palcoTudo">Mostrar a estrofe</button>
+    <button type="button" class="btn cheio" id="palcoProx">Próximo verso →</button>
+  </div>
 </div>
 
 <script>
@@ -739,7 +812,7 @@ function montaEstrofes(){
   const box=$("estrofes");box.innerHTML="";
   for(let e=0;e<S.n;e++){
     const art=document.createElement("article");art.className="estrofe";art.id="est-"+e;
-    let h=`<div class="cab"><h3>Estrofe ${e+1} <small id="quem-${e}"></small></h3><div class="acoes-est"><span class="estado" id="st-${e}"></span><button type="button" class="mini" id="cp-${e}">Copiar estrofe</button></div></div>`;
+    let h=`<div class="cab"><h3>Estrofe ${e+1} <small id="quem-${e}"></small></h3><div class="acoes-est"><span class="estado" id="st-${e}"></span><button type="button" class="mini" id="dc-${e}">Declamar</button><button type="button" class="mini" id="cp-${e}">Copiar estrofe</button></div></div>`;
     if(S.divisao==="rimas"){
       h+=`<div class="donos">`+["A","B","C","D"].map(L=>{const d=donoLetra(e,L);
         return `<button type="button" id="dn-${e}-${L}" class="d${d}" data-L="${L}" aria-label="Rima ${L}: ${esc(nomeP(d))}. Toque para trocar"><b>${L}</b>${esc(nomeP(d))}</button>`;}).join("")+`<span class="dica">toque para trocar</span></div>`;
@@ -756,6 +829,7 @@ function montaEstrofes(){
     art.querySelectorAll(".donos button").forEach(btn=>btn.onclick=()=>{
       const L=btn.dataset.L;if(!S.dono[e])S.dono[e]={};S.dono[e][L]=1-donoLetra(e,L);salva();montaEstrofes();
       const nb=$(`dn-${e}-${L}`);if(nb)nb.focus();});
+    $(`dc-${e}`).onclick=()=>abrePalco(e);
     $(`cp-${e}`).onclick=()=>{const b=$(`cp-${e}`);const txt=[...Array(10)].map((_,l)=>(linhaDe(e,l)||"").trim()).join("\n");
       copiaTexto(txt,()=>{b.textContent="Copiada ✓";b.classList.add("ok");setTimeout(()=>{b.textContent="Copiar estrofe";b.classList.remove("ok");},2000);},
         ()=>{b.textContent="Não deu para copiar";setTimeout(()=>b.textContent="Copiar estrofe",2500);});};
@@ -927,7 +1001,101 @@ function pintaModo(){
 }
 
 /* limpar tudo: dois toques para confirmar */
+/* ================= modo palco ================= */
+const palco={e:0,l:0,origem:null,tempo:0,resta:0,tick:null,wake:null};
+function abrePalco(e){
+  palco.e=Math.min(e,S.n-1);palco.l=0;palco.origem=document.activeElement;
+  $("palco").hidden=false;$("palco").classList.toggle("m11",S.metrica===11);document.body.style.overflow="hidden";
+  paraTempo(true);pintaPalco();$("palcoProx").focus();
+  try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(w=>palco.wake=w,()=>{});}catch(err){}
+}
+function fechaPalco(){
+  if(document.fullscreenElement&&document.exitFullscreen)document.exitFullscreen().catch(()=>{});
+  $("palco").hidden=true;document.body.style.overflow="";clearInterval(palco.tick);palco.tick=null;
+  try{palco.wake&&palco.wake.release();}catch(err){}palco.wake=null;
+  if(palco.origem&&palco.origem.focus)palco.origem.focus();
+}
+function pintaPalco(){
+  const e=palco.e,l=palco.l,rimas=S.divisao==="rimas";
+  $("palcoTitulo").innerHTML=`Estrofe ${e+1}<small>${esc(poeta(e))}${l===0?" · toque na tela para começar":""}</small>`;
+  let h="";
+  for(let k=0;k<10;k++){
+    const t=(linhaDe(e,k)||"").trim()||"· · ·",mote=k>=8,d=mote?null:donoLinha(e,k);
+    const est=k>=l?"oculto":(k===l-1?"atual":"dito");
+    h+=`<div class="pv ${est}${mote?" pmote":" d"+d}"><span class="dono">${mote?"mote":esc(nomeP(d))}</span><span class="tx">${esc(t)}</span></div>`;
+  }
+  $("palcoVersos").innerHTML=h;$("palcoVersos").classList.toggle("so-um",!rimas);
+  const q=$("palcoQuem");
+  if(l<10){const mote=l>=8,d=mote?null:donoLinha(e,l);
+    q.textContent=mote?"Mote: a dupla junta":"Vez de "+nomeP(d);q.className="palco-quem "+(mote?"mote":"d"+d);}
+  else{q.textContent=e<S.n-1?"Estrofe completa ✦":"Fim da peleja ✦";q.className="palco-quem";}
+  $("palcoPos").textContent=`Estrofe ${e+1} de ${S.n} · verso ${l} de 10`;
+  $("palcoAnt").disabled=e===0&&l===0;
+  $("palcoTudo").hidden=l>=10;
+  $("palcoProx").textContent=l<10?"Próximo verso →":(e<S.n-1?"Próxima estrofe →":"Encerrar ✦");
+  ["pt0","pt30","pt60","pt120"].forEach(id=>$(id).setAttribute("aria-pressed",String(+$(id).dataset.t===palco.tempo)));
+  pintaRelogio();
+}
+function proxPalco(){
+  if(palco.l<10){palco.l++;if(palco.l===1)iniciaTempo();if(palco.l===10){notasPalco();clearInterval(palco.tick);palco.tick=null;}}
+  else if(palco.e<S.n-1){palco.e++;palco.l=0;paraTempo(true);}
+  else{fechaPalco();return;}
+  pintaPalco();
+}
+function antPalco(){
+  if(palco.l>0)palco.l--;else if(palco.e>0){palco.e--;palco.l=10;}
+  if(palco.l===0)paraTempo(true);
+  pintaPalco();
+}
+function iniciaTempo(){
+  clearInterval(palco.tick);palco.tick=null;palco.resta=palco.tempo;
+  if(!palco.tempo){pintaRelogio();return;}
+  palco.tick=setInterval(()=>{palco.resta--;pintaRelogio();if(palco.resta<=0){clearInterval(palco.tick);palco.tick=null;}},1000);
+  pintaRelogio();
+}
+function paraTempo(zera){clearInterval(palco.tick);palco.tick=null;if(zera)palco.resta=palco.tempo;pintaRelogio();}
+function pintaRelogio(){
+  const r=$("palcoRelogio");
+  if(!palco.tempo){r.textContent="";r.className="palco-relogio";return;}
+  const s=Math.max(0,palco.resta);
+  r.textContent=s===0?"Tempo!":`${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
+  r.className="palco-relogio"+(s===0?" fim":s<=10?" pouco":"");
+}
+function notasPalco(){
+  if(semMovimento)return;
+  const box=$("palco"),w=box.clientWidth,h=box.clientHeight;
+  [[.12,1],[.88,-1]].forEach(([fx,dir],lado)=>["♪","♫","♬","♩"].forEach((c,k)=>{
+    const n=document.createElement("span");n.className="nota";n.textContent=c;n.style.left=(w*fx)+"px";n.style.top=(h*.72)+"px";n.style.fontSize="2.2rem";box.appendChild(n);
+    const a=n.animate([{transform:"translate(0,0)",opacity:0},{opacity:.9,offset:.15},{transform:`translate(${dir*(40+Math.random()*80)}px,${-(140+Math.random()*120)}px) rotate(${dir*20}deg)`,opacity:0}],{duration:3800,delay:k*300+lado*150,easing:"ease-out",fill:"both"});
+    a.onfinish=()=>n.remove();}));
+}
+$("abrePalco").onclick=()=>abrePalco(0);
+$("abrePalco2").onclick=()=>abrePalco(0);
+$("palcoProx").onclick=proxPalco;
+$("palcoAnt").onclick=antPalco;
+$("palcoTudo").onclick=()=>{palco.l=10;clearInterval(palco.tick);palco.tick=null;pintaPalco();};
+$("palcoSair").onclick=fechaPalco;
+$("palcoCentro").onclick=proxPalco;
+$("palcoTela").onclick=()=>{
+  const el=$("palco");
+  if(document.fullscreenElement){document.exitFullscreen&&document.exitFullscreen().catch(()=>{});return;}
+  if(el.requestFullscreen)el.requestFullscreen().catch(()=>{$("palcoTela").textContent="Tela cheia indisponível";});
+  else $("palcoTela").textContent="Tela cheia indisponível";
+};
+document.addEventListener("fullscreenchange",()=>{$("palcoTela").textContent=document.fullscreenElement?"Sair da tela cheia":"Tela cheia";});
+["pt0","pt30","pt60","pt120"].forEach(id=>$(id).onclick=()=>{palco.tempo=+$(id).dataset.t;
+  if(palco.l>0&&palco.l<10)iniciaTempo();else paraTempo(true);pintaPalco();});
+document.addEventListener("keydown",ev=>{
+  if($("palco").hidden)return;
+  const k=ev.key,emBotao=ev.target&&ev.target.tagName==="BUTTON";
+  if(k==="Escape"&&!document.fullscreenElement){ev.preventDefault();fechaPalco();}
+  else if(k==="ArrowRight"||k==="PageDown"||((k===" "||k==="Enter")&&!emBotao)){ev.preventDefault();proxPalco();}
+  else if(k==="ArrowLeft"||k==="PageUp"){ev.preventDefault();antPalco();}
+  else if(k==="f"||k==="F"){$("palcoTela").click();}
+});
+
 function limparTudo(){
+  if(!$("palco").hidden)fechaPalco();
   S=padrao();
   ["p1","p2","mp1","mp2","titulo"].forEach(id=>$(id).value="");
   aplicaTema("dark");pintaArrumacao();pintaModo();pintaCapas();montaEstrofes();
