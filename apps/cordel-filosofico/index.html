@@ -303,6 +303,7 @@ textarea.copia{position:absolute;left:-9999px}
         <div class="seg" role="group" aria-label="Métrica">
           <button type="button" id="m7" data-m="7">Sete sílabas</button>
           <button type="button" id="m11" data-m="11">Onze sílabas</button>
+          <button type="button" id="mLv" data-m="7">Décima livre</button>
           <button type="button" id="mSx" data-m="7">Sextilha</button>
         </div>
         <p class="dica" id="dicaMetrica"></p>
@@ -381,7 +382,7 @@ textarea.copia{position:absolute;left:-9999px}
         <span>9 D</span><span class="m">A palavra é minha enxada</span>
         <span>10 C</span><span class="m">e o papel é meu roçado.</span>
       </div>
-      <p class="dica" style="margin-top:.9rem">Na sextilha são seis versos de sete sílabas e só os versos 2, 4 e 6 rimam entre si (ABCBDB). No galope à beira-mar, a décima tem onze sílabas e o mote termina sempre na beira do mar.</p>
+      <p class="dica" style="margin-top:.9rem">Na décima livre não há mote fixo: a dupla escreve os dez versos, inclusive o fecho de cada estrofe. Na sextilha são seis versos de sete sílabas e só os versos 2, 4 e 6 rimam entre si (ABCBDB). No galope à beira-mar, a décima tem onze sílabas e o mote termina sempre na beira do mar.</p>
     </details>
   </section>
 
@@ -787,9 +788,11 @@ const MOTES={
 };
 const ESQ_D=["A","B","B","A","A","C","C","D","D","C"],ESQ_S=["A","B","C","B","D","B"];
 const sext=()=>S.forma==="sextilha";
+const livre=()=>S.forma==="livre";
+const semMote=()=>sext()||livre();
 const ESQf=()=>sext()?ESQ_S:ESQ_D;
 const NL=()=>sext()?6:10;   /* versos na estrofe */
-const NE=()=>sext()?6:8;    /* versos escritos pela dupla (o resto é mote) */
+const NE=()=>sext()?6:livre()?10:8;    /* versos escritos pela dupla (o resto é mote) */
 
 /* ================= estado ================= */
 const CHAVE="peleja-cordel-v3";
@@ -811,7 +814,7 @@ function donoLetra(e,L){
 }
 function donoLinha(e,l){return donoLetra(e,ESQf()[l]);}
 function poeta(e){return S.divisao==="rimas"?nomeP(e%2)+" e "+nomeP(1-e%2):nomeP(e%2);}
-function versosDe(e){if(!S.versos[e])S.versos[e]=Array(8).fill("");return S.versos[e];}
+function versosDe(e){if(!S.versos[e])S.versos[e]=[];const v=S.versos[e];while(v.length<10)v.push("");return v;}
 function linhaDe(e,l){return l<NE()?versosDe(e)[l]:mote()[l-NE()];}
 function feitos(e){return versosDe(e).slice(0,NE()).filter(v=>v.trim()).length;}
 function ativa(){for(let e=0;e<S.n;e++)if(feitos(e)<NE())return e;return -1;}
@@ -823,20 +826,22 @@ $("tema").onclick=()=>aplicaTema(document.documentElement.getAttribute("data-the
 
 /* ================= arrumação ================= */
 function pintaArrumacao(){
-  ["m7","m11"].forEach(id=>$(id).setAttribute("aria-pressed",String(!sext()&&+$(id).dataset.m===S.metrica)));
+  ["m7","m11"].forEach(id=>$(id).setAttribute("aria-pressed",String(S.forma==="decima"&&+$(id).dataset.m===S.metrica)));
+  $("mLv").setAttribute("aria-pressed",String(livre()));
   $("mSx").setAttribute("aria-pressed",String(sext()));
-  $("passoMote").hidden=sext();
+  $("passoMote").hidden=semMote();
   ["n2","n4","n6","n8"].forEach(id=>$(id).setAttribute("aria-pressed",String(+$(id).dataset.n===S.n)));
   $("dvInteira").setAttribute("aria-pressed",String(S.divisao==="inteira"));
   $("dvRimas").setAttribute("aria-pressed",String(S.divisao==="rimas"));
   $("dicaDivisao").textContent=S.divisao==="rimas"
     ?(sext()?"Os dois escrevem a mesma estrofe: um fica com os versos que rimam (2, 4 e 6), o outro com os versos livres (1, 3 e 5). Os papéis trocam na estrofe seguinte e podem ser ajustados em cada estrofe."
-      :"Os dois escrevem a mesma estrofe: um fica com as rimas A e D, o outro com B e C (quatro versos cada). Os papéis trocam na estrofe seguinte e podem ser ajustados em cada estrofe.")
+      :"Os dois escrevem a mesma estrofe: um fica com as rimas A e D, o outro com B e C ("+(livre()?"cinco":"quatro")+" versos cada). Os papéis trocam na estrofe seguinte e podem ser ajustados em cada estrofe.")
     :"Cada poeta escreve uma estrofe inteira e a vez passa para o outro.";
   $("moSorteio").setAttribute("aria-pressed",String(S.origem==="sorteio"));
   $("moProprio").setAttribute("aria-pressed",String(S.origem==="proprio"));
   $("caixaSorteio").hidden=S.origem!=="sorteio";$("caixaProprio").hidden=S.origem!=="proprio";
   $("dicaMetrica").textContent=sext()?"Sextilha: seis versos de sete sílabas, com rima só nos versos 2, 4 e 6 (ABCBDB). Não usa mote: a dupla escreve a estrofe inteira."
+    :livre()?"Décima livre: dez versos de sete sílabas, rimas ABBAACCDDC, sem mote fixo. A dupla escreve também os versos 9 e 10 de cada estrofe, do jeito que quiser."
     :S.metrica===7?"Décima em redondilha maior: sete sílabas poéticas por verso, o metro mais comum do cordel."
     :"Galope à beira-mar: décima de onze sílabas, com tônicas na 2ª, 5ª, 8ª e 11ª. O mote sempre termina na beira do mar.";
   const m=MOTES[S.metrica][S.idx[S.metrica]%MOTES[S.metrica].length];
@@ -935,8 +940,8 @@ function vinheta(){return `<svg viewBox="0 0 200 120" fill="currentColor" xmlns=
 function paginas(){
   const pl=planoPaginas(),E=estrofesUsadas(),m=mote(),cls="m"+S.metrica+(pl.spp===2?" s2":"");
   const out=[];
-  out.push({rot:"capa",html:`<div class="pag capa"><div class="pi"><div class="moldura"><h3 class="capa-t">${esc(tituloF())}</h3>${desenhar()?`<div class="grav-vazia"><span>espaço para a xilogravura</span></div>`:`<div class="grav">${cena(S.capa)}</div>`}<p class="autores">${esc(nomeP(0))} e ${esc(nomeP(1))}<small>${sext()?"Peleja em sextilhas":S.metrica===11?"Peleja em galope à beira-mar":"Peleja em décimas de 7 sílabas"}</small></p></div></div></div>`});
-  if(pl.rosto){const i=out.length;out.push({rot:"abertura",html:pagina(`<div class="miolo rosto"><h4>${esc(tituloF())}</h4><p class="de">peleja de ${esc(nomeP(0))} e ${esc(nomeP(1))}</p>${sext()?"":`<span class="r">Mote</span><p class="mote-g">${mt(m[0])}<br>${mt(m[1])}</p>`}</div>`,i+1,i)});}
+  out.push({rot:"capa",html:`<div class="pag capa"><div class="pi"><div class="moldura"><h3 class="capa-t">${esc(tituloF())}</h3>${desenhar()?`<div class="grav-vazia"><span>espaço para a xilogravura</span></div>`:`<div class="grav">${cena(S.capa)}</div>`}<p class="autores">${esc(nomeP(0))} e ${esc(nomeP(1))}<small>${sext()?"Peleja em sextilhas":livre()?"Peleja em décimas livres":S.metrica===11?"Peleja em galope à beira-mar":"Peleja em décimas de 7 sílabas"}</small></p></div></div></div>`});
+  if(pl.rosto){const i=out.length;out.push({rot:"abertura",html:pagina(`<div class="miolo rosto"><h4>${esc(tituloF())}</h4><p class="de">peleja de ${esc(nomeP(0))} e ${esc(nomeP(1))}</p>${semMote()?"":`<span class="r">Mote</span><p class="mote-g">${mt(m[0])}<br>${mt(m[1])}</p>`}</div>`,i+1,i)});}
   for(let k=0;k<E.length;k+=pl.spp){const i=out.length,grupo=E.slice(k,k+pl.spp);
     const ests=grupo.map(e=>{const ls=[];for(let l=0;l<NL();l++){const v=(linhaDe(e,l)||"").trim();ls.push(v?`<span${l>=NE()?' class="m"':""}>${esc(v)}</span>`:`<span class="lin"></span>`);}
       return `<div class="est"><h5>Estrofe ${e+1} · ${esc(poeta(e))}</h5><div class="vv">${ls.join("")}</div></div>`;}).join("");
@@ -944,7 +949,7 @@ function paginas(){
   for(let p=0;p<pl.pad;p++){const i=out.length;out.push({rot:"vinheta",html:pagina(desenhar()?`<div class="miolo"><div class="vinh-vazia grande"><span>espaço para desenho</span></div></div>`:`<div class="miolo contra"><div class="vinh">${vinheta()}</div><span class="fim">✦ ◆ ✦</span></div>`,i+1,i)});}
   const i=out.length;
   const esqHTML=ESQf().map((L,k)=>`<b${k>=NE()||(sext()&&L==="B")?' class="m"':""}>${L}</b>`).join("");
-  out.push({rot:"contracapa",html:pagina(`<div class="miolo contra">${sext()?"":`<span class="r">O mote</span><p class="mote-g">${mt(m[0])}<br>${mt(m[1])}</p>`}<span class="r">${sext()?"A sextilha":S.metrica===11?"O galope à beira-mar":"A décima"}</span><div class="esq">${esqHTML}</div><p class="exp">${sext()?"Seis versos de 7 sílabas. Rimam entre si os versos 2, 4 e 6; os versos 1, 3 e 5 ficam livres.":`Dez versos de ${S.metrica} sílabas. Os dois últimos são o mote; o verso 8 rima com o 9, e os versos 6 e 7 rimam com o 10.`}</p>${desenhar()?`<div class="vinh-vazia"><span>vinheta</span></div>`:`<div class="vinh">${vinheta()}</div>`}</div>`,"",i)});
+  out.push({rot:"contracapa",html:pagina(`<div class="miolo contra">${semMote()?"":`<span class="r">O mote</span><p class="mote-g">${mt(m[0])}<br>${mt(m[1])}</p>`}<span class="r">${sext()?"A sextilha":S.metrica===11?"O galope à beira-mar":"A décima"}</span><div class="esq">${esqHTML}</div><p class="exp">${sext()?"Seis versos de 7 sílabas. Rimam entre si os versos 2, 4 e 6; os versos 1, 3 e 5 ficam livres.":livre()?"Dez versos de 7 sílabas, todos da dupla, sem mote fixo. O verso 1 rima com o 4 e o 5; o 2 com o 3; o 6 com o 7 e o 10; o 8 com o 9.":`Dez versos de ${S.metrica} sílabas. Os dois últimos são o mote; o verso 8 rima com o 9, e os versos 6 e 7 rimam com o 10.`}</p>${desenhar()?`<div class="vinh-vazia"><span>vinheta</span></div>`:`<div class="vinh">${vinheta()}</div>`}</div>`,"",i)});
   return out;
 }
 function folheto(){
@@ -1019,7 +1024,8 @@ function copiaTexto(txt,ok,falha){
 
 /* ================= eventos ================= */
 const refaz=()=>{pintaArrumacao();for(let e=0;e<S.n;e++)atualiza(e);estados();folheto();};
-["m7","m11"].forEach(id=>$(id).onclick=()=>{const mudou=sext();S.forma="decima";S.metrica=+$(id).dataset.m;if(mudou){pintaArrumacao();montaEstrofes();}else refaz();});
+["m7","m11"].forEach(id=>$(id).onclick=()=>{const mudou=S.forma!=="decima";S.forma="decima";S.metrica=+$(id).dataset.m;if(mudou){pintaArrumacao();montaEstrofes();}else refaz();});
+$("mLv").onclick=()=>{S.forma="livre";S.metrica=7;pintaArrumacao();montaEstrofes();};
 $("mSx").onclick=()=>{S.forma="sextilha";S.metrica=7;pintaArrumacao();montaEstrofes();};
 ["n2","n4","n6","n8"].forEach(id=>$(id).onclick=()=>{S.n=+$(id).dataset.n;salva();pintaArrumacao();montaEstrofes();});
 ["dvInteira","dvRimas"].forEach(id=>$(id).onclick=()=>{S.divisao=$(id).dataset.d;salva();pintaArrumacao();montaEstrofes();});
