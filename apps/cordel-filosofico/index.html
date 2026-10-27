@@ -195,6 +195,16 @@ summary{cursor:pointer;color:var(--ouro);font-family:var(--display);font-size:1r
 textarea.copia{position:absolute;left:-9999px}
 
 [hidden]{display:none!important}
+/* ---------- autoria ---------- */
+.autoria{display:flex;flex-direction:column;align-items:center;gap:.35rem;text-align:center;padding-block:.5rem 1rem}
+.autoria p{margin:0}
+.autoria-olho{font-family:var(--mono);font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ocre)}
+.autoria-nome{font-family:var(--display);font-size:1.6rem;line-height:1.1;color:var(--tinta)}
+.autoria-cargo{font-style:italic;color:var(--apagado)}
+.autoria-links{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:.4rem .8rem;margin-top:.4rem}
+.autoria-links a{color:var(--ouro);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--ouro) 45%,transparent);padding-bottom:1px;overflow-wrap:anywhere}
+.autoria-links a:hover{border-bottom-color:var(--ouro)}
+.autoria-links b{color:var(--ocre);font-size:.7rem;font-weight:400}
 /* ---------- modo palco ---------- */
 .palco{position:fixed;inset:0;z-index:50;background:radial-gradient(ellipse 120% 80% at 50% 0%,var(--fundo2),var(--fundo) 70%);background-color:var(--fundo);color:var(--tinta);display:flex;flex-direction:column;gap:.6rem;padding:calc(env(safe-area-inset-top,0px) + 12px) 16px calc(env(safe-area-inset-bottom,0px) + 12px);overflow:hidden}
 .palco-astro{position:absolute;top:50%;left:50%;width:min(80vh,90vw);aspect-ratio:1;transform:translate(-50%,-50%);opacity:.08;color:var(--ouro);pointer-events:none;--corte:var(--fundo)}
@@ -427,6 +437,19 @@ textarea.copia{position:absolute;left:-9999px}
       <span class="aviso" id="aviso" aria-live="polite"></span>
     </div>
   </section>
+
+  <div class="divisor" aria-hidden="true">✦ ◆ ✦</div>
+
+  <footer class="autoria">
+    <p class="autoria-olho">Criado por</p>
+    <p class="autoria-nome">Artur Merlin</p>
+    <p class="autoria-cargo">Professor de Filosofia · Guamaré, RN</p>
+    <nav class="autoria-links" aria-label="Contatos do autor">
+      <a href="https://www.instagram.com/arturmerlins/" target="_blank" rel="noopener">Instagram @arturmerlins</a>
+      <b aria-hidden="true">◆</b>
+      <a href="mailto:artur.merlins@gmail.com">artur.merlins@gmail.com</a>
+    </nav>
+  </footer>
 </div>
 
 <div class="palco" id="palco" hidden role="dialog" aria-modal="true" aria-label="Modo palco">
