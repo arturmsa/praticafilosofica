@@ -75,6 +75,8 @@ h1 span{color:var(--accent)}
 .lens{border-left:6px solid var(--lens,var(--accent));padding:4px 0 4px 16px}
 .lens strong{font-family:var(--display);font-size:1.2em}
 .lens p{margin:4px 0 0;max-width:62ch}
+.exemplo{background:color-mix(in srgb,var(--lens,var(--accent)) 10%,transparent);border-radius:8px;padding:10px 14px;margin-top:10px!important}
+.exemplo b{font-family:var(--display)}
 .lensWrap{display:grid;gap:18px;position:relative}
 .lenshead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px}
 .lenshead .tag{margin:0}
@@ -253,6 +255,30 @@ const LENTES = [
 ];
 let nivel = "simples";
 
+/* Lentes na linguagem do trabalho, para a aba Administração (nível EJA) */
+const LENTES_ADM = {
+  "Kant": {s:"Fazer o certo", q:"Faça o certo mesmo quando ninguém está olhando. Antes de decidir, pergunte: e se todo mundo fizesse igual? E nunca use uma pessoa só para tirar vantagem.",
+    ex:"Se todo comerciante sonegasse imposto, não teria escola nem posto de saúde para ninguém."},
+  "Utilitarismo": {s:"Fazer as contas", q:"Coloque na balança: quem ganha e quem perde com essa decisão? Escolha o caminho que faz bem para mais gente e causa menos prejuízo.",
+    ex:"Fechar um setor tira 5 empregos, mas pode salvar os outros 40."},
+  "Aristóteles": {s:"Nem oito, nem oitenta", q:"O bom gestor não é mole demais nem duro demais. Procure o meio-termo: o que faria um chefe justo e equilibrado?",
+    ex:"Cobrar a meta, sim. Humilhar o funcionário na frente dos outros, não."},
+  "Sartre": {s:"A escolha é sua", q:"Quem decide é você, e a responsabilidade também é sua. Não vale se esconder atrás de \"o chefe mandou\" ou \"todo mundo faz\".",
+    ex:"Quem assina o documento responde por ele, mesmo que outro tenha pedido."},
+  "Ética do cuidado": {s:"Gente antes dos números", q:"Por trás de cada número tem uma pessoa. Quem vai sofrer mais com essa decisão? Como dá para cuidar dela?",
+    ex:"Se precisar demitir, avisar com tempo, conversar com respeito e ajudar a pessoa a achar outro emprego."},
+  "Estoicismo": {s:"Faça a sua parte", q:"Separe o que você pode mudar do que não pode. Não perca a calma com o que não depende de você e faça bem a parte que é sua.",
+    ex:"Você não controla a crise do país, mas controla como atende o cliente hoje."},
+  "Hobbes": {s:"Regra para todos", q:"Sem regras, cada um puxa para o seu lado e vira bagunça. Qual regra todo mundo na empresa aceitaria para trabalhar em paz?",
+    ex:"Contrato, carteira assinada e regimento existem para todos saberem o que pode e o que não pode."},
+  "Nietzsche": {s:"Pensar com a própria cabeça", q:"Não faça algo só porque \"sempre foi assim\" ou porque \"todo mundo faz\". Tenha coragem de ter o seu próprio jeito, mesmo que seja diferente da maioria. Pergunte: essa escolha me faz crescer ou só me faz ir na onda?",
+    ex:"Na firma todo mundo dá um \"jeitinho\". Você pode ser a pessoa que faz diferente e mostra que também dá certo."},
+  "Arendt": {s:"Não desligue a cabeça", q:"No trabalho, pare e pense antes de obedecer. Cumprir uma ordem errada não tira a sua culpa.",
+    ex:"\"Eu só cumpri ordens\" não convence o juiz e nem a sua consciência."},
+  "Ubuntu": {s:"Eu sou porque nós somos", q:"Uma empresa só vai bem de verdade se a equipe e a comunidade em volta também vão bem. Como essa decisão afeta todo mundo?",
+    ex:"Contratar gente da cidade, comprar do comércio local e respeitar a vizinhança."}
+};
+
 const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const SEG_COLORS = ["--s1","--s2","--s3","--s4","--s5","--s6","--s7","--s8","--s9","--s10"];
 const TAU = Math.PI*2;
@@ -369,16 +395,20 @@ function render(){
 function lensInner(){
   const L = LENTES[current.l], color = css(SEG_COLORS[current.l % SEG_COLORS.length]);
   const adv = nivel === "complexa";
+  const A = curso === "administracao" ? LENTES_ADM[L.n] : null;
+  const sub = (A && !adv) ? A.s : L.s;
   const body = adv
     ? `<p>${L.qc}</p><ul class="chips">${L.c.map(k=>`<li>${k}</li>`).join("")}</ul>`
-    : `<p>${L.q}</p>`;
+    : A ? `<p>${A.q}</p><p class="exemplo"><b>No trabalho:</b> ${A.ex}</p>`
+        : `<p>${L.q}</p>`;
   const task = adv
     ? `Tarefa avançada: decidam e justifiquem usando pelo menos dois conceitos de ${L.n}. Depois, respondam a uma objeção que outra lente faria.`
-    : `Tarefa: tome uma decisão e defenda-a usando o jeito de pensar de ${L.n}, mesmo que você pense diferente.`;
+    : A ? `Tarefa: vocês são os gestores da empresa. Decidam o que fazer e expliquem com a ideia de ${L.n}, dando um exemplo do trabalho de vocês.`
+        : `Tarefa: tome uma decisão e defenda-a usando o jeito de pensar de ${L.n}, mesmo que você pense diferente.`;
   return `<div class="lens" style="--lens:${color}">
       <div class="lenshead"><p class="tag">Sua lente · ${adv ? "aprofundada" : "simples"}</p>
         <button class="lvl" id="lvlBtn" type="button" aria-pressed="${adv}">${adv ? "◐ Voltar à lente simples" : "◉ Trocar para lente aprofundada"}</button></div>
-      <strong>${L.n} · ${L.s}</strong>${body}</div>
+      <strong>${L.n} · ${sub}</strong>${body}</div>
     <p class="task">${task}</p>`;
 }
 
