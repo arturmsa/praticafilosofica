@@ -44,6 +44,10 @@ header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-be
 h1{font-family:var(--carved);font-weight:800;font-size:clamp(2rem,4.4vw,3.6rem);line-height:1;margin:0;letter-spacing:.06em;color:var(--sky)}
 h1 span{color:var(--accent)}
 .sub{color:var(--muted);margin:6px 0 0;font-size:.9em}
+.abas{display:flex;gap:6px;flex-wrap:wrap;border-bottom:2px solid var(--line);margin-top:-12px}
+.aba{font-family:var(--carved);font-weight:600;font-size:.85em;letter-spacing:.08em;padding:10px 20px;border:2px solid transparent;border-bottom:none;border-radius:10px 10px 0 0;background:transparent;color:var(--muted);cursor:pointer;margin-bottom:-2px}
+.aba:hover{color:var(--ink)}
+.aba[aria-selected="true"]{background:var(--surface);color:var(--sky);border-color:var(--line);border-bottom:2px solid var(--surface)}
 .opts{display:flex;gap:16px;align-items:center;flex-wrap:wrap;font-size:.8em;color:var(--muted)}
 .opts label{display:flex;gap:6px;align-items:center;cursor:pointer}
 .linkbtn{background:none;border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:4px 14px;font:inherit;cursor:pointer}
@@ -134,7 +138,7 @@ h1 span{color:var(--accent)}
   <header>
     <div>
       <h1>Roleta <span>Ética</span></h1>
-      <p class="sub">Gire, receba um dilema e uma lente. Defenda a decisão com os olhos daquele filósofo.</p>
+      <p class="sub" id="sub">Gire, receba um dilema e uma lente. Defenda a decisão com os olhos daquele filósofo.</p>
     </div>
     <div class="opts">
       <label><input type="checkbox" id="norepeat" checked> Não repetir dilemas</label>
@@ -143,6 +147,10 @@ h1 span{color:var(--accent)}
     </div>
   </header>
   <div class="meander" aria-hidden="true"></div>
+  <nav class="abas" role="tablist" aria-label="Conjunto de dilemas">
+    <button type="button" class="aba" role="tab" id="aba-geral" data-curso="geral" aria-selected="true">Escola e vida</button>
+    <button type="button" class="aba" role="tab" id="aba-administracao" data-curso="administracao" aria-selected="false">Administração</button>
+  </nav>
 
   <section class="stage">
     <div class="wheelbox"><h2>1 · Dilema</h2><div class="wheel"><div class="pin"></div><canvas id="w1" width="840" height="840" aria-label="Roleta de dilemas"></canvas></div>
@@ -158,7 +166,7 @@ h1 span{color:var(--accent)}
 </div>
 
 <script>
-const DILEMAS = [
+const DILEMAS_GERAL = [
   {t:"A carteira", txt:"Você acha uma carteira na praça com R$ 500 e o documento do dono. Ninguém viu. O que você faz?",
    tw:["O dono é alguém que já te humilhou na frente da turma.","Sua família está sem dinheiro para comprar um remédio essa semana."]},
   {t:"O print", txt:"Um amigo manda no grupo o print de uma conversa privada de uma colega, só para zoar. Todos estão rindo. Você repassa, fica calado ou reage?",
@@ -176,6 +184,30 @@ const DILEMAS = [
   {t:"O mangue", txt:"A prefeitura quer aterrar parte do mangue para construir uma quadra para a comunidade, que nunca teve onde jogar.",
    tw:["A obra traria 50 empregos para a cidade.","Pescadores e marisqueiras dependem daquele trecho do mangue."]}
 ];
+const DILEMAS_ADM = [
+  {t:"Sem nota", txt:"Um fornecedor oferece a mercadoria 30% mais barata, desde que a compra seja feita sem nota fiscal. Sua loja está apertada no caixa este mês.",
+   tw:["Com o desconto, você evitaria atrasar o salário de dois funcionários.","Um concorrente seu já compra desse fornecedor e está vendendo mais barato que você."]},
+  {t:"O corte", txt:"A empresa precisa reduzir custos e você tem que demitir uma pessoa: o funcionário mais antigo, leal e mais lento, ou o novato, rápido e produtivo.",
+   tw:["O funcionário antigo está a dois anos de se aposentar.","O novato é o único que sustenta a família."]},
+  {t:"O balanço", txt:"Seu chefe pede que você \"ajeite\" os números do balanço para a empresa conseguir um empréstimo no banco. Ele diz que todo mundo faz isso.",
+   tw:["Sem o empréstimo, a empresa pode fechar e 40 pessoas perdem o emprego.","Se der problema, quem assinou o relatório foi você."]},
+  {t:"O alvará", txt:"O alvará da sua empresa está parado há meses. Alguém da fiscalização sugere que, com R$ 300 \"por fora\", tudo se resolve esta semana.",
+   tw:["Cada semana parada custa R$ 2.000 para a empresa.","Você sabe que outras empresas da cidade pagaram e foram liberadas."]},
+  {t:"O lote", txt:"Um lote de produtos saiu com um pequeno defeito que dificilmente será notado. Recolher tudo custaria caro e atrasaria as entregas.",
+   tw:["O defeito pode causar um pequeno acidente se o produto for usado por crianças.","O maior cliente da empresa ameaça cancelar o contrato se houver atraso."]},
+  {t:"A vaga", txt:"Na seleção para uma vaga, a candidata mais qualificada conta que está grávida. O dono prefere contratar o segundo colocado.",
+   tw:["O segundo colocado é sobrinho do dono.","A empresa é pequena e não tem quem cubra a licença-maternidade."]},
+  {t:"A lista", txt:"Um funcionário que veio do concorrente oferece a lista completa de clientes da empresa antiga. Ele diz que pode ajudar a dobrar as vendas.",
+   tw:["A meta do trimestre está longe de ser batida.","O concorrente fez a mesma coisa com a sua empresa no ano passado."]},
+  {t:"Hora extra", txt:"Um prazo apertado exige que a equipe trabalhe no fim de semana. O gerente sugere pedir isso sem pagar hora extra, prometendo folga \"um dia\".",
+   tw:["Se o prazo não for cumprido, a empresa paga multa e perde o cliente.","A equipe já trabalhou três fins de semana seguidos este mês."]}
+];
+const CURSOS = {
+  geral:{dilemas:DILEMAS_GERAL, sub:"Gire, receba um dilema e uma lente. Defenda a decisão com os olhos daquele filósofo."},
+  administracao:{dilemas:DILEMAS_ADM, sub:"Dilemas do dia a dia de uma empresa. Decida como gestor e defenda a escolha com a lente sorteada."}
+};
+let curso = "geral";
+let DILEMAS = DILEMAS_GERAL;
 
 const LENTES = [
   {n:"Kant", s:"Dever",
@@ -227,8 +259,10 @@ const TAU = Math.PI*2;
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 function makeWheel(canvas, items, label){
-  const ctx = canvas.getContext("2d"), N = items.length, seg = TAU/N;
+  const ctx = canvas.getContext("2d");
+  let N = items.length, seg = TAU/N;
   const w = {rot:0, used:new Set(), seg, N};
+  w.setItems = function(arr){ items = arr; N = arr.length; seg = TAU/N; w.N = N; w.seg = seg; w.used.clear(); w.rot = 0; w.draw(); };
   w.draw = function(){
     const W = canvas.width, c = W/2, R = W/2 - 38;
     ctx.clearRect(0,0,W,W);
@@ -371,11 +405,24 @@ function swapLens(){
 spin1.onclick = spinDilema;
 spin2.onclick = spinLente;
 noRepeat.onchange = ()=>{ if(!noRepeat.checked){ w1.used.clear(); drawAll(); } updateCount(); };
-document.getElementById("reset").onclick = ()=>{
+function recomecar(){
   w1.used.clear(); current = null; drawAll(); updateCount();
   spin2.disabled = true; hint2.textContent = "Libera depois de sortear o dilema.";
   result.classList.add("empty"); result.innerHTML = EMPTY;
-};
+}
+document.getElementById("reset").onclick = recomecar;
+
+function trocaCurso(c){
+  if(!CURSOS[c]) return;
+  curso = c; DILEMAS = CURSOS[c].dilemas;
+  document.getElementById("sub").textContent = CURSOS[c].sub;
+  document.querySelectorAll(".aba").forEach(b => b.setAttribute("aria-selected", b.dataset.curso === c));
+  w1.setItems(DILEMAS);
+  recomecar();
+  try{ history.replaceState(null, "", c === "geral" ? location.pathname : "#" + c); }catch(e){}
+}
+document.querySelectorAll(".aba").forEach(b => b.onclick = () => { if(!spin1.disabled) trocaCurso(b.dataset.curso); });
+if(location.hash === "#administracao") trocaCurso("administracao");
 document.getElementById("fs").onclick = ()=>{
   try{ document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(()=>{}); }catch(e){}
 };
