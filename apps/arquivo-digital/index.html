@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arquivo Digital</title>
+<meta name="robots" content="noindex">
+<script>
+/* usa o mesmo tema (claro/escuro) escolhido na página inicial */
+try{ if(localStorage.getItem("tema")==="escuro") document.documentElement.dataset.tema="escuro"; }catch(e){}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600&family=Inter:wght@400;500;600&display=swap">
+<style>
+:root{
+  --fundo:#faf8f5; --fundo2:#f0ece6; --cartao:#ffffff; --tinta:#121212; --apagado:#5d5751;
+  --borda:#e2ddd5; --destaque:#c1272d; --destaque-suave:#f7e2e2; --gestao:#6e6e6e;
+  --ok:#2a7d5f; --ok-suave:#e1f1ea; --info:#335fc0; --info-suave:#e3eafa;
+  --alerta:#a0640f; --alerta-suave:#fbefdc; --neutro-suave:#ebe8e3;
+  color-scheme:light;
+}
+:root[data-tema="escuro"]{
+  --fundo:#111111; --fundo2:#1b1b1b; --cartao:#171717; --tinta:#f3f0eb; --apagado:#aaa39b;
+  --borda:#2f2c29; --destaque:#e8484e; --destaque-suave:#3b1a1c; --gestao:#a8a8a8;
+  --ok:#5cc79c; --ok-suave:#173327; --info:#7aa2f0; --info-suave:#1a2540;
+  --alerta:#e7a35c; --alerta-suave:#3a2a14; --neutro-suave:#262422;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Inter",system-ui,sans-serif;background:var(--fundo);color:var(--tinta);line-height:1.5;min-height:100vh}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+a{color:inherit}
+button,select,input{font:inherit;color:inherit}
+
+.topo{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:18px 0}
+.voltar{text-decoration:none;font-size:.9rem;font-weight:500;color:var(--apagado)}
+.voltar:hover{color:var(--destaque)}
+
+header.titulo{padding:24px 0 22px;border-bottom:1px solid var(--tinta);margin-bottom:24px}
+.selo{font-size:.72rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--destaque)}
+h1{font-family:"Fraunces",Georgia,serif;font-weight:800;font-size:clamp(2.2rem,6vw,3.4rem);line-height:1.05;letter-spacing:-.02em;margin:6px 0 8px}
+h1 em{color:var(--destaque)}
+.sub{color:var(--apagado);max-width:620px}
+
+.estado{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.85rem;color:var(--apagado);margin-bottom:18px}
+.btn{cursor:pointer;font-size:.85rem;font-weight:600;padding:8px 14px;border-radius:999px;border:1.5px solid var(--borda);background:var(--cartao);transition:border-color .2s,color .2s}
+.btn:hover{border-color:var(--destaque);color:var(--destaque)}
+.btn:disabled{opacity:.5;cursor:wait}
+
+.numeros{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px}
+.numero{background:var(--cartao);border:1px solid var(--borda);border-radius:4px;padding:14px 16px}
+.numero b{display:block;font-family:"Fraunces",Georgia,serif;font-size:1.9rem;line-height:1.1}
+.numero span{font-size:.8rem;color:var(--apagado)}
+
+.filtros{display:grid;grid-template-columns:2fr repeat(3,1fr);gap:10px;margin-bottom:14px}
+.filtros label{display:flex;flex-direction:column;gap:4px;font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--apagado)}
+.filtros input,.filtros select{font-size:.95rem;font-weight:400;letter-spacing:0;text-transform:none;padding:10px 12px;border:1.5px solid var(--borda);border-radius:4px;background:var(--cartao);color:var(--tinta)}
+.filtros input:focus,.filtros select:focus{outline:none;border-color:var(--destaque)}
+.acoes{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px;font-size:.88rem;color:var(--apagado)}
+
+.tabela-caixa{background:var(--cartao);border:1px solid var(--borda);border-radius:4px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th{text-align:left;font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--apagado);padding:12px 14px;border-bottom:1px solid var(--tinta);white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:var(--destaque)}
+th[aria-sort="ascending"]::after{content:" ↑";color:var(--destaque)}
+th[aria-sort="descending"]::after{content:" ↓";color:var(--destaque)}
+td{padding:11px 14px;border-bottom:1px solid var(--borda);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--fundo2)}
+.nome-btn{background:none;border:none;cursor:pointer;font-weight:600;text-align:left;padding:0;border-bottom:1.5px solid transparent}
+.nome-btn:hover{color:var(--destaque);border-bottom-color:var(--destaque)}
+.mat{font-family:ui-monospace,Consolas,monospace;font-size:.85rem;color:var(--apagado)}
+
+.sit{display:inline-block;font-size:.76rem;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--neutro-suave);color:var(--apagado)}
+.sit.aprovado{background:var(--ok-suave);color:var(--ok)}
+.sit.concluido{background:var(--info-suave);color:var(--info)}
+.sit.cursando{background:var(--fundo2);color:var(--tinta);border:1px solid var(--borda)}
+.sit.reprovado{background:var(--destaque-suave);color:var(--destaque)}
+.sit.transferido{background:var(--alerta-suave);color:var(--alerta)}
+
+.vazio,.aviso{padding:40px 16px;text-align:center;color:var(--apagado)}
+.aviso{background:var(--destaque-suave);border-left:4px solid var(--destaque);border-radius:4px;text-align:left;padding:16px 18px;color:var(--tinta);margin-bottom:18px}
+.carregando{display:inline-block;width:14px;height:14px;border:2px solid var(--borda);border-top-color:var(--destaque);border-radius:50%;animation:gira .8s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
+
+/* ficha do aluno */
+.fundo-ficha{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:flex-start;justify-content:center;padding:6vh 16px;z-index:50;overflow-y:auto}
+.fundo-ficha.aberta{display:flex}
+.ficha{background:var(--cartao);border:1px solid var(--borda);border-radius:4px;max-width:520px;width:100%;padding:24px;box-shadow:8px 8px 0 var(--destaque)}
+.ficha-topo{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:6px}
+.ficha h2{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:1.6rem;line-height:1.15}
+.fechar{background:none;border:none;font-size:1.5rem;line-height:1;cursor:pointer;color:var(--apagado)}
+.fechar:hover{color:var(--destaque)}
+.linha-tempo{list-style:none;margin-top:18px;border-left:2px solid var(--borda);padding-left:18px}
+.linha-tempo li{position:relative;padding-bottom:16px}
+.linha-tempo li::before{content:"";position:absolute;left:-24px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--destaque)}
+.linha-tempo .ano{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:1.1rem}
+.linha-tempo .det{font-size:.88rem;color:var(--apagado);margin:2px 0 6px}
+
+footer{margin-top:40px;border-top:1px solid var(--borda);padding:20px 0 32px;font-size:.8rem;color:var(--apagado);text-align:center}
+
+@media (max-width:760px){
+  .filtros{grid-template-columns:1fr 1fr}
+  .filtros label:first-child{grid-column:1/-1}
+  .col-turno,.col-serie{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topo">
+    <a class="voltar" href="../../">← Prática Filosófica</a>
+  </div>
+
+  <header class="titulo">
+    <p class="selo">Gestão escolar</p>
+    <h1>Arquivo <em>Digital</em></h1>
+    <p class="sub">Consulta ao arquivo de estudantes. Os dados vêm direto da planilha do Google: o que for alterado lá aparece aqui ao clicar em "Atualizar".</p>
+  </header>
+
+  <div class="estado">
+    <button type="button" class="btn" id="atualizar">↻ Atualizar</button>
+    <span id="estado"></span>
+  </div>
+
+  <div id="aviso"></div>
+
+  <section class="numeros" id="numeros" aria-label="Resumo"></section>
+
+  <section aria-label="Filtros">
+    <div class="filtros">
+      <label>Buscar
+        <input type="search" id="f-busca" placeholder="Nome ou matrícula">
+      </label>
+      <label>Ano letivo
+        <select id="f-ano"><option value="">Todos</option></select>
+      </label>
+      <label>Turma
+        <select id="f-turma"><option value="">Todas</option></select>
+      </label>
+      <label>Situação
+        <select id="f-sit"><option value="">Todas</option></select>
+      </label>
+    </div>
+    <div class="acoes">
+      <span id="contagem" aria-live="polite"></span>
+      <button type="button" class="btn" id="baixar">⬇ Baixar lista (CSV)</button>
+    </div>
+  </section>
+
+  <div class="tabela-caixa">
+    <table>
+      <thead>
+        <tr>
+          <th data-col="Ano letivo">Ano</th>
+          <th data-col="Turma">Turma</th>
+          <th data-col="Nome">Nome</th>
+          <th data-col="Matrícula">Matrícula</th>
+          <th data-col="Série" class="col-serie">Série</th>
+          <th data-col="Turno" class="col-turno">Turno</th>
+          <th data-col="Situação">Situação</th>
+        </tr>
+      </thead>
+      <tbody id="linhas"></tbody>
+    </table>
+  </div>
+
+  <footer>Arquivo Digital · Prática Filosófica · dados lidos da planilha "Arquivo Digital" no Google Planilhas</footer>
+</div>
+
+<div class="fundo-ficha" id="fundo-ficha" role="dialog" aria-modal="true" aria-labelledby="ficha-nome">
+  <div class="ficha">
+    <div class="ficha-topo">
+      <div>
+        <p class="selo">Ficha do estudante</p>
+        <h2 id="ficha-nome"></h2>
+        <p class="mat" id="ficha-mat"></p>
+      </div>
+      <button type="button" class="fechar" id="fechar" aria-label="Fechar">×</button>
+    </div>
+    <ol class="linha-tempo" id="ficha-historico"></ol>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   LINK DA PLANILHA
+   É o "URL do app da Web" gerado no Apps Script (termina em /exec).
+   Se você fizer uma nova implantação e o link mudar, troque aqui.
+   ===================================================================== */
+const URL_PLANILHA = "https://script.google.com/macros/s/AKfycbznARHaQtI4iOMkCLDUJYaRqUhP-0UTp1pvm4R_RGRBhDJ93FWxBcCecHcATFnay2E0/exec";
+
+/* Nomes das colunas na primeira linha da aba "Alunos" */
+const C = { mat: "Matrícula", nome: "Nome", ano: "Ano letivo", serie: "Série", turma: "Turma", turno: "Turno", sit: "Situação" };
+
+let registros = [];
+let ordem = { col: "Ano letivo", dir: -1 };
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const semAcento = s => String(s ?? "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const classeSit = s => semAcento(s).replace(/[^a-z]/g, "");
+const selo = s => `<span class="sit ${classeSit(s)}">${esc(s)}</span>`;
+
+/* ---------- carregar dados ---------- */
+async function carregar() {
+  $("atualizar").disabled = true;
+  $("estado").innerHTML = '<span class="carregando" aria-hidden="true"></span> Buscando dados na planilha…';
+  $("aviso").innerHTML = "";
+  try {
+    const r = await fetch(URL_PLANILHA, { cache: "no-store" });
+    if (!r.ok) throw new Error("O Google respondeu com erro " + r.status);
+    const dados = await r.json();
+    if (dados.erro) throw new Error(dados.erro);
+    registros = (dados.alunos || []).filter(a => a[C.nome]);
+    const quando = dados.atualizado ? new Date(dados.atualizado) : new Date();
+    $("estado").textContent = `${registros.length} registros · lido às ${quando.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
+    montarFiltros();
+    mostrar();
+  } catch (e) {
+    $("estado").textContent = "";
+    $("aviso").innerHTML = `<div class="aviso"><strong>Não foi possível ler a planilha.</strong><br>
+      Confira se o Apps Script está implantado com acesso para "Qualquer pessoa" e se o link em URL_PLANILHA está certo.<br>
+      <small>Detalhe técnico: ${esc(e.message)}</small></div>`;
+    if (!registros.length) $("linhas").innerHTML = '<tr><td colspan="7" class="vazio">Sem dados para mostrar.</td></tr>';
+  } finally {
+    $("atualizar").disabled = false;
+  }
+}
+
+/* ---------- filtros ---------- */
+function preencher(sel, valores, todos) {
+  const atual = sel.value;
+  sel.innerHTML = `<option value="">${todos}</option>` + valores.map(v => `<option>${esc(v)}</option>`).join("");
+  if (valores.includes(atual)) sel.value = atual;
+}
+function montarFiltros() {
+  const unicos = col => [...new Set(registros.map(r => r[col]).filter(Boolean))];
+  preencher($("f-ano"), unicos(C.ano).sort().reverse(), "Todos");
+  preencher($("f-turma"), unicos(C.turma).sort((a, b) => a.localeCompare(b, "pt-BR", { numeric: true })), "Todas");
+  preencher($("f-sit"), unicos(C.sit).sort(), "Todas");
+}
+function filtrados() {
+  const termo = semAcento($("f-busca").value.trim());
+  const ano = $("f-ano").value, turma = $("f-turma").value, sit = $("f-sit").value;
+  return registros.filter(r =>
+    (!ano || r[C.ano] === ano) &&
+    (!turma || r[C.turma] === turma) &&
+    (!sit || r[C.sit] === sit) &&
+    (!termo || semAcento(r[C.nome]).includes(termo) || String(r[C.mat]).includes(termo))
+  ).sort((a, b) => {
+    const x = String(a[ordem.col] ?? ""), y = String(b[ordem.col] ?? "");
+    return ordem.dir * x.localeCompare(y, "pt-BR", { numeric: true }) ||
+           String(a[C.turma]).localeCompare(String(b[C.turma]), "pt-BR", { numeric: true }) ||
+           String(a[C.nome]).localeCompare(String(b[C.nome]), "pt-BR");
+  });
+}
+
+/* ---------- mostrar ---------- */
+function mostrar() {
+  const lista = filtrados();
+  const alunos = new Set(lista.map(r => r[C.mat])).size;
+  $("contagem").textContent = `${lista.length} registro${lista.length === 1 ? "" : "s"} · ${alunos} estudante${alunos === 1 ? "" : "s"}`;
+
+  const anos = registros.map(r => r[C.ano]).filter(Boolean).sort();
+  const ultimo = anos[anos.length - 1];
+  const conta = f => new Set(registros.filter(f).map(r => r[C.mat])).size;
+  $("numeros").innerHTML = [
+    [new Set(registros.map(r => r[C.mat])).size, "estudantes no arquivo"],
+    [ultimo ? conta(r => r[C.ano] === ultimo) : 0, `matriculados em ${ultimo || "-"}`],
+    [conta(r => classeSit(r[C.sit]) === "concluido"), "concluíram o Ensino Médio"],
+    [anos.length ? `${anos[0]}–${ultimo}` : "-", "anos letivos"]
+  ].map(([n, t]) => `<div class="numero"><b>${esc(n)}</b><span>${esc(t)}</span></div>`).join("");
+
+  document.querySelectorAll("th[data-col]").forEach(th =>
+    th.setAttribute("aria-sort", th.dataset.col === ordem.col ? (ordem.dir > 0 ? "ascending" : "descending") : "none"));
+
+  $("linhas").innerHTML = lista.length ? lista.map(r => `
+    <tr>
+      <td>${esc(r[C.ano])}</td>
+      <td>${esc(r[C.turma])}</td>
+      <td><button type="button" class="nome-btn" data-mat="${esc(r[C.mat])}">${esc(r[C.nome])}</button></td>
+      <td class="mat">${esc(r[C.mat])}</td>
+      <td class="col-serie">${esc(r[C.serie])}</td>
+      <td class="col-turno">${esc(r[C.turno])}</td>
+      <td>${selo(r[C.sit])}</td>
+    </tr>`).join("") : '<tr><td colspan="7" class="vazio">Nenhum registro com esses filtros.</td></tr>';
+}
+
+/* ---------- ficha do estudante ---------- */
+function abrirFicha(mat) {
+  const hist = registros.filter(r => String(r[C.mat]) === String(mat))
+    .sort((a, b) => String(a[C.ano]).localeCompare(String(b[C.ano])));
+  if (!hist.length) return;
+  $("ficha-nome").textContent = hist[hist.length - 1][C.nome];
+  $("ficha-mat").textContent = "Matrícula " + mat;
+  $("ficha-historico").innerHTML = hist.map(r => `
+    <li><div class="ano">${esc(r[C.ano])}</div>
+    <div class="det">${esc(r[C.serie])} · turma ${esc(r[C.turma])} · ${esc(r[C.turno])}</div>${selo(r[C.sit])}</li>`).join("");
+  $("fundo-ficha").classList.add("aberta");
+  $("fechar").focus();
+}
+function fecharFicha() { $("fundo-ficha").classList.remove("aberta"); }
+
+/* ---------- baixar CSV da lista filtrada ---------- */
+function baixar() {
+  const cols = [C.mat, C.nome, C.ano, C.serie, C.turma, C.turno, C.sit];
+  const q = v => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const csv = "﻿" + [cols.map(q).join(";"), ...filtrados().map(r => cols.map(c => q(r[c])).join(";"))].join("\r\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  a.download = "arquivo-digital.csv";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+/* ---------- eventos ---------- */
+["f-busca", "f-ano", "f-turma", "f-sit"].forEach(id => $(id).addEventListener("input", mostrar));
+$("atualizar").onclick = carregar;
+$("baixar").onclick = baixar;
+$("linhas").addEventListener("click", e => { const b = e.target.closest(".nome-btn"); if (b) abrirFicha(b.dataset.mat); });
+document.querySelectorAll("th[data-col]").forEach(th => th.onclick = () => {
+  ordem = { col: th.dataset.col, dir: ordem.col === th.dataset.col ? -ordem.dir : 1 };
+  mostrar();
+});
+$("fechar").onclick = fecharFicha;
+$("fundo-ficha").addEventListener("click", e => { if (e.target.id === "fundo-ficha") fecharFicha(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") fecharFicha(); });
+
+carregar();
+</script>
+</body>
+</html>
