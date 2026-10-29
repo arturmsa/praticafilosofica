@@ -98,6 +98,36 @@ tbody tr:hover{background:var(--fundo2)}
 .linha-tempo .ano{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:1.1rem}
 .linha-tempo .det{font-size:.88rem;color:var(--apagado);margin:2px 0 6px}
 
+/* modo edição */
+.btn.primario{background:var(--destaque);border-color:var(--destaque);color:#fff}
+.btn.primario:hover{filter:brightness(1.1);color:#fff}
+.btn.perigo{border-color:var(--destaque);color:var(--destaque)}
+.btn.perigo.cheio{background:var(--destaque);color:#fff}
+.btn.ativo{background:var(--tinta);border-color:var(--tinta);color:var(--fundo)}
+.espaco{flex:1}
+.so-edicao,.col-acoes{display:none}
+body.editando .so-edicao{display:inline-flex}
+body.editando .col-acoes{display:table-cell}
+.faixa-edicao{display:none;align-items:center;gap:10px;background:var(--fundo2);border-left:4px solid var(--tinta);border-radius:4px;padding:10px 14px;margin-bottom:18px;font-size:.88rem}
+body.editando .faixa-edicao{display:flex}
+.icone-btn{cursor:pointer;background:none;border:1px solid var(--borda);border-radius:4px;padding:4px 8px;font-size:.8rem;font-weight:600;margin-right:4px}
+.icone-btn:hover{border-color:var(--destaque);color:var(--destaque)}
+
+dialog.caixa{border:1px solid var(--borda);border-radius:4px;background:var(--cartao);color:var(--tinta);padding:24px;max-width:520px;width:calc(100% - 32px);box-shadow:8px 8px 0 var(--destaque);margin:auto}
+dialog.caixa::backdrop{background:rgba(0,0,0,.45)}
+dialog.caixa h2{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:1.5rem;margin:4px 0 14px}
+.form{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--apagado)}
+.form .largo{grid-column:1/-1}
+.form input,.form select{width:100%;min-width:0;font-size:.95rem;font-weight:400;letter-spacing:0;text-transform:none;padding:9px 11px;border:1.5px solid var(--borda);border-radius:4px;background:var(--cartao);color:var(--tinta)}
+.form input:focus,.form select:focus{outline:none;border-color:var(--destaque)}
+.rodape-caixa{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;flex-wrap:wrap}
+.erro-caixa{color:var(--destaque);font-size:.85rem;min-height:1.2em;margin-top:10px}
+.ficha-acoes{margin-top:4px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--tinta);color:var(--fundo);padding:10px 18px;border-radius:999px;font-size:.9rem;font-weight:500;transition:opacity .25s,transform .25s;z-index:100;pointer-events:none}
+.toast.visivel{opacity:1;transform:translateX(-50%) translateY(0)}
+@media (max-width:520px){.form{grid-template-columns:minmax(0,1fr)}}
+
 footer{margin-top:40px;border-top:1px solid var(--borda);padding:20px 0 32px;font-size:.8rem;color:var(--apagado);text-align:center}
 
 @media (max-width:760px){
@@ -123,6 +153,14 @@ footer{margin-top:40px;border-top:1px solid var(--borda);padding:20px 0 32px;fon
   <div class="estado">
     <button type="button" class="btn" id="atualizar">↻ Atualizar</button>
     <span id="estado"></span>
+    <span class="espaco"></span>
+    <button type="button" class="btn" id="modo">🔒 Modo edição</button>
+  </div>
+
+  <div class="faixa-edicao" role="status">
+    <span>✏️ <strong>Modo edição ativo.</strong> As alterações são gravadas direto na planilha.</span>
+    <span class="espaco"></span>
+    <button type="button" class="btn primario" id="novo">+ Novo estudante</button>
   </div>
 
   <div id="aviso"></div>
@@ -161,6 +199,7 @@ footer{margin-top:40px;border-top:1px solid var(--borda);padding:20px 0 32px;fon
           <th data-col="Série" class="col-serie">Série</th>
           <th data-col="Turno" class="col-turno">Turno</th>
           <th data-col="Situação">Situação</th>
+          <th class="col-acoes" scope="col">Ações</th>
         </tr>
       </thead>
       <tbody id="linhas"></tbody>
@@ -181,8 +220,64 @@ footer{margin-top:40px;border-top:1px solid var(--borda);padding:20px 0 32px;fon
       <button type="button" class="fechar" id="fechar" aria-label="Fechar">×</button>
     </div>
     <ol class="linha-tempo" id="ficha-historico"></ol>
+    <button type="button" class="btn primario so-edicao" id="ficha-novo-ano">+ Adicionar ano letivo</button>
   </div>
 </div>
+
+<!-- senha -->
+<dialog class="caixa" id="dlg-senha" aria-labelledby="t-senha">
+  <form method="dialog" id="form-senha">
+    <p class="selo">Modo edição</p>
+    <h2 id="t-senha">Digite a senha</h2>
+    <div class="form"><label class="largo">Senha
+      <input type="password" id="senha" autocomplete="current-password" required>
+    </label></div>
+    <p class="erro-caixa" id="erro-senha"></p>
+    <div class="rodape-caixa">
+      <button type="button" class="btn" data-fechar>Cancelar</button>
+      <button type="submit" class="btn primario" id="entrar">Entrar</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- adicionar / editar -->
+<dialog class="caixa" id="dlg-form" aria-labelledby="t-form">
+  <form method="dialog" id="form-registro">
+    <p class="selo" id="form-selo">Novo registro</p>
+    <h2 id="t-form">Novo estudante</h2>
+    <div class="form">
+      <label class="largo">Nome completo <input id="r-nome" required maxlength="120"></label>
+      <label>Matrícula <input id="r-mat" required maxlength="20" inputmode="numeric"></label>
+      <label>Ano letivo <input id="r-ano" required type="number" min="1990" max="2100"></label>
+      <label>Série <select id="r-serie"><option>1ª série</option><option>2ª série</option><option>3ª série</option></select></label>
+      <label>Turma <input id="r-turma" list="lista-turmas" maxlength="20" placeholder="Ex.: 1º A"></label>
+      <label>Turno <select id="r-turno"><option>Matutino</option><option>Vespertino</option><option>Noturno</option><option>Integral</option></select></label>
+      <label>Situação <select id="r-sit"><option>Cursando</option><option>Aprovado</option><option>Reprovado</option><option>Transferido</option><option>Concluído</option><option>Evadido</option></select></label>
+    </div>
+    <datalist id="lista-turmas"></datalist>
+    <p class="erro-caixa" id="erro-form"></p>
+    <div class="rodape-caixa">
+      <button type="button" class="btn" data-fechar>Cancelar</button>
+      <button type="submit" class="btn primario" id="salvar">Salvar</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- excluir -->
+<dialog class="caixa" id="dlg-excluir" aria-labelledby="t-excluir">
+  <form method="dialog" id="form-excluir">
+    <p class="selo">Excluir registro</p>
+    <h2 id="t-excluir">Tem certeza?</h2>
+    <p id="texto-excluir"></p>
+    <p class="erro-caixa" id="erro-excluir"></p>
+    <div class="rodape-caixa">
+      <button type="button" class="btn" data-fechar>Cancelar</button>
+      <button type="submit" class="btn perigo cheio" id="confirmar-excluir">Excluir</button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 /* =====================================================================
@@ -219,6 +314,7 @@ async function carregar() {
     $("estado").textContent = `${registros.length} registros · lido às ${quando.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
     montarFiltros();
     mostrar();
+    atualizarModo();
   } catch (e) {
     $("estado").textContent = "";
     $("aviso").innerHTML = `<div class="aviso"><strong>Não foi possível ler a planilha.</strong><br>
@@ -286,7 +382,8 @@ function mostrar() {
       <td class="col-serie">${esc(r[C.serie])}</td>
       <td class="col-turno">${esc(r[C.turno])}</td>
       <td>${selo(r[C.sit])}</td>
-    </tr>`).join("") : '<tr><td colspan="7" class="vazio">Nenhum registro com esses filtros.</td></tr>';
+      <td class="col-acoes">${r.ID ? `<button type="button" class="icone-btn" data-editar="${esc(r.ID)}">✏️ Editar</button><button type="button" class="icone-btn" data-excluir="${esc(r.ID)}">🗑️ Excluir</button>` : ""}</td>
+    </tr>`).join("") : '<tr><td colspan="8" class="vazio">Nenhum registro com esses filtros.</td></tr>';
 }
 
 /* ---------- ficha do estudante ---------- */
@@ -294,6 +391,7 @@ function abrirFicha(mat) {
   const hist = registros.filter(r => String(r[C.mat]) === String(mat))
     .sort((a, b) => String(a[C.ano]).localeCompare(String(b[C.ano])));
   if (!hist.length) return;
+  fichaAtual = mat;
   $("ficha-nome").textContent = hist[hist.length - 1][C.nome];
   $("ficha-mat").textContent = "Matrícula " + mat;
   $("ficha-historico").innerHTML = hist.map(r => `
@@ -316,7 +414,157 @@ function baixar() {
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
+/* =====================================================================
+   MODO EDIÇÃO: adicionar, editar e excluir
+   A senha é conferida pelo Apps Script, nunca aqui no site. Ela fica
+   guardada só enquanto esta aba do navegador estiver aberta.
+   ===================================================================== */
+let senha = null;
+let fichaAtual = null;
+let emEdicao = null;      /* ID do registro sendo editado (null = novo) */
+let paraExcluir = null;
+try { senha = sessionStorage.getItem("arquivo-senha"); } catch (e) {}
+
+function aviso(msg) {
+  const t = $("toast"); t.textContent = msg; t.classList.add("visivel");
+  clearTimeout(aviso.t); aviso.t = setTimeout(() => t.classList.remove("visivel"), 2600);
+}
+
+async function enviar(acao, extra = {}, comSenha = senha) {
+  /* texto simples evita o bloqueio de segurança (CORS) do navegador */
+  const r = await fetch(URL_PLANILHA, { method: "POST", body: JSON.stringify({ acao, senha: comSenha, ...extra }) });
+  const d = await r.json();
+  if (d.erro) {
+    if (/senha/i.test(d.erro) && acao !== "verificar") sairEdicao();
+    throw new Error(d.erro);
+  }
+  return d;
+}
+
+function atualizarModo() {
+  document.body.classList.toggle("editando", !!senha);
+  $("modo").textContent = senha ? "🔓 Sair do modo edição" : "🔒 Modo edição";
+  $("modo").classList.toggle("ativo", !!senha);
+  if (senha && registros.length && !registros.some(r => r.ID))
+    $("aviso").innerHTML = `<div class="aviso"><strong>A planilha ainda não tem a coluna ID.</strong><br>Atualize o código do Apps Script para a versão 2 e implante uma nova versão.</div>`;
+}
+function sairEdicao() {
+  senha = null;
+  try { sessionStorage.removeItem("arquivo-senha"); } catch (e) {}
+  atualizarModo();
+}
+
+/* --- senha --- */
+$("modo").onclick = () => {
+  if (senha) { sairEdicao(); aviso("Modo edição encerrado"); return; }
+  $("senha").value = ""; $("erro-senha").textContent = "";
+  $("dlg-senha").showModal();
+};
+$("form-senha").addEventListener("submit", async e => {
+  e.preventDefault();
+  const tentativa = $("senha").value;
+  $("entrar").disabled = true; $("entrar").textContent = "Conferindo…"; $("erro-senha").textContent = "";
+  try {
+    await enviar("verificar", {}, tentativa);
+    senha = tentativa;
+    try { sessionStorage.setItem("arquivo-senha", senha); } catch (e) {}
+    $("dlg-senha").close(); atualizarModo(); aviso("Modo edição ativado");
+  } catch (err) {
+    $("erro-senha").textContent = err.message;
+  } finally {
+    $("entrar").disabled = false; $("entrar").textContent = "Entrar";
+  }
+});
+
+/* --- formulário: novo, novo ano, editar --- */
+function proximaMatricula(ano) {
+  const nums = registros.map(r => String(r[C.mat])).filter(m => m.startsWith(String(ano))).map(Number);
+  return nums.length ? String(Math.max(...nums) + 1) : `${ano}001`;
+}
+function proximaSerie(serie) {
+  const n = parseInt(serie, 10);
+  return n >= 1 && n < 3 ? `${n + 1}ª série` : "3ª série";
+}
+function abrirForm(modo, base = {}) {
+  const ano = new Date().getFullYear();
+  emEdicao = modo === "editar" ? base.ID : null;
+  $("form-selo").textContent = { novo: "Novo registro", ano: "Novo ano letivo", editar: "Editar registro" }[modo];
+  $("t-form").textContent = { novo: "Novo estudante", ano: base[C.nome], editar: base[C.nome] }[modo];
+  $("r-nome").value = base[C.nome] || "";
+  $("r-mat").value = base[C.mat] || proximaMatricula(ano);
+  $("r-ano").value = modo === "ano" ? Number(base[C.ano]) + 1 : (base[C.ano] || ano);
+  $("r-serie").value = modo === "ano" ? (base[C.sit] === "Reprovado" ? base[C.serie] : proximaSerie(base[C.serie])) : (base[C.serie] || "1ª série");
+  $("r-turma").value = modo === "ano" ? "" : (base[C.turma] || "");
+  $("r-turno").value = base[C.turno] || "Matutino";
+  $("r-sit").value = modo === "editar" ? base[C.sit] : "Cursando";
+  $("r-mat").readOnly = modo === "ano";
+  $("lista-turmas").innerHTML = [...new Set(registros.map(r => r[C.turma]).filter(Boolean))].sort().map(t => `<option value="${esc(t)}">`).join("");
+  $("erro-form").textContent = "";
+  $("dlg-form").showModal();
+  (modo === "ano" ? $("r-turma") : $("r-nome")).focus();
+}
+$("novo").onclick = () => abrirForm("novo");
+$("ficha-novo-ano").onclick = () => {
+  const hist = registros.filter(r => String(r[C.mat]) === String(fichaAtual)).sort((a, b) => String(a[C.ano]).localeCompare(String(b[C.ano])));
+  fecharFicha();
+  abrirForm("ano", hist[hist.length - 1]);
+};
+$("form-registro").addEventListener("submit", async e => {
+  e.preventDefault();
+  const dados = {
+    [C.nome]: $("r-nome").value.trim(), [C.mat]: $("r-mat").value.trim(), [C.ano]: $("r-ano").value.trim(),
+    [C.serie]: $("r-serie").value, [C.turma]: $("r-turma").value.trim(), [C.turno]: $("r-turno").value, [C.sit]: $("r-sit").value
+  };
+  const repetido = registros.find(r => String(r[C.mat]) === dados[C.mat] && String(r[C.ano]) === dados[C.ano] && r.ID !== emEdicao);
+  if (repetido) { $("erro-form").textContent = `Já existe registro da matrícula ${dados[C.mat]} em ${dados[C.ano]}.`; return; }
+  const outroDono = registros.find(r => String(r[C.mat]) === dados[C.mat] && semAcento(r[C.nome]) !== semAcento(dados[C.nome]));
+  if (outroDono && !emEdicao && !confirm(`A matrícula ${dados[C.mat]} já pertence a ${outroDono[C.nome]}. Salvar mesmo assim?`)) return;
+
+  $("salvar").disabled = true; $("salvar").textContent = "Salvando…"; $("erro-form").textContent = "";
+  try {
+    if (emEdicao) await enviar("editar", { id: emEdicao, dados });
+    else await enviar("adicionar", { dados });
+    $("dlg-form").close();
+    aviso(emEdicao ? "Alterações salvas na planilha" : "Registro adicionado à planilha");
+    await carregar();
+  } catch (err) {
+    $("erro-form").textContent = "Não foi possível salvar: " + err.message;
+  } finally {
+    $("salvar").disabled = false; $("salvar").textContent = "Salvar";
+  }
+});
+
+/* --- excluir --- */
+function pedirExclusao(id) {
+  const r = registros.find(x => x.ID === id); if (!r) return;
+  paraExcluir = id;
+  $("texto-excluir").innerHTML = `Você vai excluir o registro de <strong>${esc(r[C.nome])}</strong> em <strong>${esc(r[C.ano])}</strong> (${esc(r[C.turma])}).<br><small>Os outros anos desse estudante continuam no arquivo. Se excluir por engano, dá para recuperar pelo histórico de versões da planilha.</small>`;
+  $("erro-excluir").textContent = "";
+  $("dlg-excluir").showModal();
+}
+$("form-excluir").addEventListener("submit", async e => {
+  e.preventDefault();
+  $("confirmar-excluir").disabled = true; $("confirmar-excluir").textContent = "Excluindo…";
+  try {
+    await enviar("excluir", { id: paraExcluir });
+    $("dlg-excluir").close(); aviso("Registro excluído");
+    await carregar();
+  } catch (err) {
+    $("erro-excluir").textContent = "Não foi possível excluir: " + err.message;
+  } finally {
+    $("confirmar-excluir").disabled = false; $("confirmar-excluir").textContent = "Excluir";
+  }
+});
+
+/* --- botões de fechar das caixas --- */
+document.querySelectorAll("dialog [data-fechar]").forEach(b => b.onclick = () => b.closest("dialog").close());
+
 /* ---------- eventos ---------- */
+$("linhas").addEventListener("click", e => {
+  const ed = e.target.closest("[data-editar]"), ex = e.target.closest("[data-excluir]");
+  if (ed) abrirForm("editar", registros.find(r => r.ID === ed.dataset.editar));
+  if (ex) pedirExclusao(ex.dataset.excluir);
+});
 ["f-busca", "f-ano", "f-turma", "f-sit"].forEach(id => $(id).addEventListener("input", mostrar));
 $("atualizar").onclick = carregar;
 $("baixar").onclick = baixar;
@@ -329,6 +577,7 @@ $("fechar").onclick = fecharFicha;
 $("fundo-ficha").addEventListener("click", e => { if (e.target.id === "fundo-ficha") fecharFicha(); });
 document.addEventListener("keydown", e => { if (e.key === "Escape") fecharFicha(); });
 
+atualizarModo();
 carregar();
 </script>
 </body>
