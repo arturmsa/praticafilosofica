@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rede Lusófona · Prática Filosófica</title>
+<meta name="description" content="Mapa em rede de autores brasileiros, portugueses e africanos de língua portuguesa: influências, diálogos, polêmicas, correntes e conceitos.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600&family=Inter:wght@400;500;600&display=swap">
+<script>try{ if(localStorage.getItem("tema")==="escuro") document.documentElement.dataset.tema="escuro"; }catch(e){}</script>
+<style>
+:root{
+  --fundo:#faf8f5; --fundo2:#f0ece6; --cartao:#ffffff; --tinta:#121212; --apagado:#5d5751; --borda:#e2ddd5;
+  --destaque:#c1272d; --destaque-suave:#f7e2e2;
+  --br:#23845a; --pt:#335fc0; --af:#c27417; --pe:#b8323a; --est:#8a847c; --con:#6b4fc4; --cor:#3b3631;
+  --l-inf:#4a4540; --l-dia:#335fc0; --l-cri:#c1272d; --l-gru:#a39d95; --l-con:#9a86e0; --l-cor:#6e6862;
+  color-scheme:light;
+}
+:root[data-tema="escuro"]{
+  --fundo:#111111; --fundo2:#1b1b1b; --cartao:#171717; --tinta:#f3f0eb; --apagado:#aaa39b; --borda:#2f2c29;
+  --destaque:#e8484e; --destaque-suave:#3b1a1c;
+  --br:#4cc58c; --pt:#7aa2f0; --af:#e7a35c; --pe:#ef6b70; --est:#9b958c; --con:#a58cf0; --cor:#d8d2ca;
+  --l-inf:#bdb6ad; --l-dia:#7aa2f0; --l-cri:#ef5a5f; --l-gru:#5d5852; --l-con:#7764b8; --l-cor:#a7a199;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Inter",system-ui,sans-serif;background:var(--fundo);color:var(--tinta);line-height:1.5;overflow:hidden}
+button,input,select{font:inherit;color:inherit}
+a{color:var(--destaque)}
+.app{display:grid;grid-template-rows:auto 1fr;height:100vh;height:100dvh}
+
+/* barra superior */
+.topo{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--tinta);background:var(--fundo);flex-wrap:wrap}
+.voltar{font-size:.82rem;color:var(--apagado);text-decoration:none;white-space:nowrap}
+.voltar:hover{color:var(--destaque)}
+.marca{font-family:"Fraunces",Georgia,serif;font-weight:800;font-size:1.45rem;letter-spacing:-.02em;text-transform:lowercase;white-space:nowrap}
+.marca i{color:var(--destaque)}
+.busca{position:relative;flex:1;min-width:180px;max-width:360px}
+.busca input{width:100%;padding:8px 12px 8px 34px;border:1.5px solid var(--borda);border-radius:4px;background:var(--cartao)}
+.busca input:focus{outline:none;border-color:var(--destaque);box-shadow:0 0 0 3px var(--destaque-suave)}
+.busca svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:var(--apagado)}
+.sugestoes{position:absolute;top:100%;left:0;right:0;margin-top:4px;background:var(--cartao);border:1px solid var(--borda);border-radius:4px;max-height:300px;overflow:auto;z-index:30;box-shadow:4px 4px 0 var(--fundo2)}
+.sugestoes button{display:flex;align-items:center;gap:8px;width:100%;text-align:left;padding:7px 10px;border:0;background:none;cursor:pointer;font-size:.9rem}
+.sugestoes button:hover,.sugestoes button.ativo{background:var(--fundo2)}
+.sugestoes small{color:var(--apagado);margin-left:auto;font-size:.75rem}
+.layouts{display:flex;border:1.5px solid var(--borda);border-radius:999px;overflow:hidden}
+.layouts button{border:0;background:var(--cartao);padding:6px 14px;cursor:pointer;font-size:.85rem;font-weight:500}
+.layouts button[aria-pressed="true"]{background:var(--tinta);color:var(--fundo)}
+.tema{border:1.5px solid var(--borda);background:var(--cartao);border-radius:999px;padding:6px 12px;cursor:pointer;font-size:.85rem}
+.tema:hover{border-color:var(--destaque)}
+
+/* área principal */
+.principal{display:grid;grid-template-columns:1fr 380px;min-height:0}
+.tela{position:relative;min-width:0;min-height:0;overflow:hidden;background:var(--fundo)}
+#svg{width:100%;height:100%;display:block;cursor:grab;touch-action:none}
+#svg:active{cursor:grabbing}
+.painel{border-left:1px solid var(--tinta);background:var(--cartao);display:flex;flex-direction:column;min-height:0}
+.abas{display:flex;border-bottom:1px solid var(--borda);overflow-x:auto;flex-shrink:0}
+.abas button{flex:1;border:0;background:none;padding:11px 6px;font-size:.8rem;font-weight:600;letter-spacing:.04em;cursor:pointer;color:var(--apagado);border-bottom:2.5px solid transparent;white-space:nowrap}
+.abas button[aria-selected="true"]{color:var(--tinta);border-bottom-color:var(--destaque)}
+.conteudo{padding:18px 18px 28px;overflow-y:auto;flex:1}
+.puxador{display:none}
+
+/* sobreposições da tela */
+.ano-box{position:absolute;left:16px;top:12px;pointer-events:none}
+.ano{font-family:"Fraunces",Georgia,serif;font-weight:800;font-size:2.4rem;line-height:1;letter-spacing:-.03em;color:var(--tinta);opacity:.85}
+.ano-info{font-size:.78rem;color:var(--apagado);margin-top:2px}
+.legenda{position:absolute;left:12px;bottom:72px;background:color-mix(in srgb,var(--cartao) 92%,transparent);border:1px solid var(--borda);border-radius:4px;padding:8px 10px;font-size:.74rem;display:grid;gap:3px;max-width:230px}
+.legenda b{font-weight:600;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--apagado);margin-top:4px}
+.legenda b:first-child{margin-top:0}
+.legenda span{display:flex;align-items:center;gap:7px}
+.legenda svg{flex-shrink:0}
+.legenda.fechada .corpo{display:none}
+.legenda .alterna{border:0;background:none;cursor:pointer;font-size:.72rem;color:var(--apagado);text-align:left;padding:0}
+.zoom{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:6px}
+.zoom button{width:34px;height:34px;border:1.5px solid var(--borda);background:var(--cartao);border-radius:4px;cursor:pointer;font-size:1.05rem;line-height:1}
+.zoom button:hover{border-color:var(--destaque)}
+.tempo{position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;gap:12px;padding:10px 16px;border-top:1px solid var(--borda);background:color-mix(in srgb,var(--fundo) 94%,transparent)}
+.tempo input{flex:1;accent-color:var(--destaque)}
+.tempo .play{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--tinta);background:var(--cartao);cursor:pointer;display:grid;place-items:center;flex-shrink:0}
+.tempo .play:hover{border-color:var(--destaque);color:var(--destaque)}
+.tempo label{font-size:.78rem;color:var(--apagado);white-space:nowrap}
+.marcos{font-size:.7rem;color:var(--apagado);display:flex;justify-content:space-between;position:absolute;left:68px;right:110px;bottom:2px;pointer-events:none}
+.aviso{position:absolute;left:50%;top:14px;transform:translateX(-50%);background:var(--tinta);color:var(--fundo);padding:8px 14px;border-radius:4px;font-size:.85rem;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%;text-align:center;z-index:20}
+.aviso.ver{opacity:1;pointer-events:auto}
+.aviso a{color:inherit;font-weight:600}
+
+/* grafo */
+.lk{fill:none;stroke-linecap:round}
+.lk.inf{stroke:var(--l-inf);stroke-width:1.2;opacity:.55}
+.lk.dia{stroke:var(--l-dia);stroke-width:1.2;stroke-dasharray:5 4;opacity:.55}
+.lk.cri{stroke:var(--l-cri);stroke-width:1.6;opacity:.7}
+.lk.gru{stroke:var(--l-gru);stroke-width:.8;stroke-dasharray:1.5 3;opacity:.55}
+.lk.con{stroke:var(--l-con);stroke-width:.8;stroke-dasharray:1.5 3;opacity:.45}
+.lk.cor{stroke:var(--l-cor);stroke-width:2.4;opacity:.45}
+.lk-hit{stroke:transparent;stroke-width:9;cursor:pointer}
+.lk.viz{opacity:1;stroke-width:2.2}
+.lk.caminho{stroke:var(--destaque)!important;stroke-width:3.4!important;opacity:1!important;stroke-dasharray:none!important}
+.lk.sel{stroke-width:3.4!important;opacity:1!important}
+.modo-tempo .lk:not(.viz):not(.caminho):not(.sel){opacity:.12}
+.apagando .lk:not(.viz):not(.caminho):not(.sel){opacity:.06}
+.apagando .no:not(.viz):not(.foco):not(.caminho){opacity:.13}
+.apagando .rot:not(.viz):not(.foco):not(.caminho){opacity:0}
+.no{cursor:pointer}
+.no .f{stroke:var(--fundo);stroke-width:1.5}
+.no.k-a.g-br .f{fill:var(--br)} .no.k-a.g-pt .f{fill:var(--pt)} .no.k-a.g-af .f{fill:var(--af)} .no.k-a.g-pe .f{fill:var(--pe)}
+.no.k-e .f{fill:var(--cartao);stroke:var(--est);stroke-width:1.6;stroke-dasharray:2.5 2}
+.no.k-c .f{fill:var(--con)}
+.no.k-m .f{fill:var(--cor)}
+.no.foco .f{stroke:var(--destaque);stroke-width:3.5;stroke-dasharray:none}
+.no.caminho .f{stroke:var(--destaque);stroke-width:3;stroke-dasharray:none}
+.no.voz .f{stroke:var(--tinta);stroke-width:2.6}
+.vozes .no:not(.voz){opacity:.12}
+.vozes .lk{opacity:.05}
+.vozes .rot:not(.voz){opacity:0}
+.rot{font-size:10.5px;fill:var(--tinta);paint-order:stroke;stroke:var(--fundo);stroke-width:3.2px;stroke-linejoin:round;pointer-events:none;text-anchor:middle;opacity:0;transition:opacity .2s}
+.rot.k-m{font-family:"Fraunces",Georgia,serif;font-style:italic;font-size:12px;font-weight:600}
+.rot.k-c{fill:var(--con);font-weight:600}
+.rot.k-e{fill:var(--apagado);font-style:italic}
+.rot.mostra,.rot.viz,.rot.foco,.rot.caminho{opacity:1}
+.rot.foco{font-weight:700;font-size:12.5px}
+.pais{fill:var(--fundo2);stroke:var(--borda);stroke-width:.6}
+.pais.luso{fill:color-mix(in srgb,var(--destaque) 12%,var(--fundo2));stroke:color-mix(in srgb,var(--destaque) 40%,var(--borda))}
+.grat{fill:none;stroke:var(--borda);stroke-width:.4;opacity:.7}
+.eixo text{font-size:11px;fill:var(--apagado)}
+.eixo line{stroke:var(--borda)}
+.trilha-linha{fill:none;stroke:var(--destaque);stroke-width:2.6;stroke-dasharray:7 5;opacity:.85;pointer-events:none}
+
+/* painel: componentes */
+.kicker{font-size:.7rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--destaque);margin-bottom:6px}
+h2{font-family:"Fraunces",Georgia,serif;font-weight:800;font-size:1.6rem;line-height:1.1;letter-spacing:-.015em}
+h3{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:1.1rem;margin:20px 0 8px}
+h4{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--apagado);margin:18px 0 8px}
+.meta{font-size:.85rem;color:var(--apagado);margin-top:6px}
+.selos{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.selo{font-size:.72rem;padding:3px 9px;border-radius:999px;background:var(--fundo2);color:var(--apagado);font-weight:500}
+.selo.cor{color:#fff;background:var(--c)}
+p.ideia{margin-top:14px;font-size:.95rem}
+.obras{font-size:.88rem;color:var(--apagado);margin-top:8px}
+blockquote{margin:16px 0 0;padding:4px 0 4px 14px;border-left:3px solid var(--destaque);font-family:"Fraunces",Georgia,serif;font-style:italic;font-size:1.08rem;line-height:1.4}
+blockquote cite{display:block;font-family:"Inter",system-ui,sans-serif;font-style:normal;font-size:.76rem;color:var(--apagado);margin-top:6px}
+.lista{display:flex;flex-direction:column;gap:2px}
+.item{display:flex;gap:9px;align-items:flex-start;width:100%;text-align:left;border:0;background:none;padding:6px 8px;margin:0 -8px;border-radius:4px;cursor:pointer;font-size:.88rem}
+.item:hover{background:var(--fundo2)}
+.item .bola{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.item small{display:block;color:var(--apagado);font-size:.78rem;line-height:1.35}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid var(--borda);background:var(--cartao);border-radius:999px;padding:4px 11px;font-size:.8rem;cursor:pointer}
+.chip:hover{border-color:var(--destaque);color:var(--destaque)}
+.chip.on{background:var(--tinta);color:var(--fundo);border-color:var(--tinta)}
+.botoes{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.btn{border:1.5px solid var(--tinta);background:var(--cartao);border-radius:4px;padding:8px 13px;font-size:.84rem;font-weight:500;cursor:pointer;text-decoration:none;color:var(--tinta);display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--destaque);color:var(--destaque)}
+.btn.forte{background:var(--tinta);color:var(--fundo)}
+.btn.forte:hover{background:var(--destaque);border-color:var(--destaque);color:#fff}
+.btn:disabled{opacity:.4;cursor:default}
+.campo{display:flex;flex-direction:column;gap:5px;margin-top:10px;font-size:.82rem;color:var(--apagado)}
+.campo input,.campo select{padding:8px 10px;border:1.5px solid var(--borda);border-radius:4px;background:var(--cartao);font-size:.92rem}
+.check{display:flex;gap:8px;align-items:center;font-size:.86rem;margin-top:6px;cursor:pointer}
+.check input{accent-color:var(--destaque);width:16px;height:16px}
+.cartoes{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.numero{background:var(--fundo2);border-radius:4px;padding:10px 12px}
+.numero b{display:block;font-family:"Fraunces",Georgia,serif;font-size:1.5rem;font-weight:800;line-height:1.1}
+.numero span{font-size:.76rem;color:var(--apagado)}
+.passo{counter-increment:p;position:relative;padding-left:34px;margin-top:4px}
+.comparar{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.comparar>div{background:var(--fundo2);border-radius:4px;padding:12px}
+.comparar h5{font-family:"Fraunces",Georgia,serif;font-size:1rem;font-weight:600;margin-bottom:4px;cursor:pointer}
+.comparar h5:hover{color:var(--destaque)}
+.comparar p{font-size:.84rem}
+.comparar blockquote{font-size:.92rem;margin-top:8px}
+.tipo-lig{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:.9rem;margin-top:10px}
+.nota{margin-top:10px;font-size:.92rem;padding:10px 12px;background:var(--destaque-suave);border-radius:4px}
+.trilha{border:1px solid var(--borda);border-radius:4px;padding:12px 14px;cursor:pointer;background:var(--cartao);text-align:left;width:100%;margin-bottom:8px;display:block}
+.trilha:hover{border-color:var(--tinta);box-shadow:4px 4px 0 var(--destaque)}
+.trilha b{font-family:"Fraunces",Georgia,serif;font-size:1.05rem;font-weight:600;display:block}
+.trilha span{font-size:.84rem;color:var(--apagado)}
+.progresso{height:4px;background:var(--fundo2);border-radius:2px;margin:12px 0;overflow:hidden}
+.progresso i{display:block;height:100%;background:var(--destaque);transition:width .3s}
+.pergunta{font-family:"Fraunces",Georgia,serif;font-size:1.12rem;line-height:1.4;margin-top:12px}
+.opcoes{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.opcao{border:1.5px solid var(--borda);background:var(--cartao);border-radius:4px;padding:10px 12px;text-align:left;cursor:pointer;font-size:.92rem}
+.opcao:hover:not(:disabled){border-color:var(--tinta)}
+.opcao.certa{border-color:var(--br);background:color-mix(in srgb,var(--br) 14%,var(--cartao))}
+.opcao.errada{border-color:var(--destaque);background:var(--destaque-suave)}
+.placar{display:flex;gap:14px;font-size:.84rem;color:var(--apagado);margin-top:4px}
+.placar b{color:var(--tinta)}
+.ranking{counter-reset:r}
+.ranking .item{counter-increment:r}
+.ranking .item::before{content:counter(r);font-family:"Fraunces",Georgia,serif;font-weight:800;width:20px;color:var(--apagado);flex-shrink:0}
+.barra{height:5px;background:var(--fundo2);border-radius:3px;margin-top:4px;overflow:hidden}
+.barra i{display:block;height:100%;background:var(--c,var(--destaque))}
+.dica{font-size:.84rem;color:var(--apagado);margin-top:10px}
+.sep{border:0;border-top:1px solid var(--borda);margin:20px 0}
+.carregando{position:absolute;inset:0;display:grid;place-items:center;color:var(--apagado);font-size:.9rem}
+
+@media (max-width:860px){
+  .principal{grid-template-columns:1fr;position:relative}
+  .painel{position:absolute;left:0;right:0;bottom:0;max-height:62%;border-left:0;border-top:1px solid var(--tinta);z-index:15;transition:transform .25s;box-shadow:0 -6px 0 var(--fundo2)}
+  .painel.recolhido{transform:translateY(calc(100% - 92px))}
+  .puxador{display:block;border:0;background:none;width:100%;padding:6px 0 0;cursor:pointer}
+  .puxador i{display:block;width:44px;height:4px;border-radius:2px;background:var(--borda);margin:0 auto}
+  .tempo{bottom:92px}
+  .legenda{bottom:160px}
+  .marca{font-size:1.2rem}
+  .busca{order:3;max-width:none;flex-basis:100%}
+  .ano{font-size:1.8rem}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topo">
+    <a class="voltar" href="../../">← Prática Filosófica</a>
+    <div class="marca">rede <i>lusófona</i></div>
+    <div class="busca">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="busca" type="search" placeholder="Buscar autor, conceito ou corrente" autocomplete="off" aria-label="Buscar na rede">
+      <div class="sugestoes" id="sugestoes" hidden></div>
+    </div>
+    <div class="layouts" role="group" aria-label="Organização do mapa">
+      <button type="button" data-layout="rede" aria-pressed="true">Rede</button>
+      <button type="button" data-layout="tempo" aria-pressed="false">Tempo</button>
+      <button type="button" data-layout="mapa" aria-pressed="false">Mapa</button>
+    </div>
+    <button type="button" class="tema" id="tema">◐ Tema</button>
+  </header>
+
+  <main class="principal">
+    <div class="tela" id="tela">
+      <div class="carregando" id="carregando">Montando a rede…</div>
+      <svg id="svg" role="img" aria-label="Rede de autores lusófonos"></svg>
+      <div class="ano-box"><div class="ano" id="ano">2026</div><div class="ano-info" id="anoInfo"></div></div>
+      <div class="zoom">
+        <button type="button" id="zMais" aria-label="Aproximar">+</button>
+        <button type="button" id="zMenos" aria-label="Afastar">−</button>
+        <button type="button" id="zAjusta" aria-label="Ver tudo" title="Ver tudo">⤢</button>
+      </div>
+      <div class="legenda" id="legenda"></div>
+      <div class="aviso" id="aviso" role="status"></div>
+      <div class="tempo">
+        <button type="button" class="play" id="play" aria-label="Animar a linha do tempo">▶</button>
+        <input type="range" id="slider" min="1450" max="2026" step="1" value="2026" aria-label="Ano">
+        <label for="slider">Linha do tempo</label>
+      </div>
+    </div>
+
+    <aside class="painel" id="painel">
+      <button type="button" class="puxador" id="puxador" aria-label="Abrir ou recolher painel"><i></i></button>
+      <nav class="abas" role="tablist">
+        <button type="button" role="tab" data-aba="detalhe" aria-selected="true">Explorar</button>
+        <button type="button" role="tab" data-aba="caminho" aria-selected="false">Caminhos</button>
+        <button type="button" role="tab" data-aba="trilhas" aria-selected="false">Trilhas</button>
+        <button type="button" role="tab" data-aba="desafio" aria-selected="false">Desafio</button>
+        <button type="button" role="tab" data-aba="analise" aria-selected="false">Análise</button>
+      </nav>
+      <div class="conteudo" id="conteudo"></div>
+    </aside>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<script src="dados.js"></script>
+<script>
+"use strict";
+/* ====================== utilidades ====================== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const semAcento = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const guarda = {
+  get(k, d){ try{ const v = localStorage.getItem("rede-lusofona-" + k); return v == null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem("rede-lusofona-" + k, JSON.stringify(v)); }catch(e){} }
+};
+const sorteia = a => a[Math.floor(Math.random() * a.length)];
+const embaralha = a => { a = a.slice(); for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+const GRUPOS = {br:"Literatura brasileira", pt:"Literatura portuguesa", af:"Literaturas africanas", pe:"Pensamento e ensaio"};
+const TIPOS_NO = {a:"Autores lusófonos", e:"Pensadores de fora", c:"Conceitos", m:"Correntes"};
+const TIPOS_LIG = {
+  inf:{nome:"Influência", verbo:"influenciou", inverso:"foi influenciado por", agora:"influenciou"},
+  dia:{nome:"Diálogo", verbo:"dialogou com", inverso:"dialogou com", agora:"dialogou com"},
+  cri:{nome:"Crítica ou polêmica", verbo:"criticou", inverso:"foi criticado por", agora:"criticou"},
+  gru:{nome:"Pertence a", verbo:"fez parte de", inverso:"reúne", agora:"fez parte de"},
+  con:{nome:"Conceito", verbo:"pensou", inverso:"aparece em", agora:"pensou"},
+  cor:{nome:"Corrente seguinte", verbo:"desemboca em", inverso:"vem de", agora:"desemboca em"}
+};
+const VOZES = {mulher:"Mulheres", negra:"Pessoas negras", indigena:"Indígenas", africa:"Autores africanos", rn:"Ligados ao RN"};
+const cssVar = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const corDe = n => n.k === "a" ? `var(--${n.g})` : n.k === "e" ? "var(--est)" : n.k === "c" ? "var(--con)" : "var(--cor)";
+const anos = n => {
+  if(!n.a) return "";
+  const [x, y] = n.a;
+  if(n.k === "m") return y ? `${x} a ${y}` : `desde ${x}`;
+  return y ? `${x} a ${y}` : `nasc. ${x}`;
+};
+const temVoz = (n, v) => v === "africa" ? (n.k === "a" && n.g === "af") || n.id === "amilcar" : (n.f || []).includes(v);
+
+/* ====================== dados ====================== */
+const nos = NOS.map(n => ({...n}));
+const porId = Object.fromEntries(nos.map(n => [n.id, n]));
+const ligs = LIGACOES.map(([s, t, tp, nota], i) => ({id:i, s, t, tp, nota:nota || "", source:s, target:t}));
+const viz = {}; nos.forEach(n => viz[n.id] = []);
+ligs.forEach(l => { viz[l.s].push({l, o:l.t, saida:true}); viz[l.t].push({l, o:l.s, saida:false}); });
+const PESSOAS = new Set(["inf", "dia", "cri"]);
+
+/* métricas: grau total e intermediação (Brandes) na rede de pessoas */
+nos.forEach(n => n.grau = viz[n.id].length);
+(function intermed(){
+  const V = nos.filter(n => n.k === "a" || n.k === "e").map(n => n.id);
+  const adj = {}; V.forEach(v => adj[v] = []);
+  ligs.forEach(l => { if(PESSOAS.has(l.tp) && adj[l.s] && adj[l.t]){ adj[l.s].push(l.t); adj[l.t].push(l.s); } });
+  const CB = {}; V.forEach(v => CB[v] = 0);
+  V.forEach(s => {
+    const S = [], P = {}, sig = {}, d = {};
+    V.forEach(v => { P[v] = []; sig[v] = 0; d[v] = -1; });
+    sig[s] = 1; d[s] = 0; const Q = [s];
+    while(Q.length){ const v = Q.shift(); S.push(v);
+      adj[v].forEach(w => { if(d[w] < 0){ Q.push(w); d[w] = d[v] + 1; } if(d[w] === d[v] + 1){ sig[w] += sig[v]; P[w].push(v); } }); }
+    const del = {}; V.forEach(v => del[v] = 0);
+    while(S.length){ const w = S.pop(); P[w].forEach(v => del[v] += sig[v] / sig[w] * (1 + del[w])); if(w !== s) CB[w] += del[w]; }
+  });
+  const mx = Math.max(...Object.values(CB)) || 1;
+  nos.forEach(n => { n.ponte = (CB[n.id] || 0) / 2; n.ponteN = (CB[n.id] || 0) / mx; });
+  nos.forEach(n => n.grauP = adj[n.id] ? adj[n.id].length : 0);
+})();
+const maxGrau = Math.max(...nos.map(n => n.grau));
+
+/* ====================== estado ====================== */
+const E = {
+  layout:"rede", ano:2026, sel:null, selLig:null, caminho:null, trilha:null, passo:0,
+  aba:"detalhe", vozes:null, tamanho:"grau",
+  kinds:{a:true, e:true, c:true, m:true}, grupos:{br:true, pt:true, af:true, pe:true},
+  tipos:{inf:true, dia:true, cri:true, gru:true, con:true, cor:true},
+  rotulos:"auto"
+};
+Object.assign(E.kinds, guarda.get("kinds", {})); Object.assign(E.tipos, guarda.get("tipos", {}));
+
+/* ====================== desenho ====================== */
+const svg = d3.select("#svg");
+const W = () => $("#tela").clientWidth, H = () => $("#tela").clientHeight;
+const defs = svg.append("defs");
+[["inf","--l-inf"],["cri","--l-cri"],["cor","--l-cor"],["sel","--destaque"]].forEach(([k, v]) => {
+  defs.append("marker").attr("id", "seta-" + k).attr("viewBox", "0 0 10 10").attr("refX", 9).attr("refY", 5)
+    .attr("markerWidth", 7).attr("markerHeight", 7).attr("orient", "auto-start-reverse").attr("markerUnits", "userSpaceOnUse")
+    .append("path").attr("d", "M0,1 L9,5 L0,9 z").style("fill", `var(${v})`);
+});
+const mundo = svg.append("g");
+const gFundo = mundo.append("g").attr("class", "fundo-mapa");
+const gEixo = mundo.append("g").attr("class", "eixo");
+const gLig = mundo.append("g");
+const gTrilha = mundo.append("path").attr("class", "trilha-linha");
+const gNos = mundo.append("g");
+const gRot = mundo.append("g");
+
+const raio = n => {
+  if(E.tamanho === "ponte" && (n.k === "a" || n.k === "e")) return 4 + 20 * Math.sqrt(n.ponteN);
+  if(n.k === "m") return 7 + Math.sqrt(n.grau) * 1.3;
+  if(n.k === "c") return 5 + Math.sqrt(n.grau) * 1.2;
+  if(n.k === "e") return 4 + Math.sqrt(n.grau) * 1.5;
+  return 4.5 + Math.sqrt(n.grau) * 2;
+};
+const forma = n => {
+  const r = raio(n);
+  if(n.k === "c") return `M0,${-r*1.25}L${r*1.25},0L0,${r*1.25}L${-r*1.25},0Z`;
+  if(n.k === "m") return `M${-r},${-r*.8}h${2*r}v${1.6*r}h${-2*r}Z`;
+  return `M${r},0A${r},${r} 0 1,1 ${-r},0A${r},${r} 0 1,1 ${r},0Z`;
+};
+
+const selLig = gLig.selectAll("g").data(ligs).join("g");
+const linhas = selLig.append("line").attr("class", l => "lk " + l.tp)
+  .attr("marker-end", l => (l.tp === "inf" || l.tp === "cri" || l.tp === "cor") ? `url(#seta-${l.tp})` : null);
+selLig.append("line").attr("class", "lk-hit").on("click", (ev, l) => { ev.stopPropagation(); escolheLig(l); });
+selLig.append("title").text(l => `${porId[l.s].n} ${TIPOS_LIG[l.tp].verbo} ${porId[l.t].n}${l.nota ? ". " + l.nota : ""}`);
+
+const selNo = gNos.selectAll("g").data(nos).join("g")
+  .attr("class", n => `no k-${n.k}${n.g ? " g-" + n.g : ""}`)
+  .on("click", (ev, n) => { ev.stopPropagation(); escolhe(n.id); })
+  .call(d3.drag().on("start", arrastaIni).on("drag", arrasta).on("end", arrastaFim));
+selNo.append("path").attr("class", "f");
+selNo.append("title").text(n => n.n + (n.a ? ` (${anos(n)})` : ""));
+const rotulos = gRot.selectAll("text").data(nos).join("text").attr("class", n => `rot k-${n.k}`).text(n => n.n);
+function redesenhaFormas(){ selNo.select("path").attr("d", forma); }
+redesenhaFormas();
+
+/* zoom */
+let zoomK = 1;
+const zoom = d3.zoom().scaleExtent([.15, 6]).on("zoom", ev => { mundo.attr("transform", ev.transform); zoomK = ev.transform.k; atualizaRotulos(); });
+svg.call(zoom).on("dblclick.zoom", null);
+svg.on("click", () => { if(E.sel || E.selLig){ E.sel = null; E.selLig = null; destaca(); painel(); } });
+$("#zMais").onclick = () => svg.transition().duration(300).call(zoom.scaleBy, 1.4);
+$("#zMenos").onclick = () => svg.transition().duration(300).call(zoom.scaleBy, 1 / 1.4);
+$("#zAjusta").onclick = () => ajusta();
+
+/* ====================== visibilidade ====================== */
+let visNos = new Set(), visLigs = [];
+function calculaVisiveis(){
+  const v = new Set();
+  nos.forEach(n => {
+    if(!E.kinds[n.k]) return;
+    if(E.layout === "mapa" && n.k !== "a") return;
+    if(n.k === "a" && !E.grupos[n.g]) return;
+    if((n.k === "a" || n.k === "m") && n.a && n.a[0] > E.ano) return;
+    if(n.k === "a" || n.k === "m") v.add(n.id);
+  });
+  nos.forEach(n => {
+    if(!E.kinds[n.k] || E.layout === "mapa") return;
+    if(n.k === "e" || n.k === "c"){
+      if(viz[n.id].some(x => v.has(x.o) && E.tipos[x.l.tp])) v.add(n.id);
+    }
+  });
+  visNos = v;
+  visLigs = ligs.filter(l => E.tipos[l.tp] && v.has(l.s) && v.has(l.t));
+  const vl = new Set(visLigs.map(l => l.id));
+  selNo.style("display", n => v.has(n.id) ? null : "none");
+  rotulos.style("display", n => v.has(n.id) ? null : "none");
+  selLig.style("display", l => vl.has(l.id) ? null : "none");
+  const autores = [...v].filter(id => porId[id].k === "a").length;
+  $("#ano").textContent = E.ano;
+  $("#anoInfo").textContent = `${autores} autores · ${visLigs.length} ligações visíveis`;
+}
+
+/* ====================== simulação ====================== */
+let geo = null, projecao = null, escalaTempo = null;
+let mudouLayout = false;
+const sim = d3.forceSimulation().alphaDecay(.03).velocityDecay(.38).on("tick", tick);
+function configuraForcas(){
+  const N = nos.filter(n => visNos.has(n.id));
+  sim.nodes(N);
+  sim.force("link", null).force("carga", null).force("x", null).force("y", null).force("colisao", null).force("centro", null);
+  const w = W(), h = H();
+  if(E.layout === "rede"){
+    sim.force("link", d3.forceLink(visLigs).id(n => n.id)
+        .distance(l => l.tp === "con" || l.tp === "gru" ? 70 : l.tp === "cor" ? 90 : 55)
+        .strength(l => l.tp === "con" ? .12 : l.tp === "gru" ? .18 : .5))
+      .force("carga", d3.forceManyBody().strength(n => n.k === "m" ? -320 : -150).distanceMax(500))
+      .force("x", d3.forceX(w / 2).strength(.035)).force("y", d3.forceY(h / 2).strength(.045))
+      .force("colisao", d3.forceCollide(n => raio(n) + 3));
+  } else if(E.layout === "tempo"){
+    const largura = Math.max(w * 2.2, 1800);
+    escalaTempo = d3.scaleLinear().domain([1450, 2026]).range([60, largura]);
+    const ano = n => n.a ? n.a[0] : mediaAno(n);
+    sim.force("link", d3.forceLink(visLigs).id(n => n.id).strength(0))
+      .force("x", d3.forceX(n => escalaTempo(ano(n))).strength(1))
+      .force("y", d3.forceY(n => h / 2 + faixa(n)).strength(.35))
+      .force("colisao", d3.forceCollide(n => raio(n) + 2).strength(.8));
+  } else {
+    sim.force("x", d3.forceX(n => ponto(n)[0]).strength(.6)).force("y", d3.forceY(n => ponto(n)[1]).strength(.6))
+      .force("colisao", d3.forceCollide(n => raio(n) + 1.2).strength(.9));
+  }
+  if(E.layout === "mapa") N.forEach(n => { const p = ponto(n); n.x = p[0] + (Math.random() - .5) * 6; n.y = p[1] + (Math.random() - .5) * 6; });
+  if(E.layout === "tempo" && mudouLayout) N.forEach(n => { n.x = escalaTempo(n.a ? n.a[0] : mediaAno(n)); n.y = h / 2 + faixa(n) + (Math.random() - .5) * 40; });
+  mudouLayout = false;
+  mundo.classed("modo-tempo", E.layout === "tempo");
+  desenhaFundo();
+  sim.alpha(.9).restart();
+}
+const FAIXAS = [["Correntes", "m", -330], ["Lit. portuguesa", "pt", -220], ["Lit. brasileira", "br", -100], ["Pensamento", "pe", 20], ["Lit. africanas", "af", 130], ["Conceitos", "c", 230], ["Pensadores de fora", "e", 320]];
+const faixa = n => (FAIXAS.find(f => f[1] === (n.k === "a" ? n.g : n.k)) || [0, 0, 0])[2];
+function mediaAno(n){
+  const a = viz[n.id].map(x => porId[x.o]).filter(o => o.k === "a" && o.a).map(o => o.a[0]);
+  return a.length ? d3.mean(a) : 1900;
+}
+function ponto(n){
+  const L = LUGARES[n.l]; if(!L || !projecao) return [W() / 2, H() / 2];
+  return projecao([L[3], L[2]]);
+}
+function tick(){
+  linhas.each(function(l){
+    const a = l.source, b = l.target; if(typeof a !== "object" || a.x == null) return;
+    const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
+    const rb = raio(b) * (b.k === "c" ? 1.25 : 1) + 2;
+    const x2 = b.x - dx / len * rb, y2 = b.y - dy / len * rb;
+    this.setAttribute("x1", a.x); this.setAttribute("y1", a.y); this.setAttribute("x2", x2); this.setAttribute("y2", y2);
+    const h = this.nextSibling; h.setAttribute("x1", a.x); h.setAttribute("y1", a.y); h.setAttribute("x2", x2); h.setAttribute("y2", y2);
+  });
+  selNo.attr("transform", n => n.x == null ? null : `translate(${n.x},${n.y})`);
+  rotulos.attr("x", n => n.x).attr("y", n => n.y + raio(n) + 11);
+  desenhaTrilha();
+}
+function arrastaIni(ev, n){ if(!ev.active) sim.alphaTarget(.25).restart(); n.fx = n.x; n.fy = n.y; }
+function arrasta(ev, n){ n.fx = ev.x; n.fy = ev.y; }
+function arrastaFim(ev, n){ if(!ev.active) sim.alphaTarget(0); n.fx = null; n.fy = null; }
+
+/* fundo: mapa-múndi ou eixo do tempo */
+const LUSO = new Set(["076","620","024","508","132","624","678","626","226"]);
+async function carregaMundo(){
+  if(geo !== null) return geo;
+  try{
+    const r = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json");
+    const t = await r.json();
+    geo = topojson.feature(t, t.objects.countries);
+  }catch(e){ geo = false; }
+  return geo;
+}
+function fazProjecao(){
+  const w = W(), h = H();
+  projecao = d3.geoNaturalEarth1().fitExtent([[20, 70], [w - 20, h - 80]],
+    {type:"MultiPoint", coordinates:[[-74, 8], [41, 8], [-74, -34], [41, -34], [-20, 44], [-60, 44]]});
+}
+function desenhaFundo(){
+  gFundo.selectAll("*").remove(); gEixo.selectAll("*").remove();
+  if(E.layout === "mapa"){
+    const caminho = d3.geoPath(projecao);
+    gFundo.append("path").attr("class", "grat").attr("d", caminho(d3.geoGraticule10()));
+    if(geo) gFundo.selectAll("path.pais").data(geo.features).join("path")
+      .attr("class", f => "pais" + (LUSO.has(String(f.id).padStart(3, "0")) ? " luso" : "")).attr("d", caminho);
+  }
+  if(E.layout === "tempo" && escalaTempo){
+    const h = H();
+    for(let a = 1500; a <= 2000; a += 50){
+      const x = escalaTempo(a);
+      gEixo.append("line").attr("x1", x).attr("x2", x).attr("y1", h / 2 - 390).attr("y2", h / 2 + 370);
+      gEixo.append("text").attr("x", x + 4).attr("y", h / 2 - 376).text(a);
+    }
+    FAIXAS.forEach(([t, , y]) => gEixo.append("text").attr("x", escalaTempo(1450) - 50).attr("y", h / 2 + y + 4).style("font-weight", 600).attr("text-anchor", "end").text(t));
+  }
+}
+
+/* rótulos */
+function atualizaRotulos(){
+  const limite = zoomK > 2.2 ? 0 : zoomK > 1.4 ? 3 : zoomK > .9 ? 6 : 10;
+  rotulos.classed("mostra", n => E.layout === "mapa" ? zoomK > 1.6 || n.grau >= 9 : (n.k === "m" && zoomK > .6) || n.grau >= limite);
+}
+
+/* ====================== destaque ====================== */
+function destaca(){
+  const vz = new Set(), vl = new Set();
+  if(E.sel){ vz.add(E.sel); viz[E.sel].forEach(x => { if(E.tipos[x.l.tp]){ vz.add(x.o); vl.add(x.l.id); } }); }
+  if(E.selLig != null){ const l = ligs[E.selLig]; vz.add(l.s); vz.add(l.t); }
+  const cam = new Set(), camL = new Set();
+  if(E.caminho){ E.caminho.nos.forEach(id => cam.add(id)); E.caminho.ligs.forEach(l => camL.add(l.id)); }
+  if(E.trilha){ TRILHAS.find(t => t.id === E.trilha).p.slice(0, E.passo + 1).forEach(p => cam.add(p[0])); }
+  const algum = E.sel || E.selLig != null || E.caminho || E.trilha;
+  mundo.classed("apagando", !!algum);
+  selNo.classed("foco", n => n.id === E.sel || (E.trilha && n.id === TRILHAS.find(t => t.id === E.trilha).p[E.passo][0]))
+       .classed("viz", n => vz.has(n.id)).classed("caminho", n => cam.has(n.id));
+  rotulos.classed("foco", n => n.id === E.sel).classed("viz", n => vz.has(n.id)).classed("caminho", n => cam.has(n.id));
+  linhas.classed("viz", l => vl.has(l.id)).classed("caminho", l => camL.has(l.id)).classed("sel", l => l.id === E.selLig);
+  mundo.classed("vozes", !!E.vozes && !algum);
+  selNo.classed("voz", n => !!E.vozes && temVoz(n, E.vozes));
+  rotulos.classed("voz", n => !!E.vozes && temVoz(n, E.vozes));
+  if(E.vozes && !algum) rotulos.filter(n => temVoz(n, E.vozes)).classed("viz", true);
+  desenhaTrilha();
+  try{ history.replaceState(null, "", E.sel ? "#" + E.sel : location.pathname + location.search); }catch(e){}
+}
+function desenhaTrilha(){
+  if(!E.trilha){ gTrilha.attr("d", null); return; }
+  const pts = TRILHAS.find(t => t.id === E.trilha).p.slice(0, E.passo + 1).map(p => porId[p[0]]).filter(n => visNos.has(n.id) && n.x != null);
+  gTrilha.attr("d", pts.length > 1 ? d3.line().curve(d3.curveCatmullRom)(pts.map(n => [n.x, n.y])) : null);
+}
+
+/* foco de câmera */
+function centra(ids, escala){
+  const N = ids.map(id => porId[id]).filter(n => visNos.has(n.id) && n.x != null);
+  if(!N.length) return;
+  const [x0, x1] = d3.extent(N, n => n.x), [y0, y1] = d3.extent(N, n => n.y);
+  const w = W(), cobre = innerWidth <= 860 && !painelEl.classList.contains("recolhido") ? painelEl.offsetHeight : 0;
+  const h = H() - cobre, pad = 90;
+  const k = escala || Math.min(1.7, .9 / Math.max((x1 - x0 + pad) / w, (y1 - y0 + pad) / Math.max(120, h - 140)));
+  const t = d3.zoomIdentity.translate(w / 2, h / 2 - (cobre ? 0 : 20)).scale(k).translate(-(x0 + x1) / 2, -(y0 + y1) / 2);
+  svg.transition().duration(650).call(zoom.transform, t);
+}
+function ajusta(){ centra([...visNos]); }
+
+/* ====================== seleção ====================== */
+function escolhe(id, {centrar = false, aba = "detalhe"} = {}){
+  const n = porId[id]; if(!n) return;
+  if(!visNos.has(id)){
+    if(n.a && n.a[0] > E.ano && (n.k === "a" || n.k === "m")){ E.ano = 2026; $("#slider").value = 2026; }
+    if(!E.kinds[n.k]) E.kinds[n.k] = true;
+    if(n.k === "a" && !E.grupos[n.g]) E.grupos[n.g] = true;
+    if(E.layout === "mapa" && n.k !== "a") trocaLayout("rede");
+    calculaVisiveis(); configuraForcas();
+  }
+  E.sel = id; E.selLig = null; E.aba = aba;
+  destaca(); painel(); abrePainel();
+  if(centrar) setTimeout(() => centra([id, ...viz[id].map(x => x.o)]), 60);
+}
+function escolheLig(l){ E.selLig = l.id; E.sel = null; E.aba = "detalhe"; destaca(); painel(); abrePainel(); }
+
+/* ====================== painel ====================== */
+const C = $("#conteudo");
+function abas(){ document.querySelectorAll(".abas button").forEach(b => b.setAttribute("aria-selected", b.dataset.aba === E.aba)); }
+document.querySelectorAll(".abas button").forEach(b => b.onclick = () => {
+  E.aba = b.dataset.aba;
+  if(E.aba !== "trilhas" && E.trilha){ E.trilha = null; destaca(); }
+  if(E.aba !== "caminho" && E.caminho){ E.caminho = null; destaca(); }
+  painel(); abrePainel();
+});
+function painel(){
+  abas();
+  ({detalhe:painelDetalhe, caminho:painelCaminho, trilhas:painelTrilhas, desafio:painelDesafio, analise:painelAnalise})[E.aba]();
+  C.scrollTop = 0;
+}
+const bola = n => `<span class="bola" style="background:${corDe(n)}"></span>`;
+const itemNo = (n, sub) => `<button class="item" data-ir="${n.id}">${bola(n)}<span>${esc(n.n)}${sub ? `<small>${esc(sub)}</small>` : ""}</span></button>`;
+const linkWiki = n => n.w ? `<a class="btn" href="../wiki-filosofica/#${esc(n.w)}" target="_blank" rel="noopener">📖 Wiki Filosófica</a>` : "";
+
+function painelDetalhe(){
+  if(E.selLig != null) return painelLigacao(ligs[E.selLig]);
+  if(!E.sel) return painelInicio();
+  const n = porId[E.sel], L = LUGARES[n.l];
+  const tipoTxt = n.k === "a" ? GRUPOS[n.g] : {e:"Pensador de fora", c:"Conceito", m:"Corrente ou movimento"}[n.k];
+  const vozes = (n.f || []).map(f => `<span class="selo">${esc({mulher:"mulher", negra:"pessoa negra", indigena:"indígena", rn:"Rio Grande do Norte"}[f])}</span>`).join("");
+  const blocos = {};
+  viz[n.id].forEach(x => {
+    const tp = x.l.tp;
+    const chave = (tp === "inf" || tp === "cri") ? tp + (x.saida ? "-s" : "-e") : tp;
+    (blocos[chave] = blocos[chave] || []).push(x);
+  });
+  const titulos = [
+    ["inf-e", "Influenciado por"], ["inf-s", "Influenciou"], ["dia", "Dialogou com"], ["cri-s", "Criticou"], ["cri-e", "Criticado por"],
+    ["gru", n.k === "m" ? "Autores do grupo" : "Correntes e grupos"], ["cor", "Correntes vizinhas"], ["con", n.k === "c" ? "Quem pensou" : "Conceitos"]
+  ];
+  let lig = "";
+  titulos.forEach(([k, t]) => {
+    const L2 = blocos[k]; if(!L2) return;
+    L2.sort((a, b) => ((porId[a.o].a || [0])[0]) - ((porId[b.o].a || [0])[0]));
+    if(k === "gru" || k === "con" || k === "cor")
+      lig += `<h4>${t} · ${L2.length}</h4><div class="chips">${L2.map(x => `<button class="chip" data-ir="${x.o}">${esc(porId[x.o].n)}</button>`).join("")}</div>`;
+    else
+      lig += `<h4>${t} · ${L2.length}</h4><div class="lista">${L2.map(x => `<button class="item" data-lig="${x.l.id}">${bola(porId[x.o])}<span>${esc(porId[x.o].n)}${x.l.nota ? `<small>${esc(x.l.nota)}</small>` : ""}</span></button>`).join("")}</div>`;
+  });
+  C.innerHTML = `
+    <div class="kicker" style="color:${corDe(n)}">${esc(tipoTxt)}</div>
+    <h2>${esc(n.n)}</h2>
+    <div class="meta">${esc(anos(n))}${L ? ` · ${esc(L[0])}${L[1] !== L[0] ? ", " + esc(L[1]) : ""}` : ""}</div>
+    ${vozes ? `<div class="selos">${vozes}</div>` : ""}
+    ${n.i ? `<p class="ideia">${esc(n.i)}</p>` : ""}
+    ${n.o ? `<p class="obras"><b>Obras:</b> ${esc(n.o)}</p>` : ""}
+    ${n.c ? `<blockquote>“${esc(n.c[0])}”<cite>${esc(n.c[1])}</cite></blockquote>` : ""}
+    ${n.k !== "c" && n.k !== "m" ? `<div class="selos"><span class="selo">${n.grau} ligações</span>${n.ponte > 0 ? `<span class="selo">índice de ponte ${Math.round(n.ponteN * 100)}</span>` : ""}</div>` : ""}
+    <div class="botoes">
+      <button class="btn" data-acao="caminho-de">↝ Caminho a partir daqui</button>
+      ${linkWiki(n)}
+      <button class="btn" data-acao="agora-no">🗺️ Levar ao Ágora Mapas</button>
+    </div>
+    ${lig || `<p class="dica">Ligações ocultas pelos filtros.</p>`}`;
+}
+
+function painelLigacao(l){
+  const a = porId[l.s], b = porId[l.t], T = TIPOS_LIG[l.tp];
+  const lado = n => `<div><h5 data-ir="${n.id}">${esc(n.n)}</h5><p class="meta" style="margin:0">${esc(anos(n))}</p>
+    ${n.c ? `<blockquote>“${esc(n.c[0])}”<cite>${esc(n.c[1])}</cite></blockquote>` : `<p style="margin-top:8px">${esc(n.i || "")}</p>`}</div>`;
+  C.innerHTML = `
+    <div class="kicker">Ligação</div>
+    <h2>${esc(a.n)} <span style="color:var(--destaque)">→</span> ${esc(b.n)}</h2>
+    <div class="tipo-lig">${amostraLig(l.tp)} ${esc(a.n)} ${esc(T.verbo)} ${esc(b.n)}</div>
+    ${l.nota ? `<div class="nota">${esc(l.nota)}</div>` : ""}
+    <h4>Lado a lado</h4>
+    <div class="comparar">${lado(a)}${lado(b)}</div>
+    <p class="dica">Para a turma: o que se manteve e o que mudou de um para o outro?</p>
+    <div class="botoes"><button class="btn" data-ir="${a.id}">Ver ${esc(a.n)}</button><button class="btn" data-ir="${b.id}">Ver ${esc(b.n)}</button></div>`;
+}
+
+function painelInicio(){
+  const autores = nos.filter(n => n.k === "a");
+  const top = nos.filter(n => n.k === "a").sort((a, b) => b.grau - a.grau).slice(0, 6);
+  C.innerHTML = `
+    <div class="kicker">Como usar</div>
+    <h2>Cinco séculos de pensamento em língua portuguesa</h2>
+    <p class="ideia">Cada ponto é um autor, um pensador estrangeiro, uma corrente ou um conceito. As linhas mostram quem influenciou, dialogou ou brigou com quem.</p>
+    <div class="cartoes" style="margin-top:16px">
+      <div class="numero"><b>${autores.length}</b><span>autores lusófonos</span></div>
+      <div class="numero"><b>${ligs.length}</b><span>ligações</span></div>
+      <div class="numero"><b>${nos.filter(n => n.k === "m").length}</b><span>correntes</span></div>
+      <div class="numero"><b>${nos.filter(n => n.k === "c").length}</b><span>conceitos</span></div>
+    </div>
+    <h4>Comece por</h4>
+    <div class="lista">${top.map(n => itemNo(n, `${n.grau} ligações`)).join("")}</div>
+    <h4>Dicas</h4>
+    <p class="dica" style="margin-top:0">Clique num ponto para ver suas ligações. Clique numa linha para comparar os dois autores. Arraste a <b>linha do tempo</b> e veja a rede nascer. Troque entre <b>Rede</b>, <b>Tempo</b> e <b>Mapa</b> no alto.</p>
+    <div class="botoes"><button class="btn forte" data-acao="sortear">Sortear um autor</button><button class="btn" data-aba-ir="trilhas">Seguir uma trilha</button></div>`;
+}
+
+/* ---- caminhos ---- */
+let camA = null, camB = null, camConceitos = false, camFora = false;
+function painelCaminho(){
+  const opc = nos.filter(n => n.k === "a" || n.k === "e").sort((a, b) => a.n.localeCompare(b.n, "pt"));
+  const sel = (id, v) => `<select id="${id}"><option value="">Escolha…</option>${opc.map(n => `<option value="${n.id}"${n.id === v ? " selected" : ""}>${esc(n.n)}</option>`).join("")}</select>`;
+  let res = "";
+  if(E.caminho){
+    const c = E.caminho;
+    res = `<h4>${c.nos.length - 1} passos</h4><div class="lista">` + c.nos.map((id, i) => {
+      const n = porId[id], l = c.ligs[i];
+      let s = itemNo(n, n.i ? n.i.slice(0, 90) + (n.i.length > 90 ? "…" : "") : "");
+      if(l){
+        const ida = l.s === id;
+        s += `<button class="item" data-lig="${l.id}" style="padding-left:24px">${amostraLig(l.tp)}<span><small>${esc(ida ? TIPOS_LIG[l.tp].verbo : TIPOS_LIG[l.tp].inverso)}${l.nota ? " · " + esc(l.nota) : ""}</small></span></button>`;
+      }
+      return s;
+    }).join("") + `</div><div class="botoes"><button class="btn" data-acao="agora-caminho">🗺️ Levar ao Ágora Mapas</button></div>`;
+  } else if(E.caminhoErro) res = `<p class="nota">${esc(E.caminhoErro)}</p>`;
+  C.innerHTML = `
+    <div class="kicker">Caminhos</div>
+    <h2>Como se chega de um autor a outro?</h2>
+    <p class="dica">O caminho mais curto pela rede de influências, diálogos e polêmicas.</p>
+    <label class="campo">De ${sel("camA", camA)}</label>
+    <label class="campo">Até ${sel("camB", camB)}</label>
+    <label class="check"><input type="checkbox" id="camF"${camFora ? " checked" : ""}> Passar por pensadores de fora (Marx, Nietzsche…)</label>
+    <label class="check"><input type="checkbox" id="camC"${camConceitos ? " checked" : ""}> Passar também por conceitos e correntes</label>
+    <div class="botoes"><button class="btn forte" data-acao="tracar">Traçar caminho</button><button class="btn" data-acao="sortear-par">Sortear dupla</button></div>
+    ${res}`;
+  $("#camA").onchange = e => camA = e.target.value || null;
+  $("#camB").onchange = e => camB = e.target.value || null;
+  $("#camC").onchange = e => camConceitos = e.target.checked;
+  $("#camF").onchange = e => camFora = e.target.checked;
+}
+function bfs(a, b, conceitos, fora){
+  const ok = n => n === b || porId[n].k === "a" || (fora && porId[n].k === "e") || (conceitos && (porId[n].k === "c" || porId[n].k === "m"));
+  const prev = {[a]:null}, Q = [a];
+  while(Q.length){
+    const v = Q.shift(); if(v === b) break;
+    for(const x of viz[v]){
+      if(!conceitos && !PESSOAS.has(x.l.tp)) continue;
+      if(prev[x.o] !== undefined || !ok(x.o)) continue;
+      prev[x.o] = {de:v, l:x.l}; Q.push(x.o);
+    }
+  }
+  if(prev[b] === undefined) return null;
+  const N = [], L = []; let c = b;
+  while(c !== a){ N.unshift(c); L.unshift(prev[c].l); c = prev[c].de; }
+  N.unshift(a);
+  return {nos:N, ligs:L};
+}
+function traca(){
+  E.caminhoErro = null;
+  if(!camA || !camB || camA === camB){ E.caminho = null; E.caminhoErro = "Escolha dois autores diferentes."; return painelCaminho(); }
+  E.caminho = bfs(camA, camB, camConceitos, camFora || porId[camA].k === "e");
+  if(!E.caminho) E.caminhoErro = "Não há caminho com essas opções. Marque uma das caixas para ampliar a busca.";
+  else {
+    E.sel = null; E.selLig = null;
+    if(E.layout === "mapa") trocaLayout("rede");
+    if(E.ano < 2026){ E.ano = 2026; $("#slider").value = 2026; calculaVisiveis(); configuraForcas(); }
+    destaca(); setTimeout(() => centra(E.caminho.nos), 80);
+  }
+  painelCaminho();
+}
+
+/* ---- trilhas ---- */
+function painelTrilhas(){
+  if(!E.trilha){
+    C.innerHTML = `<div class="kicker">Trilhas temáticas</div><h2>Percursos guiados para a sala de aula</h2>
+      <p class="dica">Cada trilha passa por autores ligados por um tema, com uma pergunta para discutir em cada parada.</p>
+      <div style="margin-top:14px">${TRILHAS.map(t => `<button class="trilha" data-trilha="${t.id}"><b>${esc(t.t)}</b><span>${esc(t.d)} · ${t.p.length} paradas</span></button>`).join("")}</div>`;
+    return;
+  }
+  const t = TRILHAS.find(x => x.id === E.trilha), [id, perg] = t.p[E.passo], n = porId[id];
+  C.innerHTML = `
+    <div class="kicker">${esc(t.t)} · parada ${E.passo + 1} de ${t.p.length}</div>
+    <div class="progresso"><i style="width:${(E.passo + 1) / t.p.length * 100}%"></i></div>
+    <h2 data-ir="${n.id}" style="cursor:pointer">${esc(n.n)}</h2>
+    <div class="meta">${esc(anos(n))}</div>
+    <p class="ideia">${esc(n.i || "")}</p>
+    ${n.c ? `<blockquote>“${esc(n.c[0])}”<cite>${esc(n.c[1])}</cite></blockquote>` : ""}
+    <h4>Para discutir</h4>
+    <p class="pergunta">${esc(perg)}</p>
+    <div class="botoes">
+      <button class="btn" data-acao="t-ant"${E.passo === 0 ? " disabled" : ""}>← Anterior</button>
+      ${E.passo < t.p.length - 1 ? `<button class="btn forte" data-acao="t-prox">Próxima parada →</button>` : `<button class="btn forte" data-acao="t-fim">Concluir trilha</button>`}
+    </div>
+    <div class="botoes"><button class="btn" data-acao="agora-trilha">🗺️ Levar a trilha ao Ágora</button><button class="btn" data-acao="t-sair">Outras trilhas</button></div>
+    <h4>Paradas</h4>
+    <div class="lista">${t.p.map((p, i) => `<button class="item" data-passo="${i}">${bola(porId[p[0]])}<span style="${i === E.passo ? "font-weight:600" : ""}">${i + 1}. ${esc(porId[p[0]].n)}</span></button>`).join("")}</div>`;
+}
+function irPasso(i){
+  const t = TRILHAS.find(x => x.id === E.trilha);
+  E.passo = Math.max(0, Math.min(t.p.length - 1, i)); E.sel = null; E.selLig = null; E.caminho = null;
+  if(E.layout === "mapa") trocaLayout("rede");
+  if(E.ano < 2026){ E.ano = 2026; $("#slider").value = 2026; calculaVisiveis(); configuraForcas(); }
+  destaca(); painelTrilhas();
+  const ids = t.p.slice(Math.max(0, E.passo - 1), E.passo + 1).map(p => p[0]);
+  setTimeout(() => centra(ids, ids.length === 1 ? 1.5 : null), 60);
+}
+
+/* ---- desafio ---- */
+let D = {modo:null, q:null, pontos:0, total:0, seq:0};
+function painelDesafio(){
+  const rec = guarda.get("recorde", 0);
+  if(!D.q){
+    C.innerHTML = `<div class="kicker">Desafio</div><h2>Teste o que a turma sabe</h2>
+      <div class="placar"><span>Pontos <b>${D.pontos}/${D.total}</b></span><span>Recorde de sequência <b>${rec}</b></span></div>
+      <div style="margin-top:16px">
+        <button class="trilha" data-modo="cit"><b>Quem escreveu?</b><span>Uma citação, quatro autores.</span></button>
+        <button class="trilha" data-modo="ideia"><b>De quem é a ideia?</b><span>Uma ideia central, quatro pensadores.</span></button>
+        <button class="trilha" data-modo="elo"><b>Elo perdido</b><span>Dois autores e um meio do caminho escondido.</span></button>
+        <button class="trilha" data-modo="tempo"><b>Quem veio antes?</b><span>Ponha dois autores em ordem no tempo.</span></button>
+      </div>`;
+    return;
+  }
+  const q = D.q;
+  C.innerHTML = `<div class="kicker">${esc(q.titulo)}</div>
+    <div class="placar"><span>Pontos <b>${D.pontos}/${D.total}</b></span><span>Sequência <b>${D.seq}</b></span><span>Recorde <b>${rec}</b></span></div>
+    <div class="pergunta">${q.enunciado}</div>
+    <div class="opcoes">${q.opcoes.map(id => `<button class="opcao" data-resp="${id}">${esc(porId[id].n)}${q.modo === "tempo" ? "" : ""}</button>`).join("")}</div>
+    <div id="explica"></div>
+    <div class="botoes"><button class="btn" data-acao="d-sair">Trocar de modo</button></div>`;
+}
+function novaQuestao(modo){
+  const autores = nos.filter(n => n.k === "a");
+  const outros = (certo, pool) => embaralha(pool.filter(n => n.id !== certo)).slice(0, 3).map(n => n.id);
+  let q;
+  if(modo === "cit"){
+    const n = sorteia(autores.filter(x => x.c));
+    q = {titulo:"Quem escreveu?", enunciado:`“${esc(n.c[0])}”`, certo:n.id, opcoes:embaralha([n.id, ...outros(n.id, autores.filter(x => x.c))])};
+  } else if(modo === "ideia"){
+    const n = sorteia(autores.filter(x => x.i));
+    const pool = autores.filter(x => x.g === n.g || Math.random() < .3);
+    q = {titulo:"De quem é a ideia?", enunciado:esc(n.i), certo:n.id, opcoes:embaralha([n.id, ...outros(n.id, pool)])};
+  } else if(modo === "elo"){
+    let tentativa = 0;
+    while(!q && tentativa++ < 300){
+      const x = sorteia(autores);
+      const pv = viz[x.id].filter(v => PESSOAS.has(v.l.tp) && porId[v.o].k === "a");
+      if(pv.length < 2) continue;
+      const [p1, p2] = embaralha(pv);
+      if(viz[p1.o].some(v => v.o === p2.o)) continue;
+      const vizinhos = new Set([p1.o, p2.o, x.id, ...viz[p1.o].map(v => v.o), ...viz[p2.o].map(v => v.o)]);
+      const pool = autores.filter(a => !vizinhos.has(a.id));
+      q = {titulo:"Elo perdido", enunciado:`<b>${esc(porId[p1.o].n)}</b> e <b>${esc(porId[p2.o].n)}</b> se ligam por um mesmo autor. Quem?`, certo:x.id, opcoes:embaralha([x.id, ...outros(x.id, pool)]), extra:[p1.l, p2.l]};
+    }
+  } else {
+    let a, b;
+    do { a = sorteia(autores); b = sorteia(autores); } while(a.id === b.id || Math.abs(a.a[0] - b.a[0]) < 15);
+    const certo = a.a[0] < b.a[0] ? a.id : b.id;
+    q = {titulo:"Quem veio antes?", enunciado:"Quem nasceu primeiro?", certo, opcoes:embaralha([a.id, b.id])};
+  }
+  q.modo = modo; D.modo = modo; D.q = q; painelDesafio();
+}
+function responde(id){
+  const q = D.q; if(q.respondida) return; q.respondida = true;
+  const ok = id === q.certo; D.total++;
+  if(ok){ D.pontos++; D.seq++; if(D.seq > guarda.get("recorde", 0)) guarda.set("recorde", D.seq); } else D.seq = 0;
+  document.querySelectorAll(".opcao").forEach(b => { b.disabled = true; if(b.dataset.resp === q.certo) b.classList.add("certa"); else if(b.dataset.resp === id) b.classList.add("errada"); });
+  const n = porId[q.certo];
+  let ex = `<div class="nota" style="margin-top:14px"><b>${ok ? "Isso!" : "Quase."}</b> ${esc(n.n)} (${esc(anos(n))}). `;
+  if(q.modo === "elo") ex += q.extra.map(l => esc(l.nota || `${porId[l.s].n} ${TIPOS_LIG[l.tp].verbo} ${porId[l.t].n}`)).join(" ");
+  else if(q.modo === "tempo") ex += q.opcoes.map(i => `${esc(porId[i].n)}: ${porId[i].a[0]}`).join(" · ");
+  else ex += esc(n.o || "");
+  ex += `</div><div class="botoes"><button class="btn forte" data-acao="d-prox">Próxima →</button><button class="btn" data-ir="${n.id}">Ver na rede</button></div>`;
+  $("#explica").innerHTML = ex;
+  document.querySelector(".placar").innerHTML = `<span>Pontos <b>${D.pontos}/${D.total}</b></span><span>Sequência <b>${D.seq}</b></span><span>Recorde <b>${guarda.get("recorde", 0)}</b></span>`;
+}
+
+/* ---- análise ---- */
+function painelAnalise(){
+  const autores = nos.filter(n => n.k === "a");
+  const pctV = v => Math.round(autores.filter(n => temVoz(n, v)).length / autores.length * 100);
+  const topGrau = autores.slice().sort((a, b) => b.grauP - a.grauP).slice(0, 8);
+  const topPonte = nos.filter(n => n.k === "a" || n.k === "e").sort((a, b) => b.ponte - a.ponte).slice(0, 8);
+  const maxP = topPonte[0].ponte, maxG = topGrau[0].grauP;
+  const chk = (grupo, k, rotulo, extra = "") => `<label class="check">${extra}<input type="checkbox" data-filtro="${grupo}" data-k="${k}"${E[grupo][k] ? " checked" : ""}> ${esc(rotulo)}</label>`;
+  C.innerHTML = `
+    <div class="kicker">Análise da rede</div>
+    <h2>Quem está no centro e quem ficou à margem?</h2>
+
+    <h4>Vozes fora do cânone tradicional</h4>
+    <p class="dica" style="margin-top:0">Destaque um grupo e veja onde ele aparece na rede.</p>
+    <div class="chips" style="margin-top:8px">${Object.entries(VOZES).map(([k, t]) => `<button class="chip${E.vozes === k ? " on" : ""}" data-voz="${k}">${esc(t)} · ${autores.filter(n => temVoz(n, k)).length}</button>`).join("")}</div>
+    <div class="cartoes" style="margin-top:12px">
+      <div class="numero"><b>${pctV("mulher")}%</b><span>dos autores são mulheres</span></div>
+      <div class="numero"><b>${pctV("negra")}%</b><span>são pessoas negras brasileiras</span></div>
+    </div>
+    <p class="dica">Pergunta para a turma: esta rede reflete quem pensou em língua portuguesa ou quem foi lembrado pelos livros? Quem decide o que entra no cânone?</p>
+
+    <h4>Mais conectados (entre pessoas)</h4>
+    <div class="lista ranking">${topGrau.map(n => `<button class="item" data-ir="${n.id}"><span style="flex:1">${esc(n.n)}<div class="barra" style="--c:${corDe(n)}"><i style="width:${n.grauP / maxG * 100}%"></i></div></span><small>${n.grauP}</small></button>`).join("")}</div>
+
+    <h4>Pontes (intermediação)</h4>
+    <p class="dica" style="margin-top:0">Quem liga grupos que, sem ele, ficariam distantes.</p>
+    <div class="lista ranking">${topPonte.map(n => `<button class="item" data-ir="${n.id}"><span style="flex:1">${esc(n.n)}<div class="barra" style="--c:${corDe(n)}"><i style="width:${n.ponte / maxP * 100}%"></i></div></span><small>${Math.round(n.ponte / maxP * 100)}</small></button>`).join("")}</div>
+
+    <h4>Tamanho dos pontos</h4>
+    <div class="chips"><button class="chip${E.tamanho === "grau" ? " on" : ""}" data-tam="grau">Número de ligações</button><button class="chip${E.tamanho === "ponte" ? " on" : ""}" data-tam="ponte">Força de ponte</button></div>
+
+    <hr class="sep">
+    <h4>Mostrar pontos</h4>
+    ${Object.entries(TIPOS_NO).map(([k, t]) => chk("kinds", k, t)).join("")}
+    <h4>Blocos de autores</h4>
+    ${Object.entries(GRUPOS).map(([k, t]) => chk("grupos", k, t, `<span class="bola" style="width:10px;height:10px;border-radius:50%;background:var(--${k})"></span>`)).join("")}
+    <h4>Tipos de ligação</h4>
+    ${Object.entries(TIPOS_LIG).map(([k, t]) => chk("tipos", k, t.nome, amostraLig(k))).join("")}
+    <div class="botoes"><button class="btn" data-acao="exporta-tudo">⬇ Baixar dados (JSON)</button></div>`;
+}
+
+/* ====================== Ágora Mapas ====================== */
+function paraAgora(titulo, ids, ligsExtras){
+  const set = new Set(ids);
+  const L = ligsExtras || ligs.filter(l => set.has(l.s) && set.has(l.t));
+  const tipoAg = n => n.k === "c" ? "conceito" : n.k === "m" ? "tema" : "filosofo";
+  const uid = () => Math.random().toString(36).slice(2, 10);
+  const m = {}; const total = ids.length;
+  const nodes = ids.map((id, i) => {
+    const n = porId[id], ang = i / total * Math.PI * 2, r = i === 0 && total > 2 ? 0 : 340;
+    m[id] = uid();
+    return {id:m[id], text:n.n, type:tipoAg(n), x:Math.round(Math.cos(ang) * r), y:Math.round(Math.sin(ang) * r * .7)};
+  });
+  const citas = [];
+  ids.forEach((id, i) => { const n = porId[id]; if(n.c){ const cid = uid(); const p = nodes[i];
+    citas.push({node:{id:cid, text:`“${n.c[0]}”`, type:"citacao", x:p.x + (p.x >= 0 ? 260 : -260), y:p.y + 90}, link:{id:uid(), from:m[id], to:cid, label:"escreveu"}}); } });
+  const links = L.map(l => ({id:uid(), from:m[l.s], to:m[l.t], label:TIPOS_LIG[l.tp].agora}));
+  const data = {app:"agora-mapas", v:2, title:titulo, nodes:[...nodes, ...citas.map(c => c.node)], links:[...links, ...citas.map(c => c.link)], custom:[], sources:[], view:"tipo"};
+  let salvo = false;
+  try{
+    const lib = JSON.parse(localStorage.getItem("agora-mapas-lib") || "[]");
+    lib.unshift({id:uid(), name:titulo, saved:Date.now(), data});
+    localStorage.setItem("agora-mapas-lib", JSON.stringify(lib)); salvo = true;
+  }catch(e){}
+  baixa(data, `${semAcento(titulo).replace(/[^a-z0-9]+/g, "-")}.json`);
+  aviso(salvo ? `Mapa salvo nos arquivos do Ágora e baixado. <a href="../agora-mapas/" target="_blank" rel="noopener">Abrir Ágora Mapas</a>` : "Mapa baixado. Abra no Ágora Mapas em Arquivos.", 6000);
+}
+function baixa(obj, nome){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(obj, null, 1)], {type:"application/json"}));
+  a.download = nome; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+let avisoT;
+function aviso(html, ms = 3500){ const el = $("#aviso"); el.innerHTML = html; el.classList.add("ver"); clearTimeout(avisoT); avisoT = setTimeout(() => el.classList.remove("ver"), ms); }
+
+/* ====================== eventos do painel ====================== */
+C.addEventListener("click", ev => {
+  const t = ev.target.closest("[data-ir],[data-lig],[data-acao],[data-trilha],[data-passo],[data-modo],[data-resp],[data-voz],[data-tam],[data-aba-ir]");
+  if(!t) return;
+  const d = t.dataset;
+  if(d.ir){ E.trilha = null; E.caminho = null; return escolhe(d.ir, {centrar:true}); }
+  if(d.lig){ return escolheLig(ligs[+d.lig]); }
+  if(d.abaIr){ E.aba = d.abaIr; return painel(); }
+  if(d.trilha){ E.trilha = d.trilha; E.aba = "trilhas"; return irPasso(0); }
+  if(d.passo){ return irPasso(+d.passo); }
+  if(d.modo){ return novaQuestao(d.modo); }
+  if(d.resp){ return responde(d.resp); }
+  if(d.voz){ E.vozes = E.vozes === d.voz ? null : d.voz; E.sel = null; E.selLig = null; E.caminho = null; E.trilha = null; destaca(); if(E.vozes) setTimeout(() => centra(nos.filter(n => visNos.has(n.id) && temVoz(n, E.vozes)).map(n => n.id)), 50); return painelAnalise(); }
+  if(d.tam){ E.tamanho = d.tam; redesenhaFormas(); sim.force("colisao") && sim.force("colisao").radius(n => raio(n) + 3); sim.alpha(.4).restart(); return painelAnalise(); }
+  const a = d.acao;
+  if(a === "sortear"){ const n = sorteia(nos.filter(n => n.k === "a" && visNos.has(n.id))); return escolhe(n.id, {centrar:true}); }
+  if(a === "caminho-de"){ camA = E.sel; camB = null; E.caminho = null; E.caminhoErro = null; E.aba = "caminho"; return painel(); }
+  if(a === "tracar") return traca();
+  if(a === "sortear-par"){ const A = nos.filter(n => n.k === "a"); camA = sorteia(A).id; do camB = sorteia(A).id; while(camB === camA); return traca(); }
+  if(a === "t-prox") return irPasso(E.passo + 1);
+  if(a === "t-ant") return irPasso(E.passo - 1);
+  if(a === "t-fim"){ aviso("Trilha concluída. Que tal levá-la ao Ágora e montar o mapa conceitual?"); return; }
+  if(a === "t-sair"){ E.trilha = null; destaca(); return painelTrilhas(); }
+  if(a === "d-prox") return novaQuestao(D.modo);
+  if(a === "d-sair"){ D.q = null; return painelDesafio(); }
+  if(a === "agora-no"){
+    const n = porId[E.sel];
+    const vz = viz[n.id].filter(x => E.tipos[x.l.tp]).sort((x, y) => (PESSOAS.has(y.l.tp) - PESSOAS.has(x.l.tp)) || porId[y.o].grau - porId[x.o].grau).slice(0, 14);
+    return paraAgora(`Rede de ${n.n}`, [n.id, ...vz.map(x => x.o)], vz.map(x => x.l));
+  }
+  if(a === "agora-caminho" && E.caminho) return paraAgora(`Caminho: ${porId[E.caminho.nos[0]].n} até ${porId[E.caminho.nos.at(-1)].n}`, E.caminho.nos, E.caminho.ligs);
+  if(a === "agora-trilha"){
+    const t = TRILHAS.find(x => x.id === E.trilha); const ids = t.p.map(p => p[0]);
+    const s = new Set(ids); return paraAgora(`Trilha: ${t.t}`, ids, ligs.filter(l => s.has(l.s) && s.has(l.t)));
+  }
+  if(a === "exporta-tudo") return baixa({nos:NOS, ligacoes:LIGACOES, trilhas:TRILHAS, lugares:LUGARES}, "rede-lusofona.json");
+});
+C.addEventListener("change", ev => {
+  const t = ev.target; if(!t.dataset.filtro) return;
+  E[t.dataset.filtro][t.dataset.k] = t.checked;
+  if(t.dataset.filtro === "kinds") guarda.set("kinds", E.kinds);
+  if(t.dataset.filtro === "tipos") guarda.set("tipos", E.tipos);
+  atualizaTudo();
+});
+
+/* ====================== legenda ====================== */
+function amostraLig(tp){
+  const st = {inf:"", dia:'stroke-dasharray="5 4"', cri:"", gru:'stroke-dasharray="1.5 3"', con:'stroke-dasharray="1.5 3"', cor:""}[tp];
+  const w = {inf:1.5, dia:1.5, cri:2, gru:1.2, con:1.2, cor:3}[tp];
+  const seta = (tp === "inf" || tp === "cri" || tp === "cor") ? `<path d="M18,2 L24,5 L18,8 z" fill="var(--l-${tp})"/>` : "";
+  return `<svg width="26" height="10" aria-hidden="true"><line x1="1" y1="5" x2="${seta ? 19 : 25}" y2="5" stroke="var(--l-${tp})" stroke-width="${w}" ${st}/>${seta}</svg>`;
+}
+function legenda(){
+  const f = (k, cls) => `<svg width="14" height="14" aria-hidden="true">${k === "c" ? `<path d="M7,1 13,7 7,13 1,7z" fill="var(--con)"/>` : k === "m" ? `<rect x="2" y="3" width="10" height="8" fill="var(--cor)"/>` : k === "e" ? `<circle cx="7" cy="7" r="5" fill="var(--cartao)" stroke="var(--est)" stroke-width="1.5" stroke-dasharray="2.5 2"/>` : `<circle cx="7" cy="7" r="5.5" fill="var(--${cls})"/>`}</svg>`;
+  const aberta = guarda.get("legenda", innerWidth > 860);
+  $("#legenda").className = "legenda" + (aberta ? "" : " fechada");
+  $("#legenda").innerHTML = `<button class="alterna" id="legAlt">${aberta ? "▾ Legenda" : "▸ Legenda"}</button><div class="corpo" style="display:${aberta ? "grid" : "none"};gap:3px">
+    <b>Pontos</b>${Object.entries(GRUPOS).map(([k, t]) => `<span>${f("a", k)}${t}</span>`).join("")}
+    <span>${f("e")}Pensador de fora</span><span>${f("m")}Corrente ou movimento</span><span>${f("c")}Conceito</span>
+    <b>Linhas</b>${Object.entries(TIPOS_LIG).map(([k, t]) => `<span>${amostraLig(k)}${t.nome}</span>`).join("")}</div>`;
+  $("#legAlt").onclick = () => { guarda.set("legenda", !aberta); legenda(); };
+}
+
+/* ====================== busca ====================== */
+const busca = $("#busca"), sug = $("#sugestoes");
+let sugIdx = 0, sugLista = [];
+busca.addEventListener("input", () => {
+  const q = semAcento(busca.value.trim());
+  if(!q){ sug.hidden = true; return; }
+  sugLista = nos.filter(n => semAcento(n.n).includes(q) || (n.o && semAcento(n.o).includes(q)))
+    .sort((a, b) => semAcento(a.n).indexOf(q) - semAcento(b.n).indexOf(q) || b.grau - a.grau).slice(0, 10);
+  sugIdx = 0;
+  sug.innerHTML = sugLista.length ? sugLista.map((n, i) => `<button type="button" data-id="${n.id}" class="${i === 0 ? "ativo" : ""}">${bola(n)}${esc(n.n)}<small>${esc(n.k === "a" ? GRUPOS[n.g] : TIPOS_NO[n.k])}</small></button>`).join("") : `<button type="button" disabled>Nada encontrado</button>`;
+  sug.hidden = false;
+});
+busca.addEventListener("keydown", ev => {
+  if(sug.hidden) return;
+  if(ev.key === "ArrowDown" || ev.key === "ArrowUp"){ ev.preventDefault(); sugIdx = (sugIdx + (ev.key === "ArrowDown" ? 1 : -1) + sugLista.length) % sugLista.length;
+    sug.querySelectorAll("button").forEach((b, i) => b.classList.toggle("ativo", i === sugIdx)); }
+  if(ev.key === "Enter" && sugLista[sugIdx]){ ev.preventDefault(); vaiBusca(sugLista[sugIdx].id); }
+  if(ev.key === "Escape"){ sug.hidden = true; }
+});
+sug.addEventListener("click", ev => { const b = ev.target.closest("[data-id]"); if(b) vaiBusca(b.dataset.id); });
+document.addEventListener("click", ev => { if(!ev.target.closest(".busca")) sug.hidden = true; });
+function vaiBusca(id){ sug.hidden = true; busca.value = ""; busca.blur(); E.trilha = null; E.caminho = null; escolhe(id, {centrar:true}); }
+
+/* ====================== layout, tempo, tema ====================== */
+async function trocaLayout(l){
+  E.layout = l; mudouLayout = true;
+  document.querySelectorAll("[data-layout]").forEach(b => b.setAttribute("aria-pressed", b.dataset.layout === l));
+  if(l === "mapa"){ fazProjecao(); aviso("Carregando o mapa…", 1500); await carregaMundo(); if(geo === false) aviso("Sem internet para o contorno dos países. Os autores aparecem nas posições geográficas.", 4000); }
+  atualizaTudo(true);
+  setTimeout(ajusta, l === "rede" ? 1300 : 300);
+}
+document.querySelectorAll("[data-layout]").forEach(b => b.onclick = () => trocaLayout(b.dataset.layout));
+function atualizaTudo(reforca = true){
+  calculaVisiveis();
+  if(reforca) configuraForcas();
+  atualizaRotulos(); destaca();
+}
+let filtroT;
+$("#slider").addEventListener("input", e => {
+  E.ano = +e.target.value; calculaVisiveis(); atualizaRotulos(); destaca();
+  clearTimeout(filtroT); filtroT = setTimeout(configuraForcas, 120);
+});
+let tocando = null;
+$("#play").onclick = () => {
+  if(tocando){ clearInterval(tocando); tocando = null; $("#play").textContent = "▶"; return; }
+  if(E.ano >= 2026) E.ano = 1490;
+  $("#play").textContent = "❚❚";
+  tocando = setInterval(() => {
+    E.ano = Math.min(2026, E.ano + 4); $("#slider").value = E.ano;
+    calculaVisiveis(); atualizaRotulos(); destaca();
+    if(E.ano % 12 === 0 || E.ano >= 2026) configuraForcas();
+    if(E.ano >= 2026){ clearInterval(tocando); tocando = null; $("#play").textContent = "▶"; setTimeout(ajusta, 1200); }
+  }, 90);
+};
+$("#tema").onclick = () => {
+  const escuro = document.documentElement.dataset.tema !== "escuro";
+  if(escuro) document.documentElement.dataset.tema = "escuro"; else delete document.documentElement.dataset.tema;
+  try{ localStorage.setItem("tema", escuro ? "escuro" : "claro"); }catch(e){}
+};
+
+/* painel no celular */
+const painelEl = $("#painel");
+function abrePainel(){ painelEl.classList.remove("recolhido"); }
+$("#puxador").onclick = () => painelEl.classList.toggle("recolhido");
+if(innerWidth <= 860) painelEl.classList.add("recolhido");
+
+addEventListener("resize", () => { clearTimeout(filtroT); filtroT = setTimeout(() => { if(E.layout === "mapa") fazProjecao(); configuraForcas(); }, 200); });
+addEventListener("hashchange", () => { const h = decodeURIComponent(location.hash.slice(1)); if(porId[h] && h !== E.sel) escolhe(h, {centrar:true}); });
+
+/* ====================== início ====================== */
+legenda();
+calculaVisiveis();
+nos.forEach((n, i) => { const a = i / nos.length * Math.PI * 2 * 7; n.x = W() / 2 + Math.cos(a) * (40 + i); n.y = H() / 2 + Math.sin(a) * (40 + i); });
+configuraForcas();
+for(let i = 0; i < 160; i++) sim.tick();
+tick();
+$("#carregando").remove();
+atualizaRotulos();
+const inicial = decodeURIComponent(location.hash.slice(1));
+painel();
+if(porId[inicial]) escolhe(inicial, {centrar:true}); else setTimeout(ajusta, 100);
+</script>
+</body>
+</html>
