@@ -796,6 +796,8 @@ function painel(){
 }
 const bola = n => `<span class="bola" style="background:${corDe(n)}"></span>`;
 const itemNo = (n, sub) => `<button class="item" data-ir="${n.id}">${bola(n)}<span>${esc(n.n)}${sub ? `<small>${esc(sub)}</small>` : ""}</span></button>`;
+const FILO = {"montaigne": "montaigne", "pascal": "pascal", "espinosa": "espinosa", "kant": "kant", "wollstonecraft": "wollstonecraft", "hegel": "hegel", "comte": "comte", "schopenhauer": "schopenhauer", "proudhon": "proudhon", "marx": "marx", "nietzsche": "nietzsche", "freud": "freud", "husserl": "husserl", "bergson": "bergson", "dewey": "dewey", "weber": "weber", "heidegger": "heidegger", "wittgenstein": "wittgenstein", "gramsci": "gramsci", "levi-strauss": "levistrauss", "fanon": "fanon", "foucault": "foucault", "freire": "freire", "saviani": "saviani", "lelia": "lelia", "krenak": "krenak", "silvio-almeida": "silvio"};
+const linkFilo = n => FILO[n.id] ? `<a class="btn" href="../rede-filosofica/#${FILO[n.id]}" target="_blank" rel="noopener">🌌 Rede Filosófica</a>` : "";
 const linkWiki = n => n.w ? `<a class="btn" href="../wiki-filosofica/#${esc(n.w)}" target="_blank" rel="noopener">📖 Wiki Filosófica</a>` : "";
 
 function faixaVolta(){
@@ -852,7 +854,7 @@ function painelDetalhe(){
     <div class="botoes">
       ${E.layout === "rede" ? `<button class="btn${E.foco ? " forte" : ""}" data-acao="foco">◎ ${E.foco ? "Sair do modo foco" : "Modo foco"}</button>` : ""}
       <button class="btn" data-acao="caminho-de">↝ Caminho a partir daqui</button>
-      ${linkWiki(n)}
+      ${linkWiki(n)}${linkFilo(n)}
       <button class="btn" data-acao="agora-no">🗺️ Levar ao Ágora Mapas</button>
     </div>
     ${lig || `<p class="dica">Ligações ocultas pelos filtros.</p>`}`;
