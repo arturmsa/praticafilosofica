@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Rede Filosófica · Prática Filosófica</title>
+<meta name="description" content="Mapa em rede de filósofos: influências, mestres e discípulos, críticas, diálogos, correntes e conceitos.">
+<script>try{var t=localStorage.getItem("tema");if(t)document.documentElement.dataset.theme=(t==="escuro"?"dark":"light");}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,500;0,700;1,500&family=Alegreya+Sans:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+body{margin:0;font-size:15px}[hidden]{display:none!important}img{max-width:100%}
+/* Layout: observatório de constelações. Filtros à esquerda, céu de pensadores ao centro, ficha à direita. */
+:root{
+  --bg:#eef1f4; --panel:#f8fafb; --ink:#1b2433; --muted:#5d6878; --line:#c9d1db;
+  --accent:#2f5aa8; --accent-soft:#dbe5f6; --sky:#f4f6f9;
+  --l-inf:#2f5aa8; --l-mest:#a8432f; --l-crit:#8a5a00; --l-dial:#5e6f80;
+  --good:#1f7a4d; --bad:#b0352b;
+  --f-display:"Alegreya",Georgia,serif; --f-body:"Alegreya Sans",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,monospace;
+  --node-l:42%;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1520; --panel:#161e2b; --ink:#e3e8ef; --muted:#97a3b4; --line:#2b3647;
+  --accent:#8fb0ec; --accent-soft:#22314a; --sky:#121a26;
+  --l-inf:#7fa2e6; --l-mest:#e08a72; --l-crit:#d9a441; --l-dial:#8d9bab;
+  --good:#5cc08b; --bad:#ec7b70; --node-l:64%; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1520; --panel:#161e2b; --ink:#e3e8ef; --muted:#97a3b4; --line:#2b3647;
+  --accent:#8fb0ec; --accent-soft:#22314a; --sky:#121a26;
+  --l-inf:#7fa2e6; --l-mest:#e08a72; --l-crit:#d9a441; --l-dial:#8d9bab;
+  --good:#5cc08b; --bad:#ec7b70; --node-l:64%; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5}
+header{padding-block:18px 10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 28px;border-bottom:1px solid var(--line)}
+h1{font-family:var(--f-display);font-weight:700;font-size:2rem;margin:0;line-height:1;letter-spacing:-.01em}
+h1 em{font-style:italic;font-weight:500;color:var(--accent)}
+.voltar{font-size:.82rem;color:var(--muted);text-decoration:none;display:inline-block;margin-bottom:6px}.voltar:hover{color:var(--accent)}
+.sub{color:var(--muted);font-size:.92rem;margin:4px 0 0;max-width:60ch}
+nav{display:flex;flex-wrap:wrap;gap:4px;margin-left:auto}
+nav button{font:500 .9rem var(--f-body);background:none;border:1px solid transparent;color:var(--muted);padding:6px 12px;border-radius:999px;cursor:pointer}
+nav button:hover{color:var(--ink);border-color:var(--line)}
+nav button[aria-current="true"]{background:var(--ink);color:var(--bg)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.app{display:grid;grid-template-columns:250px minmax(0,1fr) 330px;gap:0;height:calc(100vh - 92px);min-height:560px}
+aside{padding-block:16px;padding-inline:16px;background:var(--panel);min-width:0;overflow-y:auto}
+#side{border-right:1px solid var(--line)} #info{border-left:1px solid var(--line)}
+.blk{display:flex;flex-direction:column;gap:8px;padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+.blk:last-child{border-bottom:0}
+.lbl{font:500 .7rem var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+input[type=search],select{width:100%;font:inherit;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+.btn{font:500 .88rem var(--f-body);padding:7px 12px;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:var(--bg);cursor:pointer}
+.btn.ghost{background:none;color:var(--accent)}
+.btn:hover{filter:brightness(1.08)}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font:.8rem var(--f-body);display:inline-flex;align-items:center;gap:6px;padding:3px 9px 3px 7px;border:1px solid var(--line);border-radius:999px;background:var(--bg);color:var(--ink);cursor:pointer}
+.chip i{width:9px;height:9px;border-radius:50%;display:inline-block}
+.chip[aria-pressed="false"]{opacity:.38}
+.chip.c{cursor:pointer;background:var(--accent-soft);border-color:transparent}
+.types label{display:flex;align-items:center;gap:8px;font-size:.88rem;cursor:pointer}
+.types svg{flex:none}
+.check{display:flex;gap:8px;align-items:center;font-size:.9rem;cursor:pointer}
+#stage{position:relative;min-width:0;background:var(--sky);overflow:hidden}
+#graph{display:block;width:100%;height:100%;cursor:grab}
+.node circle{stroke:var(--bg);stroke-width:1.5px;cursor:pointer;transition:opacity .2s}
+.node.fora circle{stroke:var(--ink);stroke-width:1.6px;stroke-dasharray:2 2}
+.node text{font:500 11px var(--f-body);fill:var(--ink);pointer-events:none;paint-order:stroke;stroke:var(--sky);stroke-width:3px;stroke-linejoin:round}
+.node.minor text{display:none}
+#graph.zoomed .node.minor text,.node.hl text,.node.sel text{display:block}
+.node.sel circle{stroke:var(--ink);stroke-width:3px;stroke-dasharray:none}
+.node.sel text{font-weight:700;font-size:13px}
+.node.dim{opacity:.13}
+.link{fill:none;stroke-width:1.1px;opacity:.5;transition:opacity .2s}
+.link.inf{stroke:var(--l-inf)} .link.mest{stroke:var(--l-mest);stroke-width:2.2px} .link.crit{stroke:var(--l-crit);stroke-dasharray:5 3} .link.dial{stroke:var(--l-dial);stroke-dasharray:1.5 3;stroke-linecap:round}
+.link.dim{opacity:.04} .link.hl{opacity:1;stroke-width:2px} .link.mest.hl{stroke-width:3px} .link.off{display:none}
+.mk-inf{fill:var(--l-inf)} .mk-mest{fill:var(--l-mest)} .mk-crit{fill:var(--l-crit)} .mk-dial{fill:var(--l-dial)}
+.axis text{font:10.5px var(--f-mono);fill:var(--muted)} .axis line{stroke:var(--line)}
+.band text{font:500 10px var(--f-mono);fill:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.land{fill:var(--accent-soft);stroke:var(--line);stroke-width:1}
+.grat{stroke:var(--line);stroke-width:.6;fill:none;stroke-dasharray:2 4}
+.trailline{fill:none;stroke:var(--ink);stroke-width:2.5px;stroke-dasharray:7 5;opacity:.75}
+.hint{position:absolute;left:12px;bottom:10px;font:11px var(--f-mono);color:var(--muted);background:var(--panel);padding:4px 8px;border-radius:4px;border:1px solid var(--line)}
+.zoombar{position:absolute;right:12px;top:12px;display:flex;flex-direction:column;gap:4px}
+.zoombar button{width:32px;height:32px;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:6px;font-size:1rem;cursor:pointer}
+/* ficha */
+.card h2{font-family:var(--f-display);font-size:1.6rem;margin:0;line-height:1.1;text-wrap:balance}
+.meta{font:.78rem var(--f-mono);color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:6px}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;padding:2px 9px;border-radius:999px;background:var(--accent-soft)}
+.badge i{width:8px;height:8px;border-radius:50%}
+blockquote{margin:12px 0;padding:0 0 0 12px;border-left:3px solid var(--accent);font-family:var(--f-display);font-style:italic;font-size:1.12rem;line-height:1.35}
+.rel h3{font:500 .72rem var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:14px 0 6px}
+.rel ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.rel li button{all:unset;cursor:pointer;display:flex;gap:8px;align-items:center;padding:3px 6px;border-radius:4px;width:100%;box-sizing:border-box}
+.rel li button:hover,.rel li button:focus-visible{background:var(--accent-soft)}
+.rel li i{width:8px;height:8px;border-radius:50%;flex:none}
+.rel li small{margin-left:auto;color:var(--muted);font:.72rem var(--f-mono)}
+.actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.actions a{font:500 .85rem var(--f-body);color:var(--accent)}
+textarea{width:100%;min-height:90px;font:.78rem var(--f-mono);background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px}
+.note{font-size:.82rem;color:var(--muted)}
+.path ol{margin:6px 0 0;padding-left:20px} .path li{margin:3px 0}
+.path em{color:var(--muted);font-style:normal;font-size:.85rem}
+/* telas cheias */
+.full{position:absolute;inset:0;overflow-y:auto;padding-block:24px;padding-inline:max(16px,4%);background:var(--sky)}
+.full h2{font-family:var(--f-display);font-size:1.8rem;margin:0 0 4px}
+.quiz{max-width:640px;display:flex;flex-direction:column;gap:14px}
+.qprompt{font-family:var(--f-display);font-size:1.35rem;line-height:1.3}
+.qopts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.qopts button{font:500 1rem var(--f-body);padding:12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);cursor:pointer;text-align:left}
+.qopts button:hover:not(:disabled){border-color:var(--accent)}
+.qopts button.ok{border-color:var(--good);background:color-mix(in srgb,var(--good) 14%,var(--panel))}
+.qopts button.no{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,var(--panel))}
+.score{font:.85rem var(--f-mono);color:var(--muted);display:flex;gap:16px;flex-wrap:wrap}
+.score b{color:var(--ink);font-variant-numeric:tabular-nums}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;margin-top:16px}
+.metrics section h3{font:500 .75rem var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 4px}
+.metrics section p{font-size:.85rem;color:var(--muted);margin:0 0 10px}
+.mrow{display:grid;grid-template-columns:18px minmax(0,1fr) 40px;gap:8px;align-items:center;padding:3px 0;font-size:.9rem}
+.mrow button{all:unset;cursor:pointer;min-width:0}
+.mrow button:hover span{text-decoration:underline}
+.mrow .bar{height:6px;border-radius:3px;margin-top:3px}
+.mrow small{font:.75rem var(--f-mono);color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.mrow .n{font:.72rem var(--f-mono);color:var(--muted)}
+.stats{display:flex;flex-wrap:wrap;gap:28px;margin-top:10px}
+.stats div{font:.8rem var(--f-mono);color:var(--muted)} .stats b{display:block;font:700 1.8rem var(--f-display);color:var(--ink)}
+.trails{display:flex;flex-direction:column;gap:6px}
+.trails button{all:unset;cursor:pointer;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
+.trails button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.trails b{display:block;font-family:var(--f-display);font-size:1.02rem}
+.trails span{font-size:.8rem;color:var(--muted)}
+.step{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px}
+.step span{font:.8rem var(--f-mono);color:var(--muted)}
+@media (max-width:1050px){
+  .app{grid-template-columns:1fr;height:auto}
+  #stage{order:1;height:70vh;min-height:440px} #info{order:2;border-left:0;border-top:1px solid var(--line)} #side{order:3;border-right:0;border-top:1px solid var(--line)}
+  #graph{min-height:0}
+  nav{margin-left:0}
+}
+@media (max-width:520px){.qopts{grid-template-columns:1fr} h1{font-size:1.6rem}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <a class="voltar" href="../../">← Prática Filosófica</a>
+    <h1>Rede <em>Filosófica</em></h1>
+    <p class="sub">Quem ensinou, influenciou, criticou ou dialogou com quem, da Grécia antiga ao pensamento decolonial.</p>
+  </div>
+  <nav id="tabs" aria-label="Visualizações">
+    <button data-v="rede">Rede</button>
+    <button data-v="tempo">Linha do tempo</button>
+    <button data-v="mapa">Mapa</button>
+    <button data-v="trilhas">Trilhas</button>
+    <button data-v="desafio">Desafio</button>
+    <button data-v="metricas">Métricas</button>
+  </nav>
+</header>
+
+<div class="app">
+  <aside id="side">
+    <div class="blk">
+      <label class="lbl" for="q">Buscar filósofo ou conceito</label>
+      <input id="q" type="search" list="dl" placeholder="Ex.: Kant, alienação, poder">
+      <datalist id="dl"></datalist>
+    </div>
+    <div class="blk">
+      <span class="lbl">Caminho entre dois pensadores</span>
+      <select id="pa" aria-label="De"></select>
+      <select id="pb" aria-label="Até"></select>
+      <div style="display:flex;gap:6px"><button class="btn" id="pgo">Traçar caminho</button><button class="btn ghost" id="pclr">Limpar</button></div>
+    </div>
+    <div class="blk">
+      <span class="lbl">Tipos de ligação</span>
+      <div class="types" id="types"></div>
+    </div>
+    <div class="blk">
+      <label class="check"><input type="checkbox" id="fora"> Só vozes fora do cânone</label>
+      <span class="note">Mulheres e pensadores africanos, asiáticos, islâmicos e latino-americanos, marcados com contorno tracejado.</span>
+    </div>
+    <div class="blk">
+      <div style="display:flex;justify-content:space-between;align-items:center"><span class="lbl">Correntes</span><button class="btn ghost" id="call" style="padding:2px 8px;font-size:.75rem">todas</button></div>
+      <div class="chips" id="cur"></div>
+    </div>
+  </aside>
+
+  <main id="stage">
+    <svg id="graph" role="img" aria-label="Rede de filósofos e suas ligações">
+      <defs id="defs"></defs>
+      <g id="zoomg"><g id="bg"></g><g id="links"></g><g id="trailg"></g><g id="nodes"></g></g>
+    </svg>
+    <div class="zoombar"><button id="zin" aria-label="Aproximar">+</button><button id="zout" aria-label="Afastar">−</button><button id="zfit" aria-label="Recentralizar">⤢</button></div>
+    <div class="hint" id="hint">Arraste para mover · role para aproximar · clique num ponto</div>
+    <section class="full" id="quizv" hidden></section>
+    <section class="full" id="metv" hidden></section>
+  </main>
+
+  <aside id="info"></aside>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+const WIKI="../wiki-filosofica/", AGORA="../agora-mapas/";
+const WP={"tales":"tales","anaximandro":"anaximandro","pitagoras":"pitagoras","heraclito":"heraclito","parmenides":"parmenides","democrito":"democrito","socrates":"socrates","platao":"platao","aristoteles":"aristoteles","diogenes":"diogenes-de-sinope","epicuro":"epicuro","seneca":"seneca","epicteto":"epicteto","marcoaurelio":"marco-aurelio","plotino":"plotino","agostinho":"agostinho","tomas":"tomas-de-aquino","maquiavel":"maquiavel","montaigne":"montaigne","bacon":"bacon","hobbes":"hobbes","descartes":"descartes","pascal":"pascal","espinosa":"espinosa","locke":"locke","leibniz":"leibniz","berkeley":"berkeley","montesquieu":"montesquieu","voltaire":"voltaire","hume":"hume","rousseau":"rousseau","kant":"kant","hegel":"hegel","schopenhauer":"schopenhauer","comte":"comte","mill":"stuart-mill","kierkegaard":"kierkegaard","marx":"marx","engels":"engels","peirce":"peirce","james":"william-james","nietzsche":"nietzsche","frege":"frege","husserl":"husserl","dewey":"dewey","russell":"russell","heidegger":"heidegger","wittgenstein":"wittgenstein","benjamin":"walter-benjamin","horkheimer":"horkheimer","popper":"karl-popper","adorno":"adorno","sartre":"sartre","arendt":"hannah-arendt","beauvoir":"simone-de-beauvoir","merleau":"merleau-ponty","camus":"camus","rawls":"rawls","freire":"paulo-freire","kuhn":"thomas-kuhn","deleuze":"deleuze","fanon":"frantz-fanon","foucault":"foucault","habermas":"habermas","derrida":"derrida","butler":"judith-butler","laozi":"lao-tse","zhuangzi":"chuang-tse"};
+const WC={"cosmologia":"cosmologia","alma":"alma","devir":"devir","lógos":"logos","ser":"ser","verdade":"verdade","opinião":"opiniao","materialismo":"materialismo","relativismo":"relativismo","retórica":"retorica","justiça":"justica","virtude":"virtude","felicidade":"felicidade","lógica":"logica","cinismo":"cinismo","liberdade":"liberdade","prazer":"prazer","ataraxia":"ataraxia","estoicismo":"estoicismo","tempo":"tempo","dever":"dever","emanação":"emanacao","neoplatonismo":"neoplatonismo","mal":"mal","existência":"existencia","Deus":"deus","lei":"lei","poder":"poder","Estado":"estado","ceticismo":"ceticismo","alteridade":"alteridade","contrato social":"contrato-social","razão":"razao","igualdade":"igualdade","substância":"substancia","propriedade":"propriedade","mônada":"monada","conhecimento":"conhecimento","poesia":"poesia","hábito":"habito","causalidade":"causalidade","indução":"inducao","educação":"educacao","dialética":"dialetica","espírito":"espirito","história":"historia","vontade":"vontade","representação":"representacao","positivismo":"positivismo","utilitarismo":"utilitarismo","angústia":"angustia","fé":"fe","trabalho":"trabalho","alienação":"alienacao","ideologia":"ideologia","pragmatismo":"pragmatismo","signo":"signo","experiência":"experiencia","niilismo":"niilismo","moral":"moral","linguagem":"linguagem","intencionalidade":"intencionalidade","consciência":"consciencia","democracia":"democracia","racismo":"racismo","técnica":"tecnica","razão instrumental":"razao-instrumental","emancipação":"emancipacao","consumo":"consumo","indústria cultural":"industria-cultural","responsabilidade":"responsabilidade","totalitarismo":"totalitarismo","outro":"outro","gênero":"genero","corpo":"corpo","paradigma":"paradigma","diferença":"diferenca","desejo":"desejo","ética":"etica","amor":"amor"};
+const CUR=[
+ ["pre","Pré-socráticos"],["cla","Filosofia clássica grega"],["hel","Helenística e romana"],["med","Medieval"],
+ ["ren","Renascimento"],["rac","Racionalismo"],["emp","Empirismo"],["ilu","Contratualismo e Iluminismo"],
+ ["ide","Kant e idealismo alemão"],["xix","Pensamento do século XIX"],["pra","Pragmatismo"],["fen","Fenomenologia e existencialismo"],
+ ["ana","Filosofia analítica"],["fra","Teoria crítica (Frankfurt)"],["pos","Pós-estruturalismo"],
+ ["ori","Filosofias asiáticas"],["afr","Filosofias africanas e da diáspora"],["lat","Filosofia latino-americana"],["fem","Pensamento feminista"]];
+const HUE={pre:28,cla:8,hel:340,med:290,ren:265,rac:225,emp:200,ilu:185,ide:160,xix:115,pra:75,fen:48,ana:210,fra:300,pos:320,ori:40,afr:20,lat:145,fem:325};
+const SAT={ana:18,pos:60,fra:28};
+const curName=Object.fromEntries(CUR);
+function col(c){return `hsl(${HUE[c]} ${SAT[c]??58}% var(--node-l))`}
+const TYPES={inf:["influenciou","foi influenciado por"],mest:["foi mestre de","foi aluno de"],crit:["criticou","foi criticado por"],dial:["dialogou com","dialogou com"]};
+const TLBL={inf:"Influência",mest:"Mestre e discípulo",crit:"Crítica",dial:"Diálogo ou debate"};
+
+const RAW=`tales|Tales de Mileto|-624|-546|pre|Mileto|37.53|27.28|Tudo está cheio de deuses.|arché;água;physis|0
+anaximandro|Anaximandro|-610|-546|pre|Mileto|37.53|27.28||ápeiron;arché;cosmologia|0
+pitagoras|Pitágoras|-570|-495|pre|Samos|37.75|26.97||número;harmonia;alma|0
+heraclito|Heráclito|-535|-475|pre|Éfeso|37.94|27.34|Ninguém se banha duas vezes no mesmo rio.|devir;lógos;contrários|0
+parmenides|Parmênides|-515|-450|pre|Eleia|40.16|15.15|O ser é, e o não-ser não é.|ser;verdade;opinião|0
+democrito|Demócrito|-460|-370|pre|Abdera|40.95|24.98|Nada existe além dos átomos e do vazio.|átomo;materialismo;vazio|0
+protagoras|Protágoras|-490|-420|cla|Abdera|40.95|24.98|O homem é a medida de todas as coisas.|relativismo;sofística;retórica|0
+socrates|Sócrates|-470|-399|cla|Atenas|37.98|23.73|Uma vida sem exame não vale a pena ser vivida.|maiêutica;ironia;autoconhecimento|0
+platao|Platão|-428|-348|cla|Atenas|37.98|23.73|O espanto é a origem da filosofia.|ideias;alma;justiça;caverna|0
+aristoteles|Aristóteles|-384|-322|cla|Estagira|40.53|23.75|O ser humano é, por natureza, um animal político.|virtude;felicidade;ato e potência;lógica|0
+diogenes|Diógenes de Sinope|-412|-323|hel|Sinope|42.03|35.15||cinismo;natureza;liberdade|0
+epicuro|Epicuro|-341|-270|hel|Samos|37.75|26.97|A morte nada é para nós.|prazer;ataraxia;átomo;felicidade|0
+seneca|Sêneca|-4|65|hel|Córdoba|37.88|-4.78|Enquanto adiamos, a vida passa.|estoicismo;tempo;virtude|0
+epicteto|Epicteto|50|135|hel|Hierápolis|37.92|29.13|Não são as coisas que perturbam os homens, mas as opiniões sobre as coisas.|estoicismo;liberdade;controle|0
+marcoaurelio|Marco Aurélio|121|180|hel|Roma|41.9|12.5||estoicismo;dever;meditação|0
+plotino|Plotino|204|270|hel|Licópolis (Egito)|27.18|31.18||Uno;emanação;alma|0
+hipatia|Hipátia de Alexandria|355|415|hel|Alexandria|31.2|29.92||neoplatonismo;matemática;astronomia|1
+agostinho|Agostinho de Hipona|354|430|med|Tagaste (Argélia)|36.29|7.95|Ama e faze o que quiseres.|fé e razão;tempo;livre-arbítrio;mal|0
+boecio|Boécio|477|524|med|Roma|41.9|12.5||consolação;providência;universais|0
+avicena|Avicena (Ibn Sina)|980|1037|med|Bukhara|39.77|64.42||essência;existência;homem voador|1
+anselmo|Anselmo de Cantuária|1033|1109|med|Aosta|45.74|7.32|Creio para compreender.|argumento ontológico;fé e razão;Deus|0
+averroes|Averróis (Ibn Rushd)|1126|1198|med|Córdoba|37.88|-4.78||intelecto;fé e razão;comentário|1
+maimonides|Maimônides|1138|1204|med|Córdoba|37.88|-4.78||fé e razão;teologia negativa;lei|0
+tomas|Tomás de Aquino|1225|1274|med|Roccasecca|41.55|13.67||cinco vias;fé e razão;lei natural|0
+ockham|Guilherme de Ockham|1287|1347|med|Ockham (Inglaterra)|51.3|-0.45|Não se devem multiplicar os entes sem necessidade.|navalha;nominalismo;universais|0
+christine|Christine de Pizan|1364|1430|fem|Veneza|45.44|12.33||cidade das damas;educação das mulheres;misoginia|1
+maquiavel|Maquiavel|1469|1527|ren|Florença|43.77|11.25|É mais seguro ser temido do que amado.|virtù;fortuna;poder;Estado|0
+montaigne|Montaigne|1533|1592|ren|Bordeaux|44.84|-0.58|Que sei eu?|ceticismo;ensaio;alteridade|0
+bacon|Francis Bacon|1561|1626|emp|Londres|51.51|-0.13|Saber é poder.|método indutivo;ídolos;ciência|0
+hobbes|Thomas Hobbes|1588|1679|ilu|Malmesbury|51.58|-2.1|O homem é o lobo do homem.|estado de natureza;contrato social;Leviatã;poder|0
+descartes|René Descartes|1596|1650|rac|La Haye (França)|46.97|0.7|Penso, logo existo.|cogito;dúvida metódica;dualismo;método|0
+zerayacob|Zera Yacob|1599|1692|afr|Axum (Etiópia)|14.13|38.72||razão;Deus;igualdade|1
+pascal|Blaise Pascal|1623|1662|rac|Clermont|45.78|3.08|O coração tem razões que a própria razão desconhece.|aposta;fé e razão;condição humana|0
+espinosa|Baruch Espinosa|1632|1677|rac|Amsterdã|52.37|4.9|Não rir, não chorar, nem detestar, mas compreender.|substância;Deus ou natureza;afetos;liberdade|0
+locke|John Locke|1632|1704|emp|Wrington|51.36|-2.76||tábula rasa;propriedade;contrato social;tolerância|0
+leibniz|Leibniz|1646|1716|rac|Leipzig|51.34|12.37|Este é o melhor dos mundos possíveis.|mônada;razão suficiente;mal|0
+sorjuana|Sor Juana Inés de la Cruz|1648|1695|lat|San Miguel Nepantla (México)|19.1|-98.83||educação das mulheres;conhecimento;poesia|1
+berkeley|George Berkeley|1685|1753|emp|Kilkenny (Irlanda)|52.65|-7.25|Ser é ser percebido.|imaterialismo;percepção|0
+montesquieu|Montesquieu|1689|1755|ilu|Bordeaux|44.84|-0.58||separação dos poderes;leis;Estado|0
+voltaire|Voltaire|1694|1778|ilu|Paris|48.86|2.35||tolerância;liberdade;crítica da religião|0
+hume|David Hume|1711|1776|emp|Edimburgo|55.95|-3.19|A razão é, e deve ser, escrava das paixões.|hábito;causalidade;indução;ceticismo|0
+rousseau|Jean-Jacques Rousseau|1712|1778|ilu|Genebra|46.2|6.15|O homem nasce livre, e por toda parte encontra-se a ferros.|vontade geral;contrato social;estado de natureza;educação|0
+kant|Immanuel Kant|1724|1804|ide|Königsberg|54.71|20.51|Ousa saber! Tem coragem de servir-te de teu próprio entendimento.|imperativo categórico;esclarecimento;razão;dever|0
+wollstonecraft|Mary Wollstonecraft|1759|1797|fem|Londres|51.51|-0.13||direitos das mulheres;educação das mulheres;razão|1
+hegel|G. W. F. Hegel|1770|1831|ide|Stuttgart|48.78|9.18|O que é racional é efetivo, e o que é efetivo é racional.|dialética;espírito;senhor e escravo;história|0
+schopenhauer|Arthur Schopenhauer|1788|1860|ide|Danzig|54.35|18.65|O mundo é minha representação.|vontade;sofrimento;representação|0
+comte|Auguste Comte|1798|1857|xix|Montpellier|43.61|3.88||positivismo;três estados;ciência|0
+mill|John Stuart Mill|1806|1873|xix|Londres|51.51|-0.13|É melhor ser um Sócrates insatisfeito do que um tolo satisfeito.|utilitarismo;liberdade;felicidade|0
+kierkegaard|Søren Kierkegaard|1813|1855|xix|Copenhague|55.68|12.57|A angústia é a vertigem da liberdade.|angústia;escolha;existência;fé|0
+marx|Karl Marx|1818|1883|xix|Trier|49.75|6.64|Os filósofos apenas interpretaram o mundo; o que importa é transformá-lo.|materialismo histórico;trabalho;alienação;luta de classes;ideologia|0
+engels|Friedrich Engels|1820|1895|xix|Barmen|51.27|7.2||materialismo histórico;família;classe operária|0
+peirce|Charles S. Peirce|1839|1914|pra|Cambridge (EUA)|42.37|-71.11||pragmatismo;signo;abdução|0
+james|William James|1842|1910|pra|Nova York|40.71|-74.0||pragmatismo;experiência;verdade|0
+nietzsche|Friedrich Nietzsche|1844|1900|xix|Röcken|51.24|12.12|Torna-te quem tu és.|vontade de potência;niilismo;além-do-homem;moral;genealogia|0
+frege|Gottlob Frege|1848|1925|ana|Wismar|53.89|11.46||sentido e referência;lógica;linguagem|0
+husserl|Edmund Husserl|1859|1938|fen|Prossnitz|49.47|17.11|Voltar às coisas mesmas.|intencionalidade;fenomenologia;consciência|0
+dewey|John Dewey|1859|1952|pra|Burlington (EUA)|44.48|-73.21|A educação não é preparação para a vida; é a própria vida.|experiência;democracia;educação|0
+dubois|W. E. B. Du Bois|1868|1963|afr|Great Barrington (EUA)|42.2|-73.36|O problema do século XX é o problema da linha de cor.|dupla consciência;racismo;linha de cor|1
+russell|Bertrand Russell|1872|1970|ana|Trellech (País de Gales)|51.74|-2.72||lógica;descrições;linguagem|0
+heidegger|Martin Heidegger|1889|1976|fen|Messkirch|47.99|9.11|A linguagem é a casa do ser.|ser;Dasein;angústia;técnica;existência|0
+wittgenstein|Ludwig Wittgenstein|1889|1951|ana|Viena|48.21|16.37|Os limites da minha linguagem significam os limites do meu mundo.|jogos de linguagem;linguagem;lógica|0
+benjamin|Walter Benjamin|1892|1940|fra|Berlim|52.52|13.4|Nunca há um documento da cultura que não seja, ao mesmo tempo, um documento da barbárie.|aura;história;reprodutibilidade técnica|0
+mariategui|José Carlos Mariátegui|1894|1930|lat|Moquegua (Peru)|-17.19|-70.93||marxismo latino-americano;questão indígena|1
+horkheimer|Max Horkheimer|1895|1973|fra|Stuttgart|48.78|9.18||teoria crítica;razão instrumental;esclarecimento|0
+marcuse|Herbert Marcuse|1898|1979|fra|Berlim|52.52|13.4||unidimensionalidade;emancipação;consumo|0
+popper|Karl Popper|1902|1994|ana|Viena|48.21|16.37||falseabilidade;ciência;sociedade aberta;indução|0
+adorno|Theodor Adorno|1903|1969|fra|Frankfurt|50.11|8.68|Escrever um poema após Auschwitz é um ato de barbárie.|indústria cultural;razão instrumental;esclarecimento;teoria crítica|0
+sartre|Jean-Paul Sartre|1905|1980|fen|Paris|48.86|2.35|A existência precede a essência.|liberdade;má-fé;existência;responsabilidade|0
+arendt|Hannah Arendt|1906|1975|fen|Hannover|52.37|9.73||banalidade do mal;totalitarismo;ação;poder|1
+beauvoir|Simone de Beauvoir|1908|1986|fen|Paris|48.86|2.35|Ninguém nasce mulher: torna-se mulher.|outro;liberdade;existência;gênero|1
+merleau|Maurice Merleau-Ponty|1908|1961|fen|Rochefort|45.94|-0.96||corpo;percepção;fenomenologia|0
+weil|Simone Weil|1909|1943|fen|Paris|48.86|2.35|A atenção é a forma mais rara e mais pura da generosidade.|atenção;trabalho;enraizamento|1
+cesaire|Aimé Césaire|1913|2008|afr|Martinica|14.64|-61.02||negritude;colonialismo|1
+camus|Albert Camus|1913|1960|fen|Mondovi (Argélia)|36.6|7.75|É preciso imaginar Sísifo feliz.|absurdo;revolta;existência|0
+rawls|John Rawls|1921|2002|ana|Baltimore|39.29|-76.61|A justiça é a primeira virtude das instituições sociais.|véu de ignorância;justiça;contrato social|0
+freire|Paulo Freire|1921|1997|lat|Recife|-8.05|-34.9|Ninguém educa ninguém, ninguém educa a si mesmo: os homens se educam entre si, mediatizados pelo mundo.|educação bancária;diálogo;oprimido;conscientização;educação|1
+kuhn|Thomas Kuhn|1922|1996|ana|Cincinnati|39.1|-84.51||paradigma;revolução científica;ciência|0
+deleuze|Gilles Deleuze|1925|1995|pos|Paris|48.86|2.35||diferença;rizoma;desejo|0
+fanon|Frantz Fanon|1925|1961|afr|Martinica|14.64|-61.02|Cada geração deve descobrir sua missão, cumpri-la ou traí-la.|colonialismo;racismo;descolonização;violência|1
+foucault|Michel Foucault|1926|1984|pos|Poitiers|46.58|0.34|Onde há poder, há resistência.|poder;disciplina;biopoder;genealogia|0
+habermas|Jürgen Habermas|1929||fra|Düsseldorf|51.23|6.77||agir comunicativo;esfera pública;democracia|0
+derrida|Jacques Derrida|1930|2004|pos|El Biar (Argélia)|36.77|3.03||desconstrução;diferença;linguagem|0
+dussel|Enrique Dussel|1934|2023|lat|Mendoza (Argentina)|-32.89|-68.83||filosofia da libertação;decolonialidade;ética|1
+lelia|Lélia Gonzalez|1935|1994|afr|Belo Horizonte|-19.92|-43.94||amefricanidade;racismo;gênero|1
+davis|Angela Davis|1944||afr|Birmingham (EUA)|33.52|-86.8||raça, classe e gênero;prisão;emancipação|1
+hooks|bell hooks|1952|2021|fem|Hopkinsville (EUA)|36.87|-87.49|Ensinar de um modo que respeite e cuide das almas de nossos alunos.|educação;amor;raça, classe e gênero|1
+krenak|Ailton Krenak|1953||lat|Vale do Rio Doce (MG)|-19.5|-41.9||humanidade;natureza;adiar o fim do mundo|1
+butler|Judith Butler|1956||fem|Cleveland|41.5|-81.69||performatividade;gênero;vulnerabilidade|1
+mbembe|Achille Mbembe|1957||afr|Otélé (Camarões)|3.85|11.5||necropolítica;colonialismo;poder|1
+confucio|Confúcio|-551|-479|ori|Qufu (China)|35.6|116.99|Aprender sem pensar é inútil; pensar sem aprender é perigoso.|ren;ritual;virtude|1
+laozi|Lao-Tsé|-571|-471|ori|Henan (China)|33.73|115.51|Uma jornada de mil léguas começa com um passo.|tao;wu wei;natureza|1
+zhuangzi|Zhuangzi|-369|-286|ori|Meng (China)|34.4|115.6||tao;sonho da borboleta;relativismo|1
+buda|Sidarta Gautama (Buda)|-563|-483|ori|Lumbini|27.48|83.28||sofrimento;impermanência;caminho do meio|1
+nagarjuna|Nagarjuna|150|250|ori|Andhra (Índia)|16.5|80.6||vacuidade;caminho do meio|1`;
+
+const LRAW=`tales>anaximandro:m pitagoras>platao:i heraclito>platao:i parmenides>platao:i heraclito>parmenides:d protagoras>socrates:d socrates>platao:m socrates>diogenes:i platao>aristoteles:m democrito>epicuro:i diogenes>epicteto:i epicteto>marcoaurelio:i platao>plotino:i plotino>hipatia:i plotino>agostinho:i platao>agostinho:i platao>boecio:i agostinho>anselmo:i agostinho>tomas:i boecio>tomas:i aristoteles>avicena:i aristoteles>averroes:i averroes>avicena:c aristoteles>maimonides:i averroes>tomas:i avicena>tomas:i maimonides>tomas:i aristoteles>tomas:i tomas>anselmo:c ockham>tomas:c boecio>christine:i agostinho>christine:i agostinho>sorjuana:i sorjuana>christine:d seneca>montaigne:i montaigne>pascal:i montaigne>descartes:i pascal>descartes:c anselmo>descartes:i bacon>hobbes:m maquiavel>hobbes:i descartes>espinosa:i descartes>leibniz:i espinosa>leibniz:d zerayacob>descartes:d locke>descartes:c locke>hobbes:c bacon>locke:i locke>berkeley:i berkeley>locke:c berkeley>hume:i locke>hume:i locke>montesquieu:i locke>voltaire:i voltaire>leibniz:c montesquieu>rousseau:i rousseau>hobbes:c voltaire>rousseau:c wollstonecraft>rousseau:c rousseau>kant:i hume>kant:i leibniz>kant:i kant>hegel:i espinosa>hegel:i heraclito>hegel:i kant>schopenhauer:i schopenhauer>hegel:c buda>schopenhauer:i schopenhauer>nietzsche:i kierkegaard>hegel:c hegel>marx:i marx>hegel:c democrito>marx:i epicuro>marx:i marx>engels:d comte>mill:i hume>mill:i wollstonecraft>mill:i heraclito>nietzsche:i espinosa>nietzsche:i nietzsche>socrates:c peirce>james:i james>dewey:i hegel>dewey:i james>dubois:m hegel>dubois:i frege>russell:d leibniz>russell:i frege>wittgenstein:i russell>wittgenstein:m popper>wittgenstein:c hume>popper:i kuhn>popper:c kant>husserl:i descartes>husserl:i husserl>heidegger:m kierkegaard>heidegger:i nietzsche>heidegger:i aristoteles>heidegger:i laozi>heidegger:i heidegger>arendt:m kant>arendt:i aristoteles>arendt:i heidegger>sartre:i husserl>sartre:i kierkegaard>sartre:i hegel>sartre:i sartre>beauvoir:d husserl>merleau:i merleau>sartre:d camus>sartre:c nietzsche>camus:i kierkegaard>camus:i hegel>beauvoir:i platao>weil:i weil>marx:c marx>horkheimer:i horkheimer>adorno:d marx>adorno:i hegel>adorno:i benjamin>adorno:d marx>benjamin:i marx>marcuse:i heidegger>marcuse:m adorno>habermas:m kant>habermas:i arendt>habermas:i habermas>rawls:d kant>rawls:i rousseau>rawls:i rawls>mill:c nietzsche>foucault:i heidegger>foucault:i nietzsche>deleuze:i espinosa>deleuze:i foucault>deleuze:d heidegger>derrida:i husserl>derrida:i derrida>foucault:c beauvoir>butler:i foucault>butler:i derrida>butler:i hegel>butler:i laozi>zhuangzi:i confucio>laozi:d buda>nagarjuna:i cesaire>fanon:m hegel>fanon:i sartre>fanon:d fanon>mbembe:i foucault>mbembe:i dubois>davis:i marcuse>davis:m fanon>lelia:i davis>lelia:d marx>freire:i hegel>freire:i fanon>freire:i dewey>freire:i freire>hooks:i davis>hooks:d marx>mariategui:i mariategui>dussel:i marx>dussel:i freire>dussel:d dussel>descartes:c krenak>dussel:d`;
+
+const TCODE={i:"inf",m:"mest",c:"crit",d:"dial"};
+const nodes=RAW.split("\n").map(l=>{const p=l.split("|");return{id:p[0],n:p[1],a:+p[2],b:p[3]===""?null:+p[3],c:p[4],loc:p[5],lat:+p[6],lon:+p[7],q:p[8],k:p[9].split(";"),f:p[10]==="1"}});
+const byId=Object.fromEntries(nodes.map(n=>[n.id,n]));
+const links=LRAW.split(/\s+/).map(s=>{const[m,t]=s.split(":");const[a,b]=m.split(">");if(!byId[a]||!byId[b])console.warn("ligação inválida",s);return{source:a,target:b,t:TCODE[t],s0:a,t0:b}});
+const adj={};nodes.forEach(n=>adj[n.id]=[]);
+links.forEach(l=>{adj[l.s0].push({o:l.t0,l,dir:"out"});adj[l.t0].push({o:l.s0,l,dir:"in"})});
+nodes.forEach(n=>{n.deg=adj[n.id].length;n.r=4+Math.sqrt(n.deg)*2.3});
+const yr=y=>y<0?`${-y} a.C.`:`${y}`;
+const life=n=>n.b===null?`${yr(n.a)} · vivo(a)`:`${yr(n.a)} a ${yr(n.b)}${n.b<0&&n.a<0?"":""}`.replace(/(\d+) a\.C\. a (\d+) a\.C\./,"$1 a $2 a.C.");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const TRAILS=[
+ {id:"ser",t:"O que é o ser?",d:"Da physis dos gregos à pergunta de Heidegger.",s:[["parmenides","O ser é imutável; a mudança seria ilusão dos sentidos."],["heraclito","Tudo flui: a realidade é devir e tensão entre contrários."],["platao","Concilia os dois: o mundo sensível muda, as Ideias permanecem."],["aristoteles","O ser se diz de muitos modos; mudança é passagem de potência a ato."],["tomas","Distingue essência e existência; Deus é o próprio ser."],["hegel","O ser se revela no movimento dialético da história."],["heidegger","Retoma a pergunta esquecida: o que significa ser?"]]},
+ {id:"etica",t:"Como viver bem?",d:"Felicidade, virtude, dever e consequências.",s:[["socrates","Viver bem exige examinar a própria vida."],["aristoteles","A felicidade vem da virtude, o justo meio praticado por hábito."],["epicuro","Prazer como ausência de dor e de perturbação."],["epicteto","Distinguir o que depende de nós do que não depende."],["espinosa","Liberdade é compreender as causas dos nossos afetos."],["kant","Agir por dever, segundo uma regra que valha para todos."],["mill","Certo é o que produz maior felicidade para o maior número."],["nietzsche","Suspeita de toda moral: de onde vêm nossos valores?"]]},
+ {id:"poder",t:"Poder e Estado",d:"Quem deve mandar e por quê.",s:[["platao","O governo ideal caberia aos que conhecem o Bem."],["maquiavel","A política tem lógica própria, separada da moral cristã."],["hobbes","Sem Estado, a vida seria guerra de todos contra todos."],["locke","O governo existe para proteger vida, liberdade e propriedade."],["rousseau","Só é legítimo o poder que expressa a vontade geral."],["marx","O Estado reflete a luta de classes."],["arendt","Poder nasce da ação conjunta; violência é sua ausência."],["foucault","O poder circula nos detalhes: escolas, prisões, corpos."]]},
+ {id:"conhecer",t:"O que podemos conhecer?",d:"Razão, experiência e ciência.",s:[["platao","Conhecer é recordar as Ideias; os sentidos enganam."],["descartes","Duvidar de tudo até chegar ao cogito."],["locke","A mente nasce como tábula rasa; tudo vem da experiência."],["hume","Causalidade é hábito; a indução não tem prova racional."],["kant","Conhecemos o fenômeno, moldado pelas formas da razão."],["popper","Ciência é o que pode ser refutado pela experiência."],["kuhn","A ciência avança por revoluções de paradigma."]]},
+ {id:"exist",t:"Liberdade e existência",d:"Angústia, escolha e absurdo.",s:[["kierkegaard","A escolha diante de Deus gera angústia e responsabilidade."],["nietzsche","Morte de Deus: criar os próprios valores."],["sartre","Estamos condenados a ser livres."],["beauvoir","A mulher é construída como o Outro; liberdade é situada."],["camus","Diante do absurdo, a resposta é a revolta."],["fanon","A existência do colonizado é negada; libertar-se é recriar-se."]]},
+ {id:"emancipa",t:"Crítica e emancipação",d:"Pensar para transformar.",s:[["hegel","A consciência se forma na luta por reconhecimento."],["marx","Transformar o mundo, não apenas interpretá-lo."],["adorno","A indústria cultural padroniza o pensamento."],["freire","Educação libertadora contra a educação bancária."],["fanon","Descolonizar corpos e mentes."],["davis","Raça, classe e gênero se entrelaçam."],["lelia","Amefricanidade: pensar o Brasil a partir de sua matriz negra e indígena."]]},
+ {id:"fora",t:"Vozes fora do cânone",d:"Quem a história da filosofia costuma esquecer.",s:[["hipatia","Matemática e filósofa neoplatônica de Alexandria."],["christine","Escreveu A Cidade das Damas contra a misoginia medieval."],["sorjuana","Defendeu o direito das mulheres ao saber no México colonial."],["zerayacob","Razão e igualdade na Etiópia do século XVII."],["wollstonecraft","Direitos das mulheres e educação racional."],["dubois","Dupla consciência e a linha de cor."],["lelia","Amefricanidade e o racismo à brasileira."],["krenak","A humanidade separada da Terra é uma ficção perigosa."]]},
+ {id:"enem",t:"ENEM essencial",d:"Os nomes mais cobrados, em ordem histórica.",s:[["socrates","Maiêutica e o “só sei que nada sei”."],["platao","Alegoria da caverna e teoria das Ideias."],["aristoteles","Ética das virtudes e o animal político."],["descartes","Dúvida metódica e o cogito."],["kant","Esclarecimento e imperativo categórico."],["marx","Trabalho, alienação e luta de classes."],["nietzsche","Crítica da moral e niilismo."],["sartre","A existência precede a essência."],["arendt","Banalidade do mal."],["foucault","Disciplina, vigilância e poder."]]}
+];
+
+/* ---------- estado ---------- */
+const S={view:"rede",sel:null,path:null,concept:null,trail:null,step:0,cur:new Set(CUR.map(c=>c[0])),types:new Set(Object.keys(TYPES)),fora:false};
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+/* ---------- svg ---------- */
+const svg=d3.select("#graph"), zg=d3.select("#zoomg"), bgG=d3.select("#bg"), trailG=d3.select("#trailg");
+const stage=document.getElementById("stage");
+let W=800,H=600;
+const defs=d3.select("#defs");
+Object.keys(TYPES).forEach(t=>{defs.append("marker").attr("id","mk-"+t).attr("viewBox","0 -4 8 8").attr("refX",8).attr("refY",0).attr("markerWidth",6).attr("markerHeight",6).attr("orient","auto").append("path").attr("d","M0,-4L8,0L0,4").attr("class","mk-"+t)});
+const linkSel=d3.select("#links").selectAll("path").data(links).join("path").attr("class",d=>"link "+d.t).attr("marker-end",d=>d.t==="dial"?null:`url(#mk-${d.t})`);
+const nodeSel=d3.select("#nodes").selectAll("g").data(nodes,d=>d.id).join("g").attr("class",d=>"node"+(d.f?" fora":"")+(d.deg<5?" minor":""));
+nodeSel.append("circle").attr("r",d=>d.r).attr("fill",d=>col(d.c));
+nodeSel.append("text").attr("dy",d=>-d.r-4).attr("text-anchor","middle").text(d=>d.n.replace(/ \(.*\)/,""));
+nodeSel.append("title").text(d=>`${d.n} (${life(d)})`);
+nodeSel.on("click",(e,d)=>{e.stopPropagation();select(d.id)});
+svg.on("click",()=>{if(S.view!=="trilhas"){S.sel=null;S.path=null;S.concept=null;render();renderInfo()}});
+
+const zoom=d3.zoom().scaleExtent([.3,6]).on("zoom",e=>{zg.attr("transform",e.transform);svg.classed("zoomed",e.transform.k>1.5)});
+svg.call(zoom).on("dblclick.zoom",null);
+document.getElementById("zin").onclick=()=>svg.transition().call(zoom.scaleBy,1.4);
+document.getElementById("zout").onclick=()=>svg.transition().call(zoom.scaleBy,1/1.4);
+let pendingFit=false;
+function fit(anim=true){if(S.view!=="rede"&&S.view!=="trilhas"){svg.transition().call(zoom.transform,d3.zoomIdentity);return}
+  const xs=nodes.map(n=>n.x),ys=nodes.map(n=>n.y);const x0=d3.min(xs)-30,x1=d3.max(xs)+30,y0=d3.min(ys)-30,y1=d3.max(ys)+20;
+  const k=Math.min(W/(x1-x0),H/(y1-y0),1.4);const t=d3.zoomIdentity.translate(W/2-k*(x0+x1)/2,H/2-k*(y0+y1)/2).scale(k);
+  (anim?svg.transition().duration(500):svg).call(zoom.transform,t)}
+document.getElementById("zfit").onclick=()=>fit();
+
+const drag=d3.drag().on("start",(e,d)=>{if(!e.active)sim.alphaTarget(.2).restart();d.fx=d.x;d.fy=d.y}).on("drag",(e,d)=>{d.fx=e.x;d.fy=e.y}).on("end",(e,d)=>{if(!e.active)sim.alphaTarget(0);if(S.view==="rede"||S.view==="trilhas"){d.fx=null;d.fy=null}else{d.fx=null;d.fy=null}});
+nodeSel.call(drag);
+
+const sim=d3.forceSimulation(nodes).on("tick",tick).on("end",()=>{if(pendingFit){pendingFit=false;fit()}});
+function tick(){
+  linkSel.attr("d",d=>{const dx=d.target.x-d.source.x,dy=d.target.y-d.source.y,L=Math.hypot(dx,dy)||1;const tx=d.target.x-dx/L*(d.target.r+2),ty=d.target.y-dy/L*(d.target.r+2);const cx=(d.source.x+tx)/2+dy*.08,cy=(d.source.y+ty)/2-dx*.08;return`M${d.source.x},${d.source.y}Q${cx},${cy} ${tx},${ty}`});
+  nodeSel.attr("transform",d=>`translate(${d.x},${d.y})`);
+  drawTrailLine();
+}
+
+/* escalas */
+const yearFrac=d3.scaleLinear().domain([-650,0,1300,1700,2030]).range([0,.2,.36,.55,1]);
+const xYear=y=>40+yearFrac(y)*(W-80);
+const bandOrder=CUR.map(c=>c[0]);
+const yBand=c=>40+(bandOrder.indexOf(c)+.5)*((H-70)/bandOrder.length);
+let proj=d3.geoEquirectangular();
+const LAND=[
+ [[-17,21],[-16,28],[-9,33],[-5,36],[10,37],[11,33],[20,31],[32,31],[34,28],[43,12],[51,12],[44,-2],[40,-15],[35,-25],[20,-35],[18,-30],[12,-17],[13,-5],[9,4],[-8,4],[-14,10],[-17,15]],
+ [[-10,36],[-9,43],[-2,44],[-5,48],[2,51],[8,54],[10,57],[5,62],[15,69],[28,71],[40,68],[45,55],[40,47],[30,45],[28,41],[23,37],[20,40],[15,38],[12,44],[8,44],[3,42],[-2,37]],
+ [[28,41],[36,36],[35,32],[43,13],[52,16],[57,23],[60,25],[67,24],[73,21],[77,8],[80,13],[88,22],[92,22],[98,16],[103,1],[105,10],[109,20],[121,31],[122,40],[129,35],[135,45],[142,53],[160,61],[180,68],[180,72],[140,73],[110,77],[70,73],[60,68],[45,55],[40,47],[30,45]],
+ [[-168,66],[-160,59],[-135,58],[-124,48],[-118,33],[-110,23],[-105,20],[-95,16],[-85,10],[-80,8],[-83,15],[-87,21],[-97,26],[-90,30],[-82,25],[-80,32],[-76,38],[-70,42],[-66,45],[-60,47],[-56,52],[-64,60],[-78,62],[-82,70],[-100,73],[-125,71],[-140,70],[-157,71]],
+ [[-80,8],[-77,1],[-81,-5],[-76,-15],[-71,-18],[-71,-30],[-74,-42],[-75,-52],[-68,-55],[-65,-47],[-62,-39],[-57,-35],[-48,-26],[-41,-22],[-39,-13],[-35,-8],[-35,-5],[-44,-2],[-50,0],[-52,5],[-60,9],[-72,12]],
+ [[-5,50],[1,51],[2,53],[-1,55],[-2,58],[-5,58],[-6,56],[-3,54],[-5,52]]];
+
+function size(){const r=stage.getBoundingClientRect();W=Math.max(320,r.width);H=Math.max(420,r.height);svg.attr("viewBox",`0 0 ${W} ${H}`);
+  proj=d3.geoEquirectangular().fitExtent([[20,20],[W-20,H-20]],{type:"MultiPoint",coordinates:[[-125,-45],[150,72]]});}
+
+function drawBg(){
+  bgG.selectAll("*").remove();
+  if(S.view==="tempo"){
+    const ax=bgG.append("g").attr("class","axis");
+    [-600,-400,-200,0,500,1000,1300,1500,1600,1700,1800,1900,2000].forEach(y=>{const x=xYear(y);ax.append("line").attr("x1",x).attr("x2",x).attr("y1",30).attr("y2",H-24);ax.append("text").attr("x",x).attr("y",H-8).attr("text-anchor","middle").text(y<0?`${-y} a.C.`:y)});
+    const bd=bgG.append("g").attr("class","band");
+    CUR.forEach(([c,l])=>bd.append("text").attr("x",8).attr("y",yBand(c)+3).text(l));
+  }else if(S.view==="mapa"){
+    const line=d3.line();
+    const g=bgG.append("g");
+    for(let lon=-120;lon<=150;lon+=30)g.append("path").attr("class","grat").attr("d",line(d3.range(-50,76,5).map(la=>proj([lon,la]))));
+    for(let la=-40;la<=70;la+=20)g.append("path").attr("class","grat").attr("d",line(d3.range(-130,156,5).map(lo=>proj([lo,la]))));
+    LAND.forEach(p=>g.append("path").attr("class","land").attr("d",line(p.map(c=>proj(c)))+"Z"));
+    g.append("text").attr("class","axis").attr("x",24).attr("y",H-12).text("Contornos aproximados · local de nascimento").attr("fill","var(--muted)").style("font","10.5px var(--f-mono)");
+  }
+}
+
+function setForces(){
+  sim.force("link",null).force("charge",null).force("x",null).force("y",null).force("collide",null).force("center",null);
+  if(S.view==="rede"||S.view==="trilhas"){
+    sim.force("link",d3.forceLink(links).id(d=>d.id).distance(l=>l.t==="mest"?38:58).strength(.35))
+       .force("charge",d3.forceManyBody().strength(-170))
+       .force("x",d3.forceX(W/2).strength(.05)).force("y",d3.forceY(H/2).strength(.07))
+       .force("collide",d3.forceCollide(d=>d.r+6));
+  }else if(S.view==="tempo"){
+    sim.force("link",d3.forceLink(links).id(d=>d.id).strength(0))
+       .force("x",d3.forceX(d=>xYear(d.a)).strength(1)).force("y",d3.forceY(d=>yBand(d.c)).strength(.5))
+       .force("collide",d3.forceCollide(d=>d.r+2));
+  }else if(S.view==="mapa"){
+    sim.force("link",d3.forceLink(links).id(d=>d.id).strength(0))
+       .force("x",d3.forceX(d=>proj([d.lon,d.lat])[0]).strength(.8)).force("y",d3.forceY(d=>proj([d.lon,d.lat])[1]).strength(.8))
+       .force("collide",d3.forceCollide(d=>d.r+1.5));
+  }
+  sim.alpha(1).restart();
+}
+
+/* ---------- visibilidade e destaque ---------- */
+const visN=n=>S.cur.has(n.c)&&(!S.fora||n.f);
+function render(){
+  let hlN=null,hlL=null;
+  if(S.path){hlN=new Set(S.path.nodes);hlL=new Set(S.path.links)}
+  else if(S.trail){const tr=TRAILS.find(t=>t.id===S.trail);hlN=new Set(tr.s.map(x=>x[0]));const cur=tr.s[S.step][0];hlL=new Set(links.filter(l=>(l.s0===cur||l.t0===cur)&&hlN.has(l.s0)&&hlN.has(l.t0)))}
+  else if(S.concept){hlN=new Set(nodes.filter(n=>n.k.includes(S.concept)).map(n=>n.id));hlL=new Set(links.filter(l=>hlN.has(l.s0)&&hlN.has(l.t0)))}
+  else if(S.sel){hlN=new Set([S.sel,...adj[S.sel].filter(a=>S.types.has(a.l.t)).map(a=>a.o)]);hlL=new Set(adj[S.sel].map(a=>a.l).filter(l=>S.types.has(l.t)))}
+  const mapLike=S.view==="tempo"||S.view==="mapa";
+  const selId=S.trail?TRAILS.find(t=>t.id===S.trail).s[S.step][0]:S.sel;
+  nodeSel.classed("dim",d=>!visN(d)||(hlN&&!hlN.has(d.id))).classed("hl",d=>hlN&&hlN.has(d.id)).classed("sel",d=>d.id===selId);
+  linkSel.classed("off",d=>!S.types.has(d.t)||!visN(byId[d.s0])||!visN(byId[d.t0])||(mapLike&&!(hlL&&hlL.has(d))))
+    .classed("dim",d=>hlL&&!hlL.has(d)).classed("hl",d=>hlL&&hlL.has(d));
+  drawTrailLine();
+}
+function drawTrailLine(){
+  trailG.selectAll("*").remove();
+  if(S.view!=="trilhas"||!S.trail)return;
+  const tr=TRAILS.find(t=>t.id===S.trail);
+  trailG.append("path").attr("class","trailline").attr("d",d3.line().curve(d3.curveCatmullRom)(tr.s.map(x=>[byId[x[0]].x,byId[x[0]].y])));
+  tr.s.forEach((x,i)=>{const n=byId[x[0]];trailG.append("text").attr("x",n.x+n.r+3).attr("y",n.y+n.r+10).text(i+1).style("font","700 11px var(--f-mono)").attr("fill","var(--ink)")});
+}
+
+/* ---------- ficha ---------- */
+const info=document.getElementById("info");
+function dot(c){return`<i style="background:${col(c)}"></i>`}
+function intro(){
+  return`<div class="card"><h2>Como ler a rede</h2>
+  <p class="note" style="margin-top:8px">Cada ponto é um pensador. O tamanho mostra quantas ligações ele tem; a cor, a corrente. Clique num ponto para ver citação, conceitos e conexões.</p>
+  <div class="rel"><h3>Tipos de ligação</h3>${legendHTML()}</div>
+  <div class="stats"><div><b>${nodes.length}</b>pensadores</div><div><b>${links.length}</b>ligações</div><div><b>${nodes.filter(n=>n.f).length}</b>fora do cânone</div></div>
+  <div class="rel"><h3>Comece por aqui</h3><ul>${["socrates","kant","marx","beauvoir","freire","fanon"].map(id=>relBtn(id,"")).join("")}</ul></div>
+  <p class="note">Citações em tradução livre; algumas são atribuições tradicionais. Datas antigas são aproximadas.</p></div>`;
+}
+function legendHTML(){return Object.keys(TYPES).map(t=>`<div style="display:flex;gap:8px;align-items:center;font-size:.88rem">${lineSwatch(t)}${TLBL[t]}</div>`).join("")}
+function lineSwatch(t){const da={inf:"",mest:"",crit:"5 3",dial:"1.5 3"}[t];return`<svg width="30" height="10" aria-hidden="true"><line x1="1" y1="5" x2="29" y2="5" stroke="var(--l-${t})" stroke-width="${t==="mest"?3:2}" stroke-dasharray="${da}" stroke-linecap="round"/></svg>`}
+function relBtn(id,small){const n=byId[id];return`<li><button data-go="${id}">${dot(n.c)}<span>${esc(n.n)}</span><small>${small}</small></button></li>`}
+function nodeCard(id){
+  const n=byId[id];
+  const groups={};
+  adj[id].forEach(a=>{if(!S.types.has(a.l.t))return;const verb=a.dir==="out"?TYPES[a.l.t][0]:TYPES[a.l.t][1];(groups[verb]=groups[verb]||[]).push(a.o)});
+  const order=["foi aluno de","foi mestre de","foi influenciado por","influenciou","criticou","foi criticado por","dialogou com"];
+  return`<div class="card">
+   <h2>${esc(n.n)}</h2>
+   <div class="meta"><span>${life(n)}</span><span>${esc(n.loc)}</span></div>
+   <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px"><span class="badge">${dot(n.c)}${curName[n.c]}</span>${n.f?'<span class="badge">fora do cânone</span>':""}</div>
+   ${n.q?`<blockquote>“${esc(n.q)}”</blockquote>`:""}
+   <div class="rel"><h3>Conceitos</h3><div class="chips">${n.k.map(k=>`<button class="chip c" data-k="${esc(k)}">${esc(k)}</button>`).join("")}</div></div>
+   <div class="rel">${order.filter(v=>groups[v]).map(v=>`<h3>${v} (${groups[v].length})</h3><ul>${groups[v].sort((a,b)=>byId[a].a-byId[b].a).map(o=>relBtn(o,yr(byId[o].a))).join("")}</ul>`).join("")||'<p class="note">Sem ligações nos tipos selecionados.</p>'}</div>
+   <div class="actions">
+     <a href="${WIKI}${WP[id]?"#p-"+WP[id]:""}" target="_blank" rel="noopener">${WP[id]?"Ver na Wiki Filosófica":"Abrir a Wiki Filosófica"} ↗</a>
+     <button class="btn ghost" id="exp">Levar para o Ágora Mapas</button>
+   </div>
+   <div id="expbox"></div>
+  </div>`;
+}
+function proposicoes(id){
+  return adj[id].filter(a=>S.types.has(a.l.t)).map(a=>{const l=a.l;return`${byId[l.s0].n} ; ${TYPES[l.t][0]} ; ${byId[l.t0].n}`}).join("\n");
+}
+function agora(id){
+  const uid=()=>Math.random().toString(36).slice(2,10);
+  const viz=[id,...new Set(adj[id].filter(a=>S.types.has(a.l.t)).map(a=>a.o))];
+  const m={};const tot=viz.length;
+  const ns=viz.map((v,i)=>{m[v]=uid();const ang=i/tot*Math.PI*2,r=i===0?0:340;return{id:m[v],text:byId[v].n,type:"filosofo",x:Math.round(Math.cos(ang)*r),y:Math.round(Math.sin(ang)*r*.7)}});
+  const ls=adj[id].filter(a=>S.types.has(a.l.t)).map(a=>({id:uid(),from:m[a.l.s0],to:m[a.l.t0],label:TYPES[a.l.t][0]}));
+  const n=byId[id];if(n.q){const c=uid();ns.push({id:c,text:"“"+n.q+"”",type:"citacao",x:260,y:90});ls.push({id:uid(),from:m[id],to:c,label:"escreveu"})}
+  const titulo="Rede Filosófica: "+n.n;
+  const data={app:"agora-mapas",v:2,title:titulo,nodes:ns,links:ls,custom:[],sources:[],view:"tipo"};
+  try{const lib=JSON.parse(localStorage.getItem("agora-mapas-lib")||"[]");lib.unshift({id:uid(),name:titulo,saved:Date.now(),data});localStorage.setItem("agora-mapas-lib",JSON.stringify(lib));return true}catch(e){return false}
+}
+function conceptCard(k){
+  const ns=nodes.filter(n=>n.k.includes(k)).sort((a,b)=>a.a-b.a);
+  return`<div class="card"><span class="lbl">Conceito</span><h2>${esc(k)}</h2><p class="note">${ns.length} pensador(es) trabalham este conceito. As ligações entre eles aparecem destacadas.</p><div class="rel"><ul>${ns.map(n=>relBtn(n.id,yr(n.a))).join("")}</ul></div><div class="actions"><a href="${WIKI}${WC[k]?"#"+WC[k]:""}" target="_blank" rel="noopener">${WC[k]?"Ler o verbete na Wiki Filosófica":"Abrir a Wiki Filosófica"} ↗</a></div></div>`;
+}
+function pathCard(){
+  const p=S.path;
+  if(!p.nodes.length)return`<div class="card path"><h2>Sem caminho</h2><p class="note">Não há ligação entre ${esc(byId[p.a].n)} e ${esc(byId[p.b].n)} com os tipos de ligação selecionados.</p></div>`;
+  let h=`<div class="card path"><span class="lbl">Caminho · ${p.nodes.length-1} passo(s)</span><h2>${esc(byId[p.a].n)} até ${esc(byId[p.b].n)}</h2><ol>`;
+  p.nodes.forEach((id,i)=>{h+=`<li><button class="chip" data-go="${id}" style="border:0;background:none;padding:0;font-weight:700">${esc(byId[id].n)}</button>`;if(i<p.links.length){const l=p.links[i];const fwd=l.s0===id;h+=`<br><em>${fwd?TYPES[l.t][0]:TYPES[l.t][1]}</em>`}h+="</li>"});
+  return h+"</ol></div>";
+}
+function trailCard(){
+  let h=`<div class="card"><h2>Trilhas</h2><p class="note">Percursos guiados por uma pergunta. Escolha uma e avance passo a passo.</p><div class="trails">`;
+  TRAILS.forEach(t=>h+=`<button data-trail="${t.id}" aria-pressed="${S.trail===t.id}"><b>${t.t}</b><span>${t.d} · ${t.s.length} paradas</span></button>`);
+  h+="</div>";
+  if(S.trail){const t=TRAILS.find(x=>x.id===S.trail);const[id,txt]=t.s[S.step];const n=byId[id];
+    h+=`<div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--line)"><span class="lbl">Parada ${S.step+1} de ${t.s.length}</span><h2 style="font-size:1.35rem;margin-top:4px">${esc(n.n)}</h2><div class="meta"><span>${life(n)}</span><span>${curName[n.c]}</span></div><p>${esc(txt)}</p>${n.q?`<blockquote>“${esc(n.q)}”</blockquote>`:""}
+    <div class="step"><button class="btn ghost" id="tprev" ${S.step===0?"disabled":""}>Anterior</button><span>${S.step+1}/${t.s.length}</span><button class="btn" id="tnext" ${S.step===t.s.length-1?"disabled":""}>Próxima</button></div></div>`}
+  return h+"</div>";
+}
+function renderInfo(){
+  if(S.view==="trilhas")info.innerHTML=trailCard();
+  else if(S.path)info.innerHTML=pathCard();
+  else if(S.concept)info.innerHTML=conceptCard(S.concept);
+  else if(S.sel)info.innerHTML=nodeCard(S.sel);
+  else info.innerHTML=intro();
+  const ex=document.getElementById("exp");
+  if(ex)ex.onclick=()=>{const box=document.getElementById("expbox");const ok=agora(S.sel);
+    box.innerHTML=`<p class="note" style="margin:8px 0 0">${ok?`Mapa salvo nos arquivos do Ágora Mapas. <a href="${AGORA}" target="_blank" rel="noopener">Abrir Ágora Mapas ↗</a>`:"Não foi possível salvar no navegador. Use as proposições abaixo."}</p>${ok?"":`<textarea readonly>${esc(proposicoes(S.sel))}</textarea>`}`};
+}
+info.addEventListener("click",e=>{
+  const g=e.target.closest("[data-go]");if(g){if(S.view!=="rede"&&S.view!=="tempo"&&S.view!=="mapa")go("rede");select(g.dataset.go);return}
+  const k=e.target.closest("[data-k]");if(k){S.concept=k.dataset.k;S.sel=null;S.path=null;render();renderInfo();return}
+  const t=e.target.closest("[data-trail]");if(t){S.trail=t.dataset.trail;S.step=0;render();renderInfo();focusNode(TRAILS.find(x=>x.id===S.trail).s[0][0]);return}
+  if(e.target.id==="tnext"){S.step++;render();renderInfo();focusNode(TRAILS.find(x=>x.id===S.trail).s[S.step][0])}
+  if(e.target.id==="tprev"){S.step--;render();renderInfo();focusNode(TRAILS.find(x=>x.id===S.trail).s[S.step][0])}
+});
+function select(id){S.sel=id;S.path=null;S.concept=null;render();renderInfo();focusNode(id);if(innerWidth<1050)info.scrollIntoView({behavior:"smooth",block:"start"})}
+function focusNode(id){const n=byId[id];if(n.x==null)return;const k=Math.max(1.2,d3.zoomTransform(svg.node()).k);svg.transition().duration(600).call(zoom.transform,d3.zoomIdentity.translate(W/2-n.x*k,H/2-n.y*k).scale(k))}
+
+/* ---------- filtros ---------- */
+const curBox=document.getElementById("cur");
+curBox.innerHTML=CUR.map(([c,l])=>`<button class="chip" data-c="${c}" aria-pressed="true">${dot(c)}${l}</button>`).join("");
+curBox.onclick=e=>{const b=e.target.closest("[data-c]");if(!b)return;const c=b.dataset.c;S.cur.has(c)?S.cur.delete(c):S.cur.add(c);b.setAttribute("aria-pressed",S.cur.has(c));render()};
+document.getElementById("call").onclick=()=>{const all=S.cur.size===CUR.length;S.cur=new Set(all?[]:CUR.map(c=>c[0]));curBox.querySelectorAll(".chip").forEach(b=>b.setAttribute("aria-pressed",!all));render()};
+document.getElementById("types").innerHTML=Object.keys(TYPES).map(t=>`<label><input type="checkbox" id="t-${t}" data-t="${t}" checked>${lineSwatch(t)}${TLBL[t]}</label>`).join("");
+document.getElementById("types").onchange=e=>{const t=e.target.dataset.t;e.target.checked?S.types.add(t):S.types.delete(t);render();renderInfo()};
+document.getElementById("fora").onchange=e=>{S.fora=e.target.checked;render()};
+
+/* busca */
+const concepts=[...new Set(nodes.flatMap(n=>n.k))].sort((a,b)=>a.localeCompare(b,"pt"));
+document.getElementById("dl").innerHTML=nodes.map(n=>`<option value="${esc(n.n)}">`).join("")+concepts.map(k=>`<option value="${esc(k)}">conceito</option>`).join("");
+const norm=s=>s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+function doSearch(v){v=norm(v.trim());if(!v)return;
+  const n=nodes.find(n=>norm(n.n)===v)||nodes.find(n=>norm(n.n).includes(v));
+  const k=concepts.find(k=>norm(k)===v)||(!n&&concepts.find(k=>norm(k).includes(v)));
+  if(S.view==="desafio"||S.view==="metricas"||S.view==="trilhas")go("rede");
+  if(n&&!(k&&norm(k)===v))select(n.id);else if(k){S.concept=k;S.sel=null;S.path=null;render();renderInfo()}}
+const qi=document.getElementById("q");
+qi.addEventListener("change",()=>doSearch(qi.value));
+qi.addEventListener("keydown",e=>{if(e.key==="Enter")doSearch(qi.value)});
+
+/* caminho */
+const sorted=[...nodes].sort((a,b)=>a.n.localeCompare(b.n,"pt"));
+["pa","pb"].forEach((id,i)=>{const s=document.getElementById(id);s.innerHTML=sorted.map(n=>`<option value="${n.id}">${esc(n.n)}</option>`).join("");s.value=i?"freire":"socrates"});
+function bfs(a,b){const prev={[a]:null},q=[a];while(q.length){const u=q.shift();if(u===b)break;for(const x of adj[u]){if(!S.types.has(x.l.t)||x.o in prev)continue;prev[x.o]={u,l:x.l};q.push(x.o)}}
+  if(!(b in prev))return{a,b,nodes:[],links:[]};const ns=[b],ls=[];let c=b;while(prev[c]){ls.unshift(prev[c].l);c=prev[c].u;ns.unshift(c)}return{a,b,nodes:ns,links:ls}}
+document.getElementById("pgo").onclick=()=>{const a=pa.value,b=pb.value;if(a===b)return;if(!["rede","tempo","mapa"].includes(S.view))go("rede");S.path=bfs(a,b);S.sel=null;S.concept=null;render();renderInfo();if(innerWidth<1050)info.scrollIntoView({behavior:"smooth"})};
+document.getElementById("pclr").onclick=()=>{S.path=null;render();renderInfo()};
+
+/* ---------- métricas ---------- */
+function betweenness(){const C={};nodes.forEach(n=>C[n.id]=0);
+  nodes.forEach(s=>{const st=[],P={},sig={},d={};nodes.forEach(n=>{P[n.id]=[];sig[n.id]=0;d[n.id]=-1});sig[s.id]=1;d[s.id]=0;const q=[s.id];
+    while(q.length){const v=q.shift();st.push(v);adj[v].forEach(({o})=>{if(d[o]<0){q.push(o);d[o]=d[v]+1}if(d[o]===d[v]+1){sig[o]+=sig[v];P[o].push(v)}})}
+    const dl={};nodes.forEach(n=>dl[n.id]=0);while(st.length){const w=st.pop();P[w].forEach(v=>dl[v]+=sig[v]/sig[w]*(1+dl[w]));if(w!==s.id)C[w]+=dl[w]}});
+  return C}
+const BT=betweenness();
+nodes.forEach(n=>{n.bt=BT[n.id]/2;n.out=adj[n.id].filter(a=>a.dir==="out"&&(a.l.t==="inf"||a.l.t==="mest")).length;n.inn=adj[n.id].filter(a=>a.dir==="in"&&(a.l.t==="inf"||a.l.t==="mest")).length;n.crit=adj[n.id].filter(a=>a.l.t==="crit").length});
+function mlist(title,desc,key,fmt){const top=[...nodes].sort((a,b)=>b[key]-a[key]).slice(0,10);const mx=top[0][key]||1;
+  return`<section><h3>${title}</h3><p>${desc}</p>${top.map((n,i)=>`<div class="mrow"><span class="n">${i+1}</span><button data-go="${n.id}"><span>${esc(n.n)}</span><div class="bar" style="width:${n[key]/mx*100}%;background:${col(n.c)}"></div></button><small>${fmt?fmt(n[key]):n[key]}</small></div>`).join("")}</section>`}
+function renderMetrics(){
+  const byCur=CUR.map(([c,l])=>({c,l,v:nodes.filter(n=>n.c===c).length})).sort((a,b)=>b.v-a.v);const mx=byCur[0].v;
+  document.getElementById("metv").innerHTML=`<h2>Métricas da rede</h2><p class="note">Clique num nome para vê-lo na rede.</p>
+  <div class="stats"><div><b>${nodes.length}</b>pensadores</div><div><b>${links.length}</b>ligações</div><div><b>${(2*links.length/nodes.length).toFixed(1)}</b>ligações por pensador</div><div><b>${nodes.filter(n=>n.f).length}</b>fora do cânone</div><div><b>${concepts.length}</b>conceitos</div></div>
+  <div class="metrics">
+  ${mlist("Mais conectados","Total de ligações de qualquer tipo.","deg")}
+  ${mlist("Mais influentes","Quantos pensadores influenciou ou formou.","out")}
+  ${mlist("Pontes","Quem mais aparece nos caminhos mais curtos entre outros pensadores.","bt",v=>Math.round(v))}
+  ${mlist("Mais influenciados","De quantos pensadores recebeu influência ou formação.","inn")}
+  ${mlist("Mais polêmicos","Ligações de crítica, feitas ou recebidas.","crit")}
+  <section><h3>Pensadores por corrente</h3><p>Quantos pontos cada corrente tem nesta rede.</p>${byCur.map(r=>`<div class="mrow"><span>${dot(r.c).replace("<i","<i class='dot' ").replace("style=\"","style=\"display:inline-block;width:9px;height:9px;border-radius:50%;")}</span><div style="min-width:0"><span>${r.l}</span><div class="bar" style="width:${r.v/mx*100}%;background:${col(r.c)}"></div></div><small>${r.v}</small></div>`).join("")}</section>
+  </div>`;
+}
+document.getElementById("metv").addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g){go("rede");setTimeout(()=>select(g.dataset.go),50)}});
+
+/* ---------- desafio ---------- */
+let QS=LS.get("rf-quiz",{ok:0,tot:0,streak:0,best:0}), curQ=null;
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function makeQ(){
+  const kind=rnd(["inf","quote","cur","mest","conc"]);
+  if(kind==="quote"){const n=rnd(nodes.filter(n=>n.q));const wr=shuffle(nodes.filter(m=>m.id!==n.id&&m.q)).slice(0,3);return{p:`De quem é esta frase?<br><i>“${esc(n.q)}”</i>`,ans:n.n,opts:shuffle([n,...wr].map(x=>x.n)),go:n.id}}
+  if(kind==="cur"){const n=rnd(nodes);const wr=shuffle(CUR.filter(c=>c[0]!==n.c)).slice(0,3).map(c=>c[1]);return{p:`A que corrente pertence <b>${esc(n.n)}</b>?`,ans:curName[n.c],opts:shuffle([curName[n.c],...wr]),go:n.id}}
+  if(kind==="conc"){const n=rnd(nodes);const k=rnd(n.k);const wr=shuffle(nodes.filter(m=>!m.k.includes(k))).slice(0,3);return{p:`Qual destes pensadores trabalha o conceito de <b>${esc(k)}</b>?`,ans:n.n,opts:shuffle([n,...wr].map(x=>x.n)),go:n.id}}
+  const t=kind==="mest"?"mest":"inf";const cand=links.filter(l=>l.t===t);const l=rnd(cand);const tgt=l.t0;
+  const yes=new Set(adj[tgt].filter(a=>a.dir==="in"&&a.l.t===t).map(a=>a.o));
+  const wr=shuffle(nodes.filter(n=>!yes.has(n.id)&&n.id!==tgt)).slice(0,3);
+  return{p:t==="mest"?`Quem foi mestre de <b>${esc(byId[tgt].n)}</b>?`:`Quem influenciou <b>${esc(byId[tgt].n)}</b>?`,ans:byId[l.s0].n,opts:shuffle([byId[l.s0],...wr].map(x=>x.n)),go:tgt};
+}
+function renderQuiz(){
+  curQ=makeQ();
+  document.getElementById("quizv").innerHTML=`<div class="quiz"><h2>Desafio</h2>
+   <div class="score"><span>Acertos <b>${QS.ok}/${QS.tot}</b></span><span>Sequência <b>${QS.streak}</b></span><span>Recorde <b>${QS.best}</b></span><button class="btn ghost" id="qreset" style="padding:1px 8px;font-size:.75rem">zerar</button></div>
+   <div class="qprompt">${curQ.p}</div>
+   <div class="qopts">${curQ.opts.map((o,i)=>`<button data-o="${esc(o)}" id="qo${i}">${esc(o)}</button>`).join("")}</div>
+   <div id="qfb" class="note" aria-live="polite"></div></div>`;
+}
+document.getElementById("quizv").addEventListener("click",e=>{
+  if(e.target.id==="qreset"){QS={ok:0,tot:0,streak:0,best:0};LS.set("rf-quiz",QS);renderQuiz();return}
+  if(e.target.id==="qnext"){renderQuiz();return}
+  if(e.target.id==="qsee"){go("rede");setTimeout(()=>select(curQ.go),50);return}
+  const b=e.target.closest("[data-o]");if(!b||b.disabled)return;
+  const ok=b.dataset.o===curQ.ans;QS.tot++;if(ok){QS.ok++;QS.streak++;QS.best=Math.max(QS.best,QS.streak)}else QS.streak=0;LS.set("rf-quiz",QS);
+  document.querySelectorAll(".qopts button").forEach(x=>{x.disabled=true;if(x.dataset.o===curQ.ans)x.classList.add("ok");else if(x===b)x.classList.add("no")});
+  document.getElementById("qfb").innerHTML=`<p style="font-size:1rem;color:var(--ink)"><b>${ok?"Acertou!":"Não foi dessa vez."}</b> Resposta: ${esc(curQ.ans)}.</p><div style="display:flex;gap:6px"><button class="btn" id="qnext">Próxima pergunta</button><button class="btn ghost" id="qsee">Ver na rede</button></div>`;
+  document.querySelector(".score").innerHTML=`<span>Acertos <b>${QS.ok}/${QS.tot}</b></span><span>Sequência <b>${QS.streak}</b></span><span>Recorde <b>${QS.best}</b></span>`;
+});
+
+/* ---------- navegação ---------- */
+const VIEWS=["rede","tempo","mapa","trilhas","desafio","metricas"];
+function go(v){
+  if(!VIEWS.includes(v))v="rede";
+  const prev=S.view;S.view=v;
+  document.querySelectorAll("#tabs button").forEach(b=>b.setAttribute("aria-current",b.dataset.v===v));
+  const full=v==="desafio"||v==="metricas";
+  document.getElementById("quizv").hidden=v!=="desafio";document.getElementById("metv").hidden=v!=="metricas";
+  document.getElementById("hint").hidden=full;
+  if(v==="desafio")renderQuiz();
+  if(v==="metricas")renderMetrics();
+  if(v==="trilhas"){S.path=null;S.concept=null;if(!S.trail){S.trail="enem";S.step=0}}else S.trail=null;
+  if(!full){const graphView=v==="trilhas"?"rede":v;const pv=prev==="trilhas"?"rede":prev;if(graphView!==pv||!sim._init){sim._init=true;drawBg();setForces();svg.call(zoom.transform,d3.zoomIdentity);pendingFit=(graphView==="rede")}else{drawBg()}}
+  render();renderInfo();
+  if(location.hash.slice(1)!==v)history.replaceState(null,"","#"+v);
+  LS.set("rf-view",v);
+}
+document.getElementById("tabs").onclick=e=>{const b=e.target.closest("[data-v]");if(b)go(b.dataset.v)};
+addEventListener("hashchange",()=>go(location.hash.slice(1)));
+let rt;addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>{size();if(!["desafio","metricas"].includes(S.view)){drawBg();setForces()}},200)});
+
+size();
+nodes.forEach(n=>{n.x=W/2+(Math.random()-.5)*W*.6;n.y=H/2+(Math.random()-.5)*H*.6});
+const startV=location.hash.slice(1)||LS.get("rf-view","rede");
+// garante que a rede assente antes de ir para outra visualização
+S.view="rede";drawBg();setForces();sim._init=true;for(let i=0;i<300;i++)sim.tick();tick();
+go(VIEWS.includes(startV)?startV:"rede");
+if(S.view==="rede"||S.view==="trilhas")fit(false);
+</script>
+</body>
+</html>
