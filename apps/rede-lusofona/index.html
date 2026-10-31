@@ -83,6 +83,23 @@ a{color:var(--destaque)}
 .tempo .play:hover{border-color:var(--destaque);color:var(--destaque)}
 .tempo label{font-size:.78rem;color:var(--apagado);white-space:nowrap}
 .marcos{font-size:.7rem;color:var(--apagado);display:flex;justify-content:space-between;position:absolute;left:68px;right:110px;bottom:2px;pointer-events:none}
+.camadas{position:absolute;left:16px;top:76px;display:flex;flex-wrap:wrap;gap:6px;max-width:62%}
+.camadas button{border:1.5px solid var(--borda);background:var(--cartao);border-radius:999px;padding:4px 11px;font-size:.78rem;font-weight:500;cursor:pointer;color:var(--apagado)}
+.camadas button:hover{border-color:var(--destaque);color:var(--destaque)}
+.camadas button[aria-pressed="true"]{background:var(--tinta);color:var(--fundo);border-color:var(--tinta)}
+.camadas button.fixo{cursor:default}
+.cartao-h{position:absolute;z-index:12;width:250px;background:var(--cartao);border:1px solid var(--tinta);border-radius:4px;padding:10px 12px;pointer-events:none;box-shadow:4px 4px 0 var(--destaque);font-size:.84rem;line-height:1.4}
+.cartao-h b{font-family:"Fraunces",Georgia,serif;font-size:1.05rem;display:block}
+.cartao-h span{color:var(--apagado);font-size:.76rem;display:block}
+.cartao-h p{margin-top:6px}
+.cartao-h small{display:block;color:var(--apagado);margin-top:6px;font-size:.72rem}
+.volta{display:flex;margin:-18px -18px 14px;background:var(--destaque-suave);border-bottom:1px solid var(--borda)}
+.volta-btn{flex:1;border:0;background:none;text-align:left;padding:10px 18px;cursor:pointer;font-weight:600;color:var(--destaque);font-size:.9rem}
+.volta-btn small{display:block;font-weight:400;color:var(--apagado);font-size:.76rem;margin-top:1px}
+.volta-x{border:0;background:none;padding:0 16px;cursor:pointer;color:var(--apagado);font-size:1rem}
+.volta-x:hover{color:var(--destaque)}
+.volta-nav{display:flex;justify-content:space-between;gap:8px;margin-bottom:14px}
+.volta-nav .btn{font-size:.8rem;padding:6px 10px}
 .aviso{position:absolute;left:50%;top:14px;transform:translateX(-50%);background:var(--tinta);color:var(--fundo);padding:8px 14px;border-radius:4px;font-size:.85rem;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%;text-align:center;z-index:20}
 .aviso.ver{opacity:1;pointer-events:auto}
 .aviso a{color:inherit;font-weight:600}
@@ -95,7 +112,25 @@ a{color:var(--destaque)}
 .lk.gru{stroke:var(--l-gru);stroke-width:.8;stroke-dasharray:1.5 3;opacity:.55}
 .lk.con{stroke:var(--l-con);stroke-width:.8;stroke-dasharray:1.5 3;opacity:.45}
 .lk.cor{stroke:var(--l-cor);stroke-width:2.4;opacity:.45}
-.lk-hit{stroke:transparent;stroke-width:9;cursor:pointer}
+.lk-hit{fill:none;stroke:transparent;stroke-width:10;cursor:pointer}
+.part{fill:none;stroke-linecap:round;stroke-width:4.5;stroke-dasharray:.1 17.9;display:none;pointer-events:none}
+.t-inf .part{stroke:var(--l-inf)} .t-cri .part{stroke:var(--l-cri)} .t-cor .part{stroke:var(--l-cor)}
+.lg.anima.t-inf .part,.lg.anima.t-cri .part,.lg.anima.t-cor .part{display:inline}
+@keyframes corre{to{stroke-dashoffset:-36}}
+@media (prefers-reduced-motion:no-preference){.lg.anima .part{animation:corre 1.3s linear infinite}}
+.xis{fill:none;stroke:var(--l-cri);stroke-width:1.8;stroke-linecap:round;pointer-events:none}
+.apagando .lg:not(.anima) .xis{opacity:.08}
+.regiao{cursor:pointer}
+.rg{fill:var(--rc);fill-opacity:.07;stroke:var(--rc);stroke-opacity:.3;stroke-width:1;transition:fill-opacity .2s,stroke-opacity .2s}
+.regiao:hover .rg{fill-opacity:.17;stroke-opacity:.8}
+.rg-nome{opacity:0;transition:opacity .2s}
+.rg-nome.mostra,.regiao:hover .rg-nome,.regiao.sel .rg-nome{opacity:1}
+.regiao.sel .rg{fill-opacity:.2;stroke-width:2.2;stroke-opacity:.95}
+.rg-nome{font-family:"Fraunces",Georgia,serif;font-style:italic;font-weight:600;fill:var(--rc);text-anchor:middle;paint-order:stroke;stroke:var(--fundo);stroke-linejoin:round}
+.apagando .regiao:not(.sel){opacity:.28}
+.como-regiao .no.k-m,.como-regiao .rot.k-m,.como-regiao .lg.t-gru,.como-regiao .lg.t-cor{display:none}
+.focando .no:not(.no-foco),.focando .rot:not(.no-foco),.focando .lg:not(.lig-foco),.focando .regiao,.focando .trilha-linha{opacity:0!important;pointer-events:none}
+.foco-rot text{font-weight:600;letter-spacing:.12em;text-transform:uppercase;fill:var(--destaque);text-anchor:middle;paint-order:stroke;stroke:var(--fundo);stroke-linejoin:round}
 .lk.viz{opacity:1;stroke-width:2.2}
 .lk.caminho{stroke:var(--destaque)!important;stroke-width:3.4!important;opacity:1!important;stroke-dasharray:none!important}
 .lk.sel{stroke-width:3.4!important;opacity:1!important}
@@ -115,12 +150,12 @@ a{color:var(--destaque)}
 .vozes .no:not(.voz){opacity:.12}
 .vozes .lk{opacity:.05}
 .vozes .rot:not(.voz){opacity:0}
-.rot{font-size:10.5px;fill:var(--tinta);paint-order:stroke;stroke:var(--fundo);stroke-width:3.2px;stroke-linejoin:round;pointer-events:none;text-anchor:middle;opacity:0;transition:opacity .2s}
-.rot.k-m{font-family:"Fraunces",Georgia,serif;font-style:italic;font-size:12px;font-weight:600}
+.rot{fill:var(--tinta);paint-order:stroke;stroke:var(--fundo);stroke-linejoin:round;pointer-events:none;text-anchor:middle;opacity:0;transition:opacity .2s}
+.rot.k-m{font-family:"Fraunces",Georgia,serif;font-style:italic;font-size:1.12em;font-weight:600}
 .rot.k-c{fill:var(--con);font-weight:600}
 .rot.k-e{fill:var(--apagado);font-style:italic}
 .rot.mostra,.rot.viz,.rot.foco,.rot.caminho{opacity:1}
-.rot.foco{font-weight:700;font-size:12.5px}
+.rot.foco{font-weight:700;font-size:1.15em}
 .pais{fill:var(--fundo2);stroke:var(--borda);stroke-width:.6}
 .pais.luso{fill:color-mix(in srgb,var(--destaque) 12%,var(--fundo2));stroke:color-mix(in srgb,var(--destaque) 40%,var(--borda))}
 .grat{fill:none;stroke:var(--borda);stroke-width:.4;opacity:.7}
@@ -204,6 +239,7 @@ blockquote cite{display:block;font-family:"Inter",system-ui,sans-serif;font-styl
   .puxador i{display:block;width:44px;height:4px;border-radius:2px;background:var(--borda);margin:0 auto}
   .tempo{bottom:92px}
   .legenda{bottom:160px}
+  .camadas{top:66px;max-width:80%}
   .marca{font-size:1.2rem}
   .busca{order:3;max-width:none;flex-basis:100%}
   .ano{font-size:1.8rem}
@@ -239,6 +275,8 @@ blockquote cite{display:block;font-family:"Inter",system-ui,sans-serif;font-styl
         <button type="button" id="zMenos" aria-label="Afastar">−</button>
         <button type="button" id="zAjusta" aria-label="Ver tudo" title="Ver tudo">⤢</button>
       </div>
+      <div class="camadas" id="camadas" role="group" aria-label="Camadas do mapa"></div>
+      <div class="cartao-h" id="cartao" hidden></div>
       <div class="legenda" id="legenda"></div>
       <div class="aviso" id="aviso" role="status"></div>
       <div class="tempo">
@@ -332,12 +370,12 @@ const maxGrau = Math.max(...nos.map(n => n.grau));
 /* ====================== estado ====================== */
 const E = {
   layout:"rede", ano:2026, sel:null, selLig:null, caminho:null, trilha:null, passo:0,
-  aba:"detalhe", vozes:null, tamanho:"grau",
-  kinds:{a:true, e:true, c:true, m:true}, grupos:{br:true, pt:true, af:true, pe:true},
+  aba:"detalhe", vozes:null, tamanho:"grau", foco:false, hover:null,
+  kinds:{a:true, e:false, c:false, m:false}, grupos:{br:true, pt:true, af:true, pe:true},
   tipos:{inf:true, dia:true, cri:true, gru:true, con:true, cor:true},
   rotulos:"auto"
 };
-Object.assign(E.kinds, guarda.get("kinds", {})); Object.assign(E.tipos, guarda.get("tipos", {}));
+Object.assign(E.kinds, guarda.get("camadas", {})); E.kinds.a = true; Object.assign(E.tipos, guarda.get("tipos", {}));
 
 /* ====================== desenho ====================== */
 const svg = d3.select("#svg");
@@ -351,10 +389,12 @@ const defs = svg.append("defs");
 const mundo = svg.append("g");
 const gFundo = mundo.append("g").attr("class", "fundo-mapa");
 const gEixo = mundo.append("g").attr("class", "eixo");
+const gRegioes = mundo.append("g");
 const gLig = mundo.append("g");
 const gTrilha = mundo.append("path").attr("class", "trilha-linha");
 const gNos = mundo.append("g");
 const gRot = mundo.append("g");
+const gFocoRot = mundo.append("g").attr("class", "foco-rot");
 
 const raio = n => {
   if(E.tamanho === "ponte" && (n.k === "a" || n.k === "e")) return 4 + 20 * Math.sqrt(n.ponteN);
@@ -370,15 +410,46 @@ const forma = n => {
   return `M${r},0A${r},${r} 0 1,1 ${-r},0A${r},${r} 0 1,1 ${r},0Z`;
 };
 
-const selLig = gLig.selectAll("g").data(ligs).join("g");
-const linhas = selLig.append("line").attr("class", l => "lk " + l.tp)
+const selLig = gLig.selectAll("g").data(ligs).join("g").attr("class", l => "lg t-" + l.tp);
+const linhas = selLig.append("path").attr("class", l => "lk " + l.tp)
   .attr("marker-end", l => (l.tp === "inf" || l.tp === "cri" || l.tp === "cor") ? `url(#seta-${l.tp})` : null);
-selLig.append("line").attr("class", "lk-hit").on("click", (ev, l) => { ev.stopPropagation(); escolheLig(l); });
+selLig.append("path").attr("class", "part");
+selLig.filter(l => l.tp === "cri").append("path").attr("class", "xis");
+selLig.append("path").attr("class", "lk-hit").on("click", (ev, l) => { ev.stopPropagation(); escolheLig(l); });
 selLig.append("title").text(l => `${porId[l.s].n} ${TIPOS_LIG[l.tp].verbo} ${porId[l.t].n}${l.nota ? ". " + l.nota : ""}`);
+selLig.each(function(l){ const c = this.children; l._lk = c[0]; l._pt = c[1]; l._x = l.tp === "cri" ? c[2] : null; l._hit = l.tp === "cri" ? c[3] : c[2]; });
+
+/* correntes como regiões */
+const CORES_REG = ["#23845a", "#335fc0", "#c27417", "#b8323a", "#6b4fc4", "#0f7c8a", "#a0522d", "#8a7a00", "#c1477a"];
+const correntes = nos.filter(n => n.k === "m");
+correntes.forEach((m, i) => { m.membros = viz[m.id].filter(x => x.l.tp === "gru").map(x => porId[x.o]); m.corReg = CORES_REG[i % CORES_REG.length]; });
+const selReg = gRegioes.selectAll("g").data(correntes).join("g").attr("class", "regiao").style("--rc", m => m.corReg)
+  .on("click", (ev, m) => { ev.stopPropagation(); escolhe(m.id); });
+selReg.append("path").attr("class", "rg");
+selReg.append("text").attr("class", "rg-nome").text(m => m.n);
+selReg.append("title").text(m => `${m.n} (${anos(m)})`);
+const regioesAtivas = () => E.layout === "rede" && E.kinds.m;
+function desenhaRegioes(){
+  const on = regioesAtivas();
+  selReg.style("display", m => on && visNos.has(m.id) && m.membros.some(a => visNos.has(a.id)) ? null : "none");
+  if(!on) return;
+  selReg.each(function(m){
+    const mem = m.membros.filter(a => visNos.has(a.id) && a.x != null);
+    if(!mem.length) return;
+    const pts = [];
+    mem.forEach(a => { const r = raio(a) + 15; for(let k = 0; k < 8; k++){ const t = k / 8 * Math.PI * 2; pts.push([a.x + Math.cos(t) * r, a.y + Math.sin(t) * r]); } });
+    const casco = d3.polygonHull(pts);
+    if(!casco) return;
+    this.children[0].setAttribute("d", d3.line().curve(d3.curveCatmullRomClosed.alpha(.5))(casco));
+    let topo = casco[0]; casco.forEach(q => { if(q[1] < topo[1]) topo = q; });
+    this.children[1].setAttribute("x", d3.mean(mem, a => a.x)); this.children[1].setAttribute("y", topo[1] - 5 / zoomK);
+  });
+}
 
 const selNo = gNos.selectAll("g").data(nos).join("g")
   .attr("class", n => `no k-${n.k}${n.g ? " g-" + n.g : ""}`)
   .on("click", (ev, n) => { ev.stopPropagation(); escolhe(n.id); })
+  .on("mouseenter", (ev, n) => entraHover(ev, n)).on("mousemove", ev => moveHover(ev)).on("mouseleave", () => saiHover())
   .call(d3.drag().on("start", arrastaIni).on("drag", arrasta).on("end", arrastaFim));
 selNo.append("path").attr("class", "f");
 selNo.append("title").text(n => n.n + (n.a ? ` (${anos(n)})` : ""));
@@ -388,9 +459,24 @@ redesenhaFormas();
 
 /* zoom */
 let zoomK = 1;
-const zoom = d3.zoom().scaleExtent([.15, 6]).on("zoom", ev => { mundo.attr("transform", ev.transform); zoomK = ev.transform.k; atualizaRotulos(); });
+function escalaTextos(){
+  gRot.attr("font-size", 11 / zoomK).style("stroke-width", 3.2 / zoomK);
+  gRegioes.attr("font-size", 13 / zoomK).selectAll(".rg-nome").style("stroke-width", 3.5 / zoomK);
+  gFocoRot.attr("font-size", 11 / zoomK).style("stroke-width", 3 / zoomK);
+  rotulos.attr("y", n => n.y + raio(n) + 12 / zoomK);
+}
+const zoom = d3.zoom().scaleExtent([.15, 6]).on("zoom", ev => { mundo.attr("transform", ev.transform); zoomK = ev.transform.k; escalaTextos(); pedeRotulos(); });
 svg.call(zoom).on("dblclick.zoom", null);
-svg.on("click", () => { if(E.sel || E.selLig){ E.sel = null; E.selLig = null; destaca(); painel(); } });
+svg.on("click", () => {
+  if(E.foco){ E.foco = false; saiFoco(); }
+  if(E.sel || E.selLig != null){
+    E.sel = null; E.selLig = null;
+    if(E.aba === "detalhe" && E.caminho) E.aba = "caminho";
+    else if(E.aba === "detalhe" && E.trilha) E.aba = "trilhas";
+    if(E.aba === "trilhas" && E.trilha) return irPasso(E.passo);
+    destaca(); painel();
+  }
+});
 $("#zMais").onclick = () => svg.transition().duration(300).call(zoom.scaleBy, 1.4);
 $("#zMenos").onclick = () => svg.transition().duration(300).call(zoom.scaleBy, 1 / 1.4);
 $("#zAjusta").onclick = () => ajusta();
@@ -418,6 +504,8 @@ function calculaVisiveis(){
   selNo.style("display", n => v.has(n.id) ? null : "none");
   rotulos.style("display", n => v.has(n.id) ? null : "none");
   selLig.style("display", l => vl.has(l.id) ? null : "none");
+  mundo.classed("como-regiao", regioesAtivas());
+  desenhaRegioes();
   const autores = [...v].filter(id => porId[id].k === "a").length;
   $("#ano").textContent = E.ano;
   $("#anoInfo").textContent = `${autores} autores · ${visLigs.length} ligações visíveis`;
@@ -433,10 +521,11 @@ function configuraForcas(){
   sim.force("link", null).force("carga", null).force("x", null).force("y", null).force("colisao", null).force("centro", null);
   const w = W(), h = H();
   if(E.layout === "rede"){
+    const reg = regioesAtivas();
     sim.force("link", d3.forceLink(visLigs).id(n => n.id)
-        .distance(l => l.tp === "con" || l.tp === "gru" ? 70 : l.tp === "cor" ? 90 : 55)
-        .strength(l => l.tp === "con" ? .12 : l.tp === "gru" ? .18 : .5))
-      .force("carga", d3.forceManyBody().strength(n => n.k === "m" ? -320 : -150).distanceMax(500))
+        .distance(l => l.tp === "gru" ? (reg ? 28 : 70) : l.tp === "con" ? 70 : l.tp === "cor" ? 90 : 60)
+        .strength(l => l.tp === "con" ? (reg ? .04 : .12) : l.tp === "gru" ? (reg ? .75 : .18) : l.tp === "cor" ? (reg ? .01 : .4) : (reg ? .12 : .45)))
+      .force("carga", d3.forceManyBody().strength(n => n.k === "m" ? (reg ? -30 : -320) : (reg ? -110 : -170)).distanceMax(reg ? 300 : 500))
       .force("x", d3.forceX(w / 2).strength(.035)).force("y", d3.forceY(h / 2).strength(.045))
       .force("colisao", d3.forceCollide(n => raio(n) + 3));
   } else if(E.layout === "tempo"){
@@ -468,22 +557,34 @@ function ponto(n){
   const L = LUGARES[n.l]; if(!L || !projecao) return [W() / 2, H() / 2];
   return projecao([L[3], L[2]]);
 }
+let nTick = 0;
+const f1 = v => Math.round(v * 10) / 10;
 function tick(){
-  linhas.each(function(l){
-    const a = l.source, b = l.target; if(typeof a !== "object" || a.x == null) return;
+  for(const l of visLigs){
+    const a = l.source, b = l.target;
+    if(typeof a !== "object" || typeof b !== "object" || a.x == null || b.x == null) continue;
     const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1;
-    const rb = raio(b) * (b.k === "c" ? 1.25 : 1) + 2;
-    const x2 = b.x - dx / len * rb, y2 = b.y - dy / len * rb;
-    this.setAttribute("x1", a.x); this.setAttribute("y1", a.y); this.setAttribute("x2", x2); this.setAttribute("y2", y2);
-    const h = this.nextSibling; h.setAttribute("x1", a.x); h.setAttribute("y1", a.y); h.setAttribute("x2", x2); h.setAttribute("y2", y2);
-  });
+    const off = Math.min(70, len * (l.tp === "gru" || l.tp === "con" ? .08 : .17)) * (l.s < l.t ? 1 : -1);
+    const cx = (a.x + b.x) / 2 - dy / len * off, cy = (a.y + b.y) / 2 + dx / len * off;
+    const ra = raio(a) * (a.k === "c" ? 1.25 : 1) + 1, rb = raio(b) * (b.k === "c" ? 1.25 : 1) + 2.5;
+    const l1 = Math.hypot(cx - a.x, cy - a.y) || 1, l2 = Math.hypot(b.x - cx, b.y - cy) || 1;
+    const x1 = a.x + (cx - a.x) / l1 * ra, y1 = a.y + (cy - a.y) / l1 * ra;
+    const x2 = b.x - (b.x - cx) / l2 * rb, y2 = b.y - (b.y - cy) / l2 * rb;
+    const d = `M${f1(x1)},${f1(y1)}Q${f1(cx)},${f1(cy)} ${f1(x2)},${f1(y2)}`;
+    l._lk.setAttribute("d", d); l._pt.setAttribute("d", d); l._hit.setAttribute("d", d);
+    if(l._x){ const px = .25 * x1 + .5 * cx + .25 * x2, py = .25 * y1 + .5 * cy + .25 * y2;
+      l._x.setAttribute("d", `M${f1(px - 3.5)},${f1(py - 3.5)}l7,7M${f1(px + 3.5)},${f1(py - 3.5)}l-7,7`); }
+  }
   selNo.attr("transform", n => n.x == null ? null : `translate(${n.x},${n.y})`);
-  rotulos.attr("x", n => n.x).attr("y", n => n.y + raio(n) + 11);
+  rotulos.attr("x", n => n.x).attr("y", n => n.y + raio(n) + 12 / zoomK);
+  desenhaRegioes();
   desenhaTrilha();
+  if(++nTick % 20 === 0) pedeRotulos();
 }
-function arrastaIni(ev, n){ if(!ev.active) sim.alphaTarget(.25).restart(); n.fx = n.x; n.fy = n.y; }
+sim.on("end", () => pedeRotulos());
+function arrastaIni(ev, n){ if(!ev.active) sim.alphaTarget(.25).restart(); n.fx = n.x; n.fy = n.y; cartao.hidden = true; }
 function arrasta(ev, n){ n.fx = ev.x; n.fy = ev.y; }
-function arrastaFim(ev, n){ if(!ev.active) sim.alphaTarget(0); n.fx = null; n.fy = null; }
+function arrastaFim(ev, n){ if(!ev.active) sim.alphaTarget(0); if(!n._foco){ n.fx = null; n.fy = null; } }
 
 /* fundo: mapa-múndi ou eixo do tempo */
 const LUSO = new Set(["076","620","024","508","132","624","678","626","226"]);
@@ -521,29 +622,65 @@ function desenhaFundo(){
 }
 
 /* rótulos */
-function atualizaRotulos(){
-  const limite = zoomK > 2.2 ? 0 : zoomK > 1.4 ? 3 : zoomK > .9 ? 6 : 10;
-  rotulos.classed("mostra", n => E.layout === "mapa" ? zoomK > 1.6 || n.grau >= 9 : (n.k === "m" && zoomK > .6) || n.grau >= limite);
+let rotForcados = new Set(), pedidoRot = 0;
+function atualizaRotulos(){ pedeRotulos(); }
+function pedeRotulos(){ if(!pedidoRot) pedidoRot = requestAnimationFrame(() => { pedidoRot = 0; arrumaRotulos(); }); }
+function arrumaRotulos(){
+  const t = d3.zoomTransform(svg.node()), w = W(), h = H();
+  const lista = nos.filter(n => visNos.has(n.id) && n.x != null && !(n.k === "m" && regioesAtivas()));
+  const prio = n => (n.id === E.sel ? 1e6 : 0) + (rotForcados.has(n.id) ? 1e5 : 0) + (n.k === "a" ? 60 : n.k === "m" ? 50 : 0) + n.grau;
+  lista.sort((a, b) => prio(b) - prio(a));
+  const caixas = [], mostrar = new Set();
+  if(regioesAtivas()){
+    const regs = correntes.filter(m => visNos.has(m.id)).sort((a, b) => b.membros.length - a.membros.length);
+    const vistas = new Set();
+    regs.forEach(m => {
+      const el = m._nome || (m._nome = selReg.filter(x => x === m).select(".rg-nome").node());
+      const x = t.applyX(+el.getAttribute("x")), y = t.applyY(+el.getAttribute("y"));
+      if(!isFinite(x)) return;
+      const bw = m.n.length * 13 * .55 + 8, caixa = [x - bw / 2, y - 14, x + bw / 2, y + 4];
+      if(caixas.some(c => caixa[0] < c[2] && caixa[2] > c[0] && caixa[1] < c[3] && caixa[3] > c[1])) return;
+      caixas.push(caixa); vistas.add(m.id);
+    });
+    selReg.select(".rg-nome").classed("mostra", m => vistas.has(m.id));
+  }
+  for(const n of lista){
+    const x = t.applyX(n.x), y = t.applyY(n.y) + raio(n) * t.k + 12;
+    if(x < -80 || x > w + 80 || y < -20 || y > h + 20) continue;
+    const fs = n.k === "m" ? 12.3 : 11;
+    const bw = n.n.length * fs * .55 + 6, caixa = [x - bw / 2, y - fs, x + bw / 2, y + 4];
+    if(!rotForcados.has(n.id)){
+      if(t.k < .5 && n.grau < 10) continue;
+      if(caixas.some(c => caixa[0] < c[2] && caixa[2] > c[0] && caixa[1] < c[3] && caixa[3] > c[1])) continue;
+    }
+    caixas.push(caixa); mostrar.add(n.id);
+  }
+  rotulos.classed("mostra", n => mostrar.has(n.id));
 }
 
 /* ====================== destaque ====================== */
 function destaca(){
   const vz = new Set(), vl = new Set();
-  if(E.sel){ vz.add(E.sel); viz[E.sel].forEach(x => { if(E.tipos[x.l.tp]){ vz.add(x.o); vl.add(x.l.id); } }); }
+  const focoId = E.sel || (!E.caminho && !E.trilha && E.selLig == null ? E.hover : null);
+  if(focoId){ vz.add(focoId); viz[focoId].forEach(x => { if(E.tipos[x.l.tp]){ vz.add(x.o); vl.add(x.l.id); } }); }
   if(E.selLig != null){ const l = ligs[E.selLig]; vz.add(l.s); vz.add(l.t); }
   const cam = new Set(), camL = new Set();
   if(E.caminho){ E.caminho.nos.forEach(id => cam.add(id)); E.caminho.ligs.forEach(l => camL.add(l.id)); }
   if(E.trilha){ TRILHAS.find(t => t.id === E.trilha).p.slice(0, E.passo + 1).forEach(p => cam.add(p[0])); }
-  const algum = E.sel || E.selLig != null || E.caminho || E.trilha;
+  const algum = focoId || E.selLig != null || E.caminho || E.trilha;
   mundo.classed("apagando", !!algum);
   selNo.classed("foco", n => n.id === E.sel || (E.trilha && n.id === TRILHAS.find(t => t.id === E.trilha).p[E.passo][0]))
        .classed("viz", n => vz.has(n.id)).classed("caminho", n => cam.has(n.id));
   rotulos.classed("foco", n => n.id === E.sel).classed("viz", n => vz.has(n.id)).classed("caminho", n => cam.has(n.id));
   linhas.classed("viz", l => vl.has(l.id)).classed("caminho", l => camL.has(l.id)).classed("sel", l => l.id === E.selLig);
+  selLig.classed("anima", l => vl.has(l.id) || camL.has(l.id) || l.id === E.selLig);
+  selReg.classed("sel", m => m.id === E.sel || m.id === E.hover);
   mundo.classed("vozes", !!E.vozes && !algum);
   selNo.classed("voz", n => !!E.vozes && temVoz(n, E.vozes));
   rotulos.classed("voz", n => !!E.vozes && temVoz(n, E.vozes));
   if(E.vozes && !algum) rotulos.filter(n => temVoz(n, E.vozes)).classed("viz", true);
+  rotForcados = new Set([...(algum ? vz : []), ...cam, ...(E.vozes && !algum ? nos.filter(n => temVoz(n, E.vozes)).map(n => n.id) : [])]);
+  pedeRotulos();
   desenhaTrilha();
   try{ history.replaceState(null, "", E.sel ? "#" + E.sel : location.pathname + location.search); }catch(e){}
 }
@@ -558,6 +695,9 @@ function centra(ids, escala){
   const N = ids.map(id => porId[id]).filter(n => visNos.has(n.id) && n.x != null);
   if(!N.length) return;
   const [x0, x1] = d3.extent(N, n => n.x), [y0, y1] = d3.extent(N, n => n.y);
+  enquadra(x0, x1, y0, y1, escala);
+}
+function enquadra(x0, x1, y0, y1, escala){
   const w = W(), cobre = innerWidth <= 860 && !painelEl.classList.contains("recolhido") ? painelEl.offsetHeight : 0;
   const h = H() - cobre, pad = 90;
   const k = escala || Math.min(1.7, .9 / Math.max((x1 - x0 + pad) / w, (y1 - y0 + pad) / Math.max(120, h - 140)));
@@ -578,7 +718,67 @@ function escolhe(id, {centrar = false, aba = "detalhe"} = {}){
   }
   E.sel = id; E.selLig = null; E.aba = aba;
   destaca(); painel(); abrePainel();
-  if(centrar) setTimeout(() => centra([id, ...viz[id].map(x => x.o)]), 60);
+  if(E.foco) aplicaFoco();
+  else if(centrar) setTimeout(() => centra([id, ...viz[id].map(x => x.o)]), 60);
+}
+
+/* modo foco: vizinhos em setores ao redor do autor */
+let focoTimer = null;
+function saiFoco(reinicia = true){
+  if(focoTimer){ focoTimer.stop(); focoTimer = null; }
+  gFocoRot.selectAll("*").remove();
+  let teve = false;
+  nos.forEach(n => { if(n._foco){ n.fx = null; n.fy = null; n._foco = false; teve = true; } });
+  mundo.classed("focando", false);
+  selNo.classed("no-foco", false); rotulos.classed("no-foco", false); selLig.classed("lig-foco", false);
+  if(teve && reinicia) sim.alpha(.35).restart();
+}
+function aplicaFoco(){
+  saiFoco(false);
+  if(!E.foco || !E.sel || E.layout !== "rede") return;
+  const c = porId[E.sel]; if(c.x == null) return;
+  const set = {dir:[], baixo:[], esq:[], cima:[], anel:[]}, usados = new Set([c.id]);
+  ["inf", "dia", "cri", "gru", "con", "cor"].forEach(tp => viz[c.id].forEach(x => {
+    if(x.l.tp !== tp || !visNos.has(x.o) || !E.tipos[tp] || usados.has(x.o)) return;
+    if(regioesAtivas() && porId[x.o].k === "m") return;
+    usados.add(x.o);
+    set[tp === "inf" ? (x.saida ? "dir" : "esq") : tp === "dia" ? "cima" : tp === "cri" ? "baixo" : "anel"].push(porId[x.o]);
+  }));
+  const ang = {dir:[-32, 32], baixo:[38, 142], esq:[148, 212], cima:[218, 322], anel:[0, 360]};
+  const nomes = {dir:"Influenciou", esq:"Influenciado por", cima:"Diálogos", baixo:"Críticas"};
+  const R = 170 + 14 * Math.max(...["dir", "esq", "cima", "baixo"].map(k => set[k].length));
+  const alvos = new Map();
+  Object.entries(set).forEach(([k, L]) => {
+    if(!L.length) return;
+    L.sort((a, b) => ((a.a || [0])[0]) - ((b.a || [0])[0]));
+    const [a0, a1] = ang[k], r0 = k === "anel" ? R + 110 : R;
+    L.forEach((n, i) => {
+      const f = k === "anel" ? i / L.length : (i + .5) / L.length;
+      const t = (a0 + (a1 - a0) * f) * Math.PI / 180, r = r0 + (L.length > 3 ? (i % 2) * 34 : 0);
+      alvos.set(n, [c.x + Math.cos(t) * r, c.y + Math.sin(t) * r]);
+    });
+    if(k !== "anel"){
+      const tm = (a0 + a1) / 2 * Math.PI / 180, rr = r0 + (L.length > 3 ? 34 : 0) + (k === "cima" || k === "baixo" ? 62 : 95);
+      gFocoRot.append("text").attr("x", c.x + Math.cos(tm) * rr).attr("y", c.y + Math.sin(tm) * rr + 4).text(nomes[k]);
+    }
+  });
+  c.fx = c.x; c.fy = c.y; c._foco = true;
+  const ini = new Map();
+  alvos.forEach((p, n) => { ini.set(n, [n.x, n.y]); n._foco = true; });
+  const dentro = new Set([c.id, ...[...alvos.keys()].map(n => n.id)]);
+  mundo.classed("focando", true);
+  selNo.classed("no-foco", n => dentro.has(n.id)); rotulos.classed("no-foco", n => dentro.has(n.id));
+  selLig.classed("lig-foco", l => (l.s === c.id && dentro.has(l.t)) || (l.t === c.id && dentro.has(l.s)));
+  escalaTextos();
+  focoTimer = d3.timer(dt => {
+    const e = d3.easeCubicOut(Math.min(1, dt / 650));
+    alvos.forEach((p, n) => { const [x0, y0] = ini.get(n); n.fx = n.x = x0 + (p[0] - x0) * e; n.fy = n.y = y0 + (p[1] - y0) * e; });
+    tick();
+    if(dt >= 650){ focoTimer.stop(); focoTimer = null; sim.alpha(.1).restart(); }
+  });
+  const pts = [[c.x, c.y], ...alvos.values()];
+  const ext = R + (set.anel.length ? 140 : 110);
+  enquadra(c.x - ext, c.x + ext, c.y - ext, c.y + ext);
 }
 function escolheLig(l){ E.selLig = l.id; E.sel = null; E.aba = "detalhe"; destaca(); painel(); abrePainel(); }
 
@@ -587,8 +787,6 @@ const C = $("#conteudo");
 function abas(){ document.querySelectorAll(".abas button").forEach(b => b.setAttribute("aria-selected", b.dataset.aba === E.aba)); }
 document.querySelectorAll(".abas button").forEach(b => b.onclick = () => {
   E.aba = b.dataset.aba;
-  if(E.aba !== "trilhas" && E.trilha){ E.trilha = null; destaca(); }
-  if(E.aba !== "caminho" && E.caminho){ E.caminho = null; destaca(); }
   painel(); abrePainel();
 });
 function painel(){
@@ -600,6 +798,23 @@ const bola = n => `<span class="bola" style="background:${corDe(n)}"></span>`;
 const itemNo = (n, sub) => `<button class="item" data-ir="${n.id}">${bola(n)}<span>${esc(n.n)}${sub ? `<small>${esc(sub)}</small>` : ""}</span></button>`;
 const linkWiki = n => n.w ? `<a class="btn" href="../wiki-filosofica/#${esc(n.w)}" target="_blank" rel="noopener">📖 Wiki Filosófica</a>` : "";
 
+function faixaVolta(){
+  if(E.caminho){
+    const c = E.caminho, i = c.nos.indexOf(E.sel);
+    let h = `<div class="volta"><button class="volta-btn" data-acao="volta-caminho">← Voltar ao caminho<small>${esc(porId[c.nos[0]].n)} → ${esc(porId[c.nos.at(-1)].n)}${i >= 0 ? ` · parada ${i + 1} de ${c.nos.length}` : ""}</small></button><button class="volta-x" data-acao="sai-caminho" aria-label="Fechar o caminho" title="Fechar o caminho">✕</button></div>`;
+    if(i >= 0){
+      h += `<div class="volta-nav">${i > 0 ? `<button class="btn" data-ir="${c.nos[i - 1]}">‹ ${esc(porId[c.nos[i - 1]].n)}</button>` : "<span></span>"}${i < c.nos.length - 1 ? `<button class="btn" data-ir="${c.nos[i + 1]}">${esc(porId[c.nos[i + 1]].n)} ›</button>` : ""}</div>`;
+      const notas = [c.ligs[i - 1], c.ligs[i]].filter(Boolean).map(l => `${esc(porId[l.s].n)} ${esc(TIPOS_LIG[l.tp].verbo)} ${esc(porId[l.t].n)}${l.nota ? ": " + esc(l.nota) : ""}`);
+      if(notas.length) h += `<p class="nota" style="margin:0 0 14px;font-size:.84rem"><b>Neste caminho.</b> ${notas.join(" · ")}</p>`;
+    }
+    return h;
+  }
+  if(E.trilha){
+    const t = TRILHAS.find(x => x.id === E.trilha);
+    return `<div class="volta"><button class="volta-btn" data-acao="volta-trilha">← Voltar à trilha<small>${esc(t.t)} · parada ${E.passo + 1} de ${t.p.length}</small></button><button class="volta-x" data-acao="sai-trilha" aria-label="Fechar a trilha" title="Fechar a trilha">✕</button></div>`;
+  }
+  return "";
+}
 function painelDetalhe(){
   if(E.selLig != null) return painelLigacao(ligs[E.selLig]);
   if(!E.sel) return painelInicio();
@@ -625,7 +840,7 @@ function painelDetalhe(){
     else
       lig += `<h4>${t} · ${L2.length}</h4><div class="lista">${L2.map(x => `<button class="item" data-lig="${x.l.id}">${bola(porId[x.o])}<span>${esc(porId[x.o].n)}${x.l.nota ? `<small>${esc(x.l.nota)}</small>` : ""}</span></button>`).join("")}</div>`;
   });
-  C.innerHTML = `
+  C.innerHTML = `${faixaVolta()}
     <div class="kicker" style="color:${corDe(n)}">${esc(tipoTxt)}</div>
     <h2>${esc(n.n)}</h2>
     <div class="meta">${esc(anos(n))}${L ? ` · ${esc(L[0])}${L[1] !== L[0] ? ", " + esc(L[1]) : ""}` : ""}</div>
@@ -635,6 +850,7 @@ function painelDetalhe(){
     ${n.c ? `<blockquote>“${esc(n.c[0])}”<cite>${esc(n.c[1])}</cite></blockquote>` : ""}
     ${n.k !== "c" && n.k !== "m" ? `<div class="selos"><span class="selo">${n.grau} ligações</span>${n.ponte > 0 ? `<span class="selo">índice de ponte ${Math.round(n.ponteN * 100)}</span>` : ""}</div>` : ""}
     <div class="botoes">
+      ${E.layout === "rede" ? `<button class="btn${E.foco ? " forte" : ""}" data-acao="foco">◎ ${E.foco ? "Sair do modo foco" : "Modo foco"}</button>` : ""}
       <button class="btn" data-acao="caminho-de">↝ Caminho a partir daqui</button>
       ${linkWiki(n)}
       <button class="btn" data-acao="agora-no">🗺️ Levar ao Ágora Mapas</button>
@@ -646,7 +862,7 @@ function painelLigacao(l){
   const a = porId[l.s], b = porId[l.t], T = TIPOS_LIG[l.tp];
   const lado = n => `<div><h5 data-ir="${n.id}">${esc(n.n)}</h5><p class="meta" style="margin:0">${esc(anos(n))}</p>
     ${n.c ? `<blockquote>“${esc(n.c[0])}”<cite>${esc(n.c[1])}</cite></blockquote>` : `<p style="margin-top:8px">${esc(n.i || "")}</p>`}</div>`;
-  C.innerHTML = `
+  C.innerHTML = `${faixaVolta()}
     <div class="kicker">Ligação</div>
     <h2>${esc(a.n)} <span style="color:var(--destaque)">→</span> ${esc(b.n)}</h2>
     <div class="tipo-lig">${amostraLig(l.tp)} ${esc(a.n)} ${esc(T.verbo)} ${esc(b.n)}</div>
@@ -698,7 +914,7 @@ function painelCaminho(){
   C.innerHTML = `
     <div class="kicker">Caminhos</div>
     <h2>Como se chega de um autor a outro?</h2>
-    <p class="dica">O caminho mais curto pela rede de influências, diálogos e polêmicas.</p>
+    <p class="dica">O caminho mais curto pela rede de influências, diálogos e polêmicas. Clique num autor da lista para ver a ficha; o caminho continua aceso e você volta por aqui.</p>
     <label class="campo">De ${sel("camA", camA)}</label>
     <label class="campo">Até ${sel("camB", camB)}</label>
     <label class="check"><input type="checkbox" id="camF"${camFora ? " checked" : ""}> Passar por pensadores de fora (Marx, Nietzsche…)</label>
@@ -733,7 +949,8 @@ function traca(){
   E.caminho = bfs(camA, camB, camConceitos, camFora || porId[camA].k === "e");
   if(!E.caminho) E.caminhoErro = "Não há caminho com essas opções. Marque uma das caixas para ampliar a busca.";
   else {
-    E.sel = null; E.selLig = null;
+    E.sel = null; E.selLig = null; E.trilha = null; E.foco = false; saiFoco();
+    garanteCamadas(E.caminho.nos);
     if(E.layout === "mapa") trocaLayout("rede");
     if(E.ano < 2026){ E.ano = 2026; $("#slider").value = 2026; calculaVisiveis(); configuraForcas(); }
     destaca(); setTimeout(() => centra(E.caminho.nos), 80);
@@ -767,9 +984,16 @@ function painelTrilhas(){
     <h4>Paradas</h4>
     <div class="lista">${t.p.map((p, i) => `<button class="item" data-passo="${i}">${bola(porId[p[0]])}<span style="${i === E.passo ? "font-weight:600" : ""}">${i + 1}. ${esc(porId[p[0]].n)}</span></button>`).join("")}</div>`;
 }
+function garanteCamadas(ids){
+  let mudou = false;
+  ids.forEach(id => { const k = porId[id].k; if(!E.kinds[k]){ E.kinds[k] = true; mudou = true; } });
+  if(mudou){ renderCamadas(); calculaVisiveis(); configuraForcas(); }
+}
 function irPasso(i){
   const t = TRILHAS.find(x => x.id === E.trilha);
-  E.passo = Math.max(0, Math.min(t.p.length - 1, i)); E.sel = null; E.selLig = null; E.caminho = null;
+  E.passo = Math.max(0, Math.min(t.p.length - 1, i)); E.sel = null; E.selLig = null; E.caminho = null; E.aba = "trilhas";
+  if(E.foco){ E.foco = false; saiFoco(); }
+  garanteCamadas(t.p.map(p => p[0]));
   if(E.layout === "mapa") trocaLayout("rede");
   if(E.ano < 2026){ E.ano = 2026; $("#slider").value = 2026; calculaVisiveis(); configuraForcas(); }
   destaca(); painelTrilhas();
@@ -927,16 +1151,21 @@ C.addEventListener("click", ev => {
   const t = ev.target.closest("[data-ir],[data-lig],[data-acao],[data-trilha],[data-passo],[data-modo],[data-resp],[data-voz],[data-tam],[data-aba-ir]");
   if(!t) return;
   const d = t.dataset;
-  if(d.ir){ E.trilha = null; E.caminho = null; return escolhe(d.ir, {centrar:true}); }
+  if(d.ir){ return escolhe(d.ir, {centrar:!(E.caminho || E.trilha)}); }
   if(d.lig){ return escolheLig(ligs[+d.lig]); }
   if(d.abaIr){ E.aba = d.abaIr; return painel(); }
-  if(d.trilha){ E.trilha = d.trilha; E.aba = "trilhas"; return irPasso(0); }
+  if(d.trilha){ E.trilha = d.trilha; E.caminho = null; E.aba = "trilhas"; return irPasso(0); }
   if(d.passo){ return irPasso(+d.passo); }
   if(d.modo){ return novaQuestao(d.modo); }
   if(d.resp){ return responde(d.resp); }
-  if(d.voz){ E.vozes = E.vozes === d.voz ? null : d.voz; E.sel = null; E.selLig = null; E.caminho = null; E.trilha = null; destaca(); if(E.vozes) setTimeout(() => centra(nos.filter(n => visNos.has(n.id) && temVoz(n, E.vozes)).map(n => n.id)), 50); return painelAnalise(); }
+  if(d.voz){ if(E.foco){ E.foco = false; saiFoco(); } E.vozes = E.vozes === d.voz ? null : d.voz; E.sel = null; E.selLig = null; E.caminho = null; E.trilha = null; destaca(); if(E.vozes) setTimeout(() => centra(nos.filter(n => visNos.has(n.id) && temVoz(n, E.vozes)).map(n => n.id)), 50); return painelAnalise(); }
   if(d.tam){ E.tamanho = d.tam; redesenhaFormas(); sim.force("colisao") && sim.force("colisao").radius(n => raio(n) + 3); sim.alpha(.4).restart(); return painelAnalise(); }
   const a = d.acao;
+  if(a === "foco"){ E.foco = !E.foco; if(E.foco) aplicaFoco(); else { saiFoco(); centra([E.sel, ...viz[E.sel].map(x => x.o)]); } return painelDetalhe(); }
+  if(a === "volta-caminho"){ E.sel = null; E.selLig = null; E.aba = "caminho"; if(E.foco){ E.foco = false; saiFoco(); } destaca(); painel(); return centra(E.caminho.nos); }
+  if(a === "sai-caminho"){ E.caminho = null; destaca(); return painel(); }
+  if(a === "volta-trilha"){ if(E.foco){ E.foco = false; saiFoco(); } return irPasso(E.passo); }
+  if(a === "sai-trilha"){ E.trilha = null; destaca(); return painel(); }
   if(a === "sortear"){ const n = sorteia(nos.filter(n => n.k === "a" && visNos.has(n.id))); return escolhe(n.id, {centrar:true}); }
   if(a === "caminho-de"){ camA = E.sel; camB = null; E.caminho = null; E.caminhoErro = null; E.aba = "caminho"; return painel(); }
   if(a === "tracar") return traca();
@@ -962,10 +1191,49 @@ C.addEventListener("click", ev => {
 C.addEventListener("change", ev => {
   const t = ev.target; if(!t.dataset.filtro) return;
   E[t.dataset.filtro][t.dataset.k] = t.checked;
-  if(t.dataset.filtro === "kinds") guarda.set("kinds", E.kinds);
+  if(t.dataset.filtro === "kinds"){ E.kinds.a = true; guarda.set("camadas", E.kinds); renderCamadas(); if(E.foco){ E.foco = false; saiFoco(); } }
   if(t.dataset.filtro === "tipos") guarda.set("tipos", E.tipos);
   atualizaTudo();
 });
+
+/* ====================== camadas ====================== */
+const CAMADAS = [["m", "Correntes"], ["c", "Conceitos"], ["e", "Pensadores de fora"]];
+function renderCamadas(){
+  const el = $("#camadas");
+  el.style.display = E.layout === "mapa" ? "none" : "";
+  el.innerHTML = `<button type="button" class="fixo" aria-pressed="true" title="Autores lusófonos sempre visíveis">Autores</button>` +
+    CAMADAS.map(([k, t]) => `<button type="button" data-camada="${k}" aria-pressed="${E.kinds[k]}">${E.kinds[k] ? "" : "+ "}${t}</button>`).join("");
+}
+$("#camadas").addEventListener("click", ev => {
+  const b = ev.target.closest("[data-camada]"); if(!b) return;
+  const k = b.dataset.camada; E.kinds[k] = !E.kinds[k]; guarda.set("camadas", E.kinds);
+  if(E.foco){ E.foco = false; saiFoco(false); }
+  renderCamadas(); atualizaTudo();
+  if(E.aba === "analise") painelAnalise();
+  if(k === "m" && E.kinds.m && E.layout === "rede") aviso("Cada mancha colorida é uma corrente. Clique nela para ver os autores do grupo.", 4500);
+});
+
+/* ====================== cartão ao passar o mouse ====================== */
+const cartao = $("#cartao");
+const temHover = matchMedia("(hover: hover)").matches;
+const NOME_K = {e:"Pensador de fora", c:"Conceito", m:"Corrente ou movimento"};
+function entraHover(ev, n){
+  if(!temHover) return;
+  E.hover = n.id; destaca();
+  const sub = [anos(n), n.k === "a" ? GRUPOS[n.g] : NOME_K[n.k]].filter(Boolean).join(" · ");
+  const ideia = n.i ? (n.i.length > 125 ? n.i.slice(0, 122) + "…" : n.i) : "";
+  cartao.innerHTML = `<b>${esc(n.n)}</b><span>${esc(sub)}</span>${ideia ? `<p>${esc(ideia)}</p>` : ""}<small>${n.grau} ligações · clique para abrir</small>`;
+  cartao.hidden = false; moveHover(ev);
+}
+function moveHover(ev){
+  if(cartao.hidden) return;
+  const r = $("#tela").getBoundingClientRect();
+  let x = ev.clientX - r.left + 16, y = ev.clientY - r.top + 16;
+  if(x + cartao.offsetWidth > r.width - 8) x = ev.clientX - r.left - cartao.offsetWidth - 16;
+  if(y + cartao.offsetHeight > r.height - 70) y = ev.clientY - r.top - cartao.offsetHeight - 16;
+  cartao.style.left = Math.max(4, x) + "px"; cartao.style.top = Math.max(4, y) + "px";
+}
+function saiHover(){ if(E.hover == null) return; E.hover = null; cartao.hidden = true; destaca(); }
 
 /* ====================== legenda ====================== */
 function amostraLig(tp){
@@ -980,8 +1248,8 @@ function legenda(){
   $("#legenda").className = "legenda" + (aberta ? "" : " fechada");
   $("#legenda").innerHTML = `<button class="alterna" id="legAlt">${aberta ? "▾ Legenda" : "▸ Legenda"}</button><div class="corpo" style="display:${aberta ? "grid" : "none"};gap:3px">
     <b>Pontos</b>${Object.entries(GRUPOS).map(([k, t]) => `<span>${f("a", k)}${t}</span>`).join("")}
-    <span>${f("e")}Pensador de fora</span><span>${f("m")}Corrente ou movimento</span><span>${f("c")}Conceito</span>
-    <b>Linhas</b>${Object.entries(TIPOS_LIG).map(([k, t]) => `<span>${amostraLig(k)}${t.nome}</span>`).join("")}</div>`;
+    <span>${f("e")}Pensador de fora</span><span><svg width="14" height="14" aria-hidden="true"><rect x="1" y="2" width="12" height="10" rx="5" fill="var(--pt)" fill-opacity=".15" stroke="var(--pt)" stroke-opacity=".6"/></svg>Corrente (mancha)</span><span>${f("c")}Conceito</span>
+    <b>Linhas</b><span style="color:var(--apagado)">bolinhas correm na direção da influência</span>${Object.entries(TIPOS_LIG).map(([k, t]) => `<span>${amostraLig(k)}${t.nome}</span>`).join("")}</div>`;
   $("#legAlt").onclick = () => { guarda.set("legenda", !aberta); legenda(); };
 }
 
@@ -1011,6 +1279,8 @@ function vaiBusca(id){ sug.hidden = true; busca.value = ""; busca.blur(); E.tril
 /* ====================== layout, tempo, tema ====================== */
 async function trocaLayout(l){
   E.layout = l; mudouLayout = true;
+  if(E.foco){ E.foco = false; saiFoco(false); }
+  renderCamadas();
   document.querySelectorAll("[data-layout]").forEach(b => b.setAttribute("aria-pressed", b.dataset.layout === l));
   if(l === "mapa"){ fazProjecao(); aviso("Carregando o mapa…", 1500); await carregaMundo(); if(geo === false) aviso("Sem internet para o contorno dos países. Os autores aparecem nas posições geográficas.", 4000); }
   atualizaTudo(true);
@@ -1056,12 +1326,14 @@ addEventListener("hashchange", () => { const h = decodeURIComponent(location.has
 
 /* ====================== início ====================== */
 legenda();
+renderCamadas();
 calculaVisiveis();
 nos.forEach((n, i) => { const a = i / nos.length * Math.PI * 2 * 7; n.x = W() / 2 + Math.cos(a) * (40 + i); n.y = H() / 2 + Math.sin(a) * (40 + i); });
 configuraForcas();
 for(let i = 0; i < 160; i++) sim.tick();
 tick();
 $("#carregando").remove();
+escalaTextos();
 atualizaRotulos();
 const inicial = decodeURIComponent(location.hash.slice(1));
 painel();
