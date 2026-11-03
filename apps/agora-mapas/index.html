@@ -494,7 +494,24 @@ const ARIST=()=>T('Estética em Aristóteles',[
   [['es','be','investiga o'],['es','ar','estuda a'],['be','op','depende de'],['ari','pe','escreveu'],['ari','pla','critica'],['ari','be','define o'],
    ['ar','mm','fundamenta-se em'],['mm','pa','gera o'],['mm','vs','segue a'],['po','ar','é forma de'],['pe','tr','analisa a'],['tr','po','é forma de'],
    ['tr','ca','provoca a'],['ca','em','purifica as'],['ci','po','expressa-se como']]);
+const HPP=()=>{const m=T('Mudança e permanência',[
+  ['mp','Mudança e permanência','tema',0,-440],
+  ['he','Heráclito','filosofo',-480,-260],['pa','Parmênides','filosofo',480,-260],['pl','Platão','filosofo',0,-200],
+  ['tf','Tudo flui','citacao',-860,-340],['ri','Ninguém se banha duas vezes no mesmo rio','citacao',-860,-150],['oe','O ser é, e o não ser não é','citacao',860,-260],
+  ['mu','Mudança (devir)','conceito',-480,-40],['pe','Permanência (ser)','conceito',480,-40],
+  ['es','Essência','conceito',480,90],
+  ['se','Sentidos','conceito',-660,200],['ra','Razão','conceito',660,200],
+  ['ms','Mundo sensível','conceito',-260,200],['mi','Mundo das Ideias','conceito',260,200],
+  ['op','Opinião (doxa)','conceito',-260,370],['ce','Conhecimento estável','conceito',260,370]],
+  [['mp','he','é debatida por'],['mp','pa','é debatida por'],['mp','pl','é conciliada por'],
+   ['he','tf','afirmou'],['ri','tf','ilustra o'],['tf','mu','expressa a'],['he','mu','defende a'],
+   ['pa','oe','afirmou'],['oe','pe','expressa a'],['pa','pe','defende a'],['mu','pe','é oposta à'],['pa','ra','confia na'],
+   ['pl','ms','admite o'],['pl','mi','propõe o'],['ms','mu','é o reino da'],['se','ms','percebem o'],['ra','mi','alcança o'],
+   ['ms','op','gera apenas'],['pl','ce','busca o'],['mi','ce','sustenta o'],['mi','es','guarda a'],['es','pe','é o que permanece:']]);
+  const W={'Mudança (devir)':'devir','Permanência (ser)':'ser','Opinião (doxa)':'opiniao','Conhecimento estável':'conhecimento'};
+  m.nodes.forEach(n=>{if(W[n.text])n.wiki=W[n.text]});return m};
 const TPL=[
+ {name:'Mudança e permanência',desc:'Heráclito, Parmênides e Platão',make:HPP},
  {name:'Estética em Platão',desc:'Abra este primeiro',make:PLATAO,join:true},
  {name:'Estética em Aristóteles',desc:'Depois toque em Juntar para comparar com Platão',make:ARIST,join:true},
  {name:'Exemplo: Platão e Aristóteles juntos',desc:'O resultado da junção, já organizado',make:()=>({...PLATAO(),title:'Estética · Platão e Aristóteles',merge:ARIST(),names:['Platão','Aristóteles']})},
