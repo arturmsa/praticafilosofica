@@ -401,12 +401,12 @@ ${OK.map(k=>`.origem .lk.o-${k}{stroke:var(--o-${k}-line)} .arh-${k}{fill:var(--
 .lk.f-oposicao{stroke:#c0392b;stroke-width:1.8;stroke-dasharray:7 5} .arh-foposicao{fill:#c0392b}
 .lk.f-causa{stroke:#2e8b57;stroke-width:2;stroke-dasharray:9 6} .arh-fcausa{fill:#2e8b57}
 .lk.f-origem{stroke:#2c5b8f;stroke-width:2.3} .arh-forigem{fill:#2c5b8f}
-.lk.f-parte{stroke:#8a94a3;stroke-width:1.5;stroke-dasharray:1.5 4;stroke-linecap:round} .arh-fparte{fill:#8a94a3}
+.lk.f-parte{stroke:#6b7686;stroke-width:2.6;stroke-dasharray:2 5;stroke-linecap:round} .arh-fparte{fill:#6b7686}
 .xm circle{fill:#fff;stroke:#c0392b;stroke-width:1.6} .xm path{stroke:#c0392b;stroke-width:1.8;stroke-linecap:round;fill:none}
 .mov .lk.f-causa{animation:flui 1.6s linear infinite}
 .mov .lk.run{stroke-dasharray:9 6;animation:flui .9s linear infinite}
-.mov .lk.f-parte.run{stroke-dasharray:1.5 4;animation:fluip .9s linear infinite}
-@keyframes flui{to{stroke-dashoffset:-15}} @keyframes fluip{to{stroke-dashoffset:-11}}
+.mov .lk.f-parte.run{stroke-dasharray:2 5;animation:fluip .9s linear infinite}
+@keyframes flui{to{stroke-dashoffset:-15}} @keyframes fluip{to{stroke-dashoffset:-14}}
 @media (prefers-reduced-motion:reduce){.lk{animation:none!important}}
 .lk.sel,.origem .lk.sel{stroke:var(--accent);stroke-width:2.4} .arh2{fill:var(--accent)}
 .ll{font:500 13px 'Alegreya Sans',system-ui,sans-serif;fill:var(--link);paint-order:stroke;stroke:var(--bg2);stroke-width:6px;stroke-linejoin:round;cursor:pointer}
@@ -421,7 +421,7 @@ ${OK.map(k=>`.origem .lk.o-${k}{stroke:var(--o-${k}-line)} .arh-${k}{fill:var(--
 .t-obra rect.box{fill:var(--obra-bg);stroke:var(--obra)} .t-obra .tl{fill:var(--obra)}
 .t-citacao rect.box{fill:var(--citacao-bg);stroke:var(--citacao)} .t-citacao .tl{fill:var(--citacao)}
 .t-periodo rect.box{fill:var(--periodo-bg);stroke:var(--periodo)} .t-periodo .tl{fill:var(--periodo)}
-.node.c-amarelo rect.box{fill:#fff1b8;stroke:#b8930a;stroke-width:2} .node.c-amarelo .tx{fill:var(--node-ink)} .node.c-amarelo .tl{fill:#b8930a} .node.c-verde rect.box{fill:#d8f0cf;stroke:#3f8a2e;stroke-width:2} .node.c-verde .tx{fill:var(--node-ink)} .node.c-verde .tl{fill:#3f8a2e} .node.c-azul rect.box{fill:#d6e6fa;stroke:#2c64b0;stroke-width:2} .node.c-azul .tx{fill:var(--node-ink)} .node.c-azul .tl{fill:#2c64b0} .node.c-laranja rect.box{fill:#fde0c4;stroke:#c46a12;stroke-width:2} .node.c-laranja .tx{fill:var(--node-ink)} .node.c-laranja .tl{fill:#c46a12} .node.c-rosa rect.box{fill:#f9d6e2;stroke:#b0406a;stroke-width:2} .node.c-rosa .tx{fill:var(--node-ink)} .node.c-rosa .tl{fill:#b0406a}
+.node.c-amarelo rect.box{fill:#ffd95a;stroke:#a07800;stroke-width:2.2} .node.c-amarelo .tx{fill:#1b2230} .node.c-amarelo .tl{fill:#1b2230;opacity:.75} .node.c-verde rect.box{fill:#9fdc8a;stroke:#2f7a22;stroke-width:2.2} .node.c-verde .tx{fill:#1b2230} .node.c-verde .tl{fill:#1b2230;opacity:.75} .node.c-azul rect.box{fill:#9cc3f5;stroke:#1f5aa8;stroke-width:2.2} .node.c-azul .tx{fill:#1b2230} .node.c-azul .tl{fill:#1b2230;opacity:.75} .node.c-laranja rect.box{fill:#ffb877;stroke:#b55a0c;stroke-width:2.2} .node.c-laranja .tx{fill:#1b2230} .node.c-laranja .tl{fill:#1b2230;opacity:.75} .node.c-rosa rect.box{fill:#f7a6c2;stroke:#a8325d;stroke-width:2.2} .node.c-rosa .tx{fill:#1b2230} .node.c-rosa .tl{fill:#1b2230;opacity:.75}
 .calmo .node rect.box{fill:var(--panel);stroke:var(--muted)} .calmo .tl{fill:var(--muted)}
 .calmo .t-tema rect.box{fill:var(--panel);stroke:var(--ink);stroke-width:2.6} .calmo .t-tema .tx{fill:var(--ink)}
 ${OK.map(k=>`.origem .node.o-${k} rect.box{fill:var(--o-${k});stroke:var(--o-${k}-line);stroke-width:2}`).join('\n')}
@@ -570,7 +570,7 @@ const TPL=[
 /* ---------- salvar ---------- */
 function mapObj(){return{app:'agora-mapas',v:2,title:st.title,nodes:st.nodes,links:st.links,custom:st.custom,sources:st.sources,view:st.view}}
 function snap(){return JSON.stringify({title:st.title,nodes:st.nodes,links:st.links,sources:st.sources,view:st.view})}
-function save(){try{localStorage.setItem(KEY,JSON.stringify({...mapObj(),calmo,linkStyle,filesOpen,toolsOpen,movimento,relOpen}))}catch(e){toast('Sem espaço para salvar neste navegador. Baixe o arquivo do mapa em Arquivos.')}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({...mapObj(),calmo,linkStyle,filesOpen,toolsOpen,movimento,relOpen,curColor}))}catch(e){toast('Sem espaço para salvar neste navegador. Baixe o arquivo do mapa em Arquivos.')}}
 function pushHist(){hist.push(snap());if(hist.length>60)hist.shift();$('bUndo').disabled=false}
 function undo(){const s=hist.pop();if(!s)return;const o=JSON.parse(s);Object.assign(st,o);$('title').value=st.title;
   selNode=selLink=linkFrom=uniteFrom=null;closeSheets(true);commit();$('bUndo').disabled=!hist.length}
@@ -628,7 +628,7 @@ const FAM={
  oposicao:{nome:'Oposição e crítica',cor:'#c0392b',re:/^(critic|refut|e oposto|e oposta|opoe|op[oõ]e|combat|nega|rompe|impede|contrast|denunci|recusa|contradiz|desmente|questiona|rejeit)/},
  causa:{nome:'Causa e consequência',cor:'#2e8b57',re:/^(leva|caus|gera|produz|pode gerar|resulta|transforma|provoca|desperta|impulsion|estimula|desenvolve|permite|possibilita|alimenta|intensifica|faz surgir|cria)/},
  origem:{nome:'Origem e fundamento',cor:'#2c5b8f',re:/^(origina|fundamenta|influenci|retoma|e condicao|escreveu|e a base|e base|pressupoe|sustenta|surge|responde|deriva|parte d|depende)/},
- parte:{nome:'Parte e exemplo',cor:'#8a94a3',re:/^(faz parte|e exemplo|exemplifica|expressa|e forma|e uma|e um |compoe|pertence|e etapa|inclui|ilustra|e tipo)/},
+ parte:{nome:'Parte e exemplo',cor:'#6b7686',re:/^(faz parte|e exemplo|exemplifica|expressa|e forma|e uma|e um |compoe|pertence|e etapa|inclui|ilustra|e tipo)/},
  outra:{nome:'Outras relações',cor:'',re:null}};
 const FK=['oposicao','causa','origem','parte'];
 function famOf(l){if(l.fam&&FAM[l.fam])return l.fam;const t=String(l.label||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
@@ -685,14 +685,14 @@ function renderLegend(){const lg=$('legend');if(st.sources.length<2||present!=nu
 /* ---------- ferramentas ---------- */
 $('types').innerHTML=Object.entries(TYPES).map(([k,v])=>`<button class="tb" data-new="${k}" title="Novo ${v.toLowerCase()}"><i class="sw" style="background:var(--${k==='tema'?'tema':k+'-bg'});border-color:var(--${k==='tema'?'tema-line':k})"></i><span>${v}</span></button>`).join('');
 $('types').addEventListener('click',e=>{const b=e.target.closest('[data-new]');if(b)addNode(b.dataset.new)});
-const COLORS={"amarelo": ["Amarelo", "#fff1b8", "#b8930a"], "verde": ["Verde", "#d8f0cf", "#3f8a2e"], "azul": ["Azul", "#d6e6fa", "#2c64b0"], "laranja": ["Laranja", "#fde0c4", "#c46a12"], "rosa": ["Rosa", "#f9d6e2", "#b0406a"]};
+const COLORS={"amarelo": ["Amarelo", "#ffd95a", "#a07800"], "verde": ["Verde", "#9fdc8a", "#2f7a22"], "azul": ["Azul", "#9cc3f5", "#1f5aa8"], "laranja": ["Laranja", "#ffb877", "#b55a0c"], "rosa": ["Rosa", "#f7a6c2", "#a8325d"]};
 let curColor='';
 $('tColors').innerHTML='<button class="tb" data-c="" title="Cor do tipo"><i class="sw" style="background:var(--panel);border-color:var(--muted);border-style:dashed"></i><span>Padrão</span></button>'+
   Object.entries(COLORS).map(([k,[nm,bg,ln]])=>`<button class="tb" data-c="${k}" title="${nm}"><i class="sw" style="background:${bg};border-color:${ln}"></i><span>${nm}</span></button>`).join('');
 $('tColors').addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(!b)return;const c=b.dataset.c;curColor=c;
-  const n=selNode&&byId(selNode);if(n){pushHist();if(c)n.color=c;else delete n.color;commit()}else{renderTools();toast(c?'Os próximos nós nascem na cor '+COLORS[c][0].toLowerCase()+'.':'Os próximos nós usam a cor do tipo.')}});
+  const n=selNode&&byId(selNode);if(n){pushHist();if(c)n.color=c;else delete n.color;commit();toast(c?'Cor aplicada. Os próximos nós também nascem em '+COLORS[c][0].toLowerCase()+'.':'Cor do tipo restaurada. Os próximos nós usam a cor do tipo.')}else{save();renderTools();toast(c?'Os próximos nós nascem na cor '+COLORS[c][0].toLowerCase()+'.':'Os próximos nós usam a cor do tipo.')}});
 let relOpen=true;
-function relSample(k){const c=FAM[k].cor||'var(--link)';const da={oposicao:'7 5',causa:'9 6',parte:'1.5 4'}[k]||'';
+function relSample(k){const c=FAM[k].cor||'var(--link)';const da={oposicao:'7 5',causa:'9 6',parte:'2 5'}[k]||'';
   return `<svg width="38" height="14" viewBox="0 0 38 14"><path d="M2 7H30" stroke="${c}" stroke-width="2" ${da?`stroke-dasharray="${da}"`:''} stroke-linecap="round" fill="none" ${k==='causa'?'class="lk f-causa"':''}/><path d="M29 3L36 7L29 11z" fill="${c}"/>${k==='oposicao'?'<g class="xm" transform="translate(16,7)"><circle r="5"/><path d="M-2 -2L2 2M2 -2L-2 2"/></g>':''}</svg>`}
 function renderRel(){const el=$('rel');if(!el)return;const used=new Set(st.links.map(famOf));
   if(present!=null||!st.links.length){el.hidden=true;return}
@@ -1031,7 +1031,7 @@ let tt;function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clear
 let wantFiles=!mq.matches;
 try{const o=JSON.parse(localStorage.getItem(KEY)||'null');if(o&&Array.isArray(o.nodes)&&o.nodes.length){
   st={title:o.title||'Mapa',nodes:o.nodes,links:o.links||[],custom:o.custom||[],sources:o.sources||[],view:o.view||'tipo'};calmo=!!o.calmo;if(STYLES[o.linkStyle])linkStyle=o.linkStyle;
-  if(typeof o.filesOpen==='boolean'&&!mq.matches)wantFiles=o.filesOpen;if(typeof o.movimento==='boolean')movimento=o.movimento;if(typeof o.relOpen==='boolean')relOpen=o.relOpen;if(typeof o.toolsOpen==='boolean')toolsOpen=o.toolsOpen}}catch(_){}
+  if(typeof o.filesOpen==='boolean'&&!mq.matches)wantFiles=o.filesOpen;if(typeof o.curColor==='string'&&(o.curColor===''||COLORS[o.curColor]))curColor=o.curColor;if(typeof o.movimento==='boolean')movimento=o.movimento;if(typeof o.relOpen==='boolean')relOpen=o.relOpen;if(typeof o.toolsOpen==='boolean')toolsOpen=o.toolsOpen}}catch(_){}
 let fresh=!st.nodes.length;try{if(!localStorage.getItem('agora-ex-edu')){if(st.title==='Aluno 1 · Conhecimento científico'&&!st.sources.length)fresh=true;localStorage.setItem('agora-ex-edu','1')}}catch(_){}
 if(fresh){const m=EDU();st={...st,title:m.title,nodes:m.nodes,links:m.links,sources:[],view:'tipo'}}
 try{if(!localStorage.getItem(LIBKEY)){const a=ALUNO1(),b=ALUNO2(),now=Date.now();
