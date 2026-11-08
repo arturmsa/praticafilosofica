@@ -402,6 +402,7 @@ ${OK.map(k=>`.origem .lk.o-${k}{stroke:var(--o-${k}-line)} .arh-${k}{fill:var(--
 .lk.f-causa{stroke:#2e8b57;stroke-width:2;stroke-dasharray:9 6} .arh-fcausa{fill:#2e8b57}
 .lk.f-origem{stroke:#2c5b8f;stroke-width:2.3} .arh-forigem{fill:#2c5b8f}
 .lk.f-parte{stroke:#6b7686;stroke-width:2.6;stroke-dasharray:2 5;stroke-linecap:round} .arh-fparte{fill:#6b7686}
+.fd{fill:var(--link);stroke:var(--bg2);stroke-width:1.2;pointer-events:none} .fd.f-oposicao{fill:#c0392b} .fd.f-causa{fill:#2e8b57} .fd.f-origem{fill:#2c5b8f} .fd.f-parte{fill:#6b7686}
 .xm circle{fill:#fff;stroke:#c0392b;stroke-width:1.6} .xm path{stroke:#c0392b;stroke-width:1.8;stroke-linecap:round;fill:none}
 .mov .lk.f-causa{animation:flui 1.6s linear infinite}
 .mov .lk.run{stroke-dasharray:9 6;animation:flui .9s linear infinite}
@@ -634,6 +635,7 @@ const FK=['oposicao','causa','origem','parte'];
 function famOf(l){if(l.fam&&FAM[l.fam])return l.fam;const t=String(l.label||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
   if(!t)return'outra';for(const k of FK)if(FAM[k].re.test(t))return k;return'outra'}
 let movimento=true;
+const reducedMotion=()=>!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 const MARKERS='<defs>'+['','2',...OK.map(k=>'-'+k),...FK.map(k=>'-f'+k)].map(k=>`<marker id="ar${k}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="${k==='2'?6:7}" markerHeight="${k==='2'?6:7}" orient="auto-start-reverse"><path class="arh${k}" d="M0,0L10,5L0,10z"/></marker>`).join('')+'</defs>';
 function nodeSvg(n,o){const l=L[n.id],x0=-l.w/2,y0=-l.h/2;let y=y0+14,s='';const ok=origemOn()?' o-'+oKey(n.src):'';
   s+=`<g class="node t-${n.type}${n.color&&COLORS[n.color]?" c-"+n.color:""}${ok}${o.sel?' sel':''}${o.from?' from':''}" data-node="${n.id}" transform="translate(${r1(n.x)},${r1(n.y)})"><rect class="box" x="${r1(x0)}" y="${r1(y0)}" width="${r1(l.w)}" height="${r1(l.h)}" rx="10"/>`;
@@ -651,6 +653,7 @@ function render(){L={};st.nodes.forEach(n=>L[n.id]=layout(n));
   for(const k of links){const r=R[k.id];if(!r)continue;const{d,lx,ly}=pathFor(k,r),se=k.id===selLink,ok=og?oKey(k.src):'',fm=famOf(k),run=present==null&&selNode&&k.from===selNode;
     s+=`<g data-link="${k.id}"><path class="hit" d="${d}"/><path class="lk f-${fm}${ok?' o-'+ok:''}${se?' sel':''}${run?' run':''}" d="${d}" marker-end="url(#ar${se?'2':ok?'-'+ok:fm!=='outra'?'-f'+fm:''})"/>`;
     if(k.label)s+=`<text class="ll${se?' sel':''}" x="${r1(lx)}" y="${r1(ly)}" text-anchor="middle" dominant-baseline="central">${esc(k.label)}</text>`;
+    if(movimento&&!calmo&&!reducedMotion()){const dur=fm==='causa'?1.8:fm==='oposicao'?2.2:2.6;s+=`<g class="flow"><circle class="fd f-${fm}${ok?' o-'+ok:''}" r="4.6"><animateMotion dur="${dur}s" begin="-${(Math.random()*dur).toFixed(2)}s" repeatCount="indefinite" path="${d}"/></circle></g>`}
     if(fm==='oposicao'){const yy=k.label?ly-15:ly;s+=`<g class="xm" transform="translate(${r1(lx)},${r1(yy)})"><circle r="7"/><path d="M-3 -3L3 3M3 -3L-3 3"/></g>`}
     s+='</g>'}
   const order=st.nodes.filter(n=>!vis||vis.has(n.id)).sort((a,b)=>(a.id===selNode)-(b.id===selNode));
@@ -711,7 +714,7 @@ $('tStyles').addEventListener('click',e=>{const b=e.target.closest('[data-s]');i
 $('tVTipo').onclick=()=>{st.view='tipo';commit()};
 $('tVOrig').onclick=()=>{if(st.sources.length<2)return;st.view='origem';commit()};
 $('tCalmo').onclick=()=>{calmo=!calmo;commit()};
-$('tMov').onclick=()=>{movimento=!movimento;commit();toast(movimento?'Movimento ligado: setas de causa e consequência correm, e as que saem do conceito tocado também.':'Movimento desligado.')};
+$('tMov').onclick=()=>{movimento=!movimento;commit();toast(movimento?'Movimento ligado: um ponto percorre cada seta da origem ao destino.':'Movimento desligado.')};
 $('tLink').onclick=()=>{if(linkFrom){linkFrom=null;render();return}if(!selNode){toast('Toque num nó primeiro.');return}linkFrom=selNode;uniteFrom=null;render();toast('Agora toque no nó de destino.')};
 $('tUnite').onclick=()=>{if(uniteFrom){uniteFrom=null;render();return}if(!selNode){toast('Toque num nó e depois em Unir para juntar dois conceitos iguais.');return}uniteFrom=selNode;linkFrom=null;closeSheets(true);render();toast('Toque no nó que representa o mesmo conceito.')};
 $('tEdit').onclick=()=>{if(selNode)openEditor(selNode);else if(selLink)openPicker(selLink);else toast('Toque num nó ou numa seta para editar.')};
@@ -959,7 +962,7 @@ function legendSvg(x,y){if(!origemOn())return{s:'',h:0};const f="500 13px 'Alegr
 $('fPng').onclick=()=>{const ps=selNode,pl=selLink;selNode=selLink=null;render();const bb=bbox(),pad=40,lg=legendSvg(pad,pad+4),top=pad+28+lg.h;
   const W=Math.ceil(bb.w+pad*2),H=Math.ceil(bb.h+top+pad);
   const cs=getComputedStyle(document.documentElement),vars=TOKENS.map(t=>`--${t}:${cs.getPropertyValue('--'+t).trim()}`).join(';');
-  const src=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" class="${calmo?'calmo ':''}${origemOn()?'origem':''}"><style>svg{${vars}}${NODE_CSS}</style><rect width="${W}" height="${H}" fill="${cs.getPropertyValue('--bg2').trim()}"/><text x="${pad}" y="${pad-8}" style="font:600 18px Alegreya,Georgia,serif;fill:var(--ink)">${esc(st.title)}</text>${lg.s}<g transform="translate(${r1(pad-bb.x)},${r1(top-bb.y)})">${world.innerHTML}</g></svg>`;
+  const src=`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" class="${calmo?'calmo ':''}${origemOn()?'origem':''}"><style>svg{${vars}}${NODE_CSS}</style><rect width="${W}" height="${H}" fill="${cs.getPropertyValue('--bg2').trim()}"/><text x="${pad}" y="${pad-8}" style="font:600 18px Alegreya,Georgia,serif;fill:var(--ink)">${esc(st.title)}</text>${lg.s}<g transform="translate(${r1(pad-bb.x)},${r1(top-bb.y)})">${world.innerHTML.replace(/<g class="flow">.*?<\/g>/g,'')}</g></svg>`;
   selNode=ps;selLink=pl;render();pngBlob=null;
   const url='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(src),im=new Image();
   im.onload=()=>{let out=url;try{const s=Math.min(2,7000/Math.max(W,H)),c=document.createElement('canvas');c.width=W*s;c.height=H*s;const x=c.getContext('2d');x.scale(s,s);x.drawImage(im,0,0);out=c.toDataURL('image/png');c.toBlob(b=>{pngBlob=b},'image/png')}catch(_){}
