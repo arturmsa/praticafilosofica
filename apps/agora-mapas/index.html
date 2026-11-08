@@ -148,6 +148,13 @@ details[open]{display:flex;flex-direction:column;gap:6px}
 .hint ul{margin:0;padding-left:18px;color:var(--muted)}
 .hint .btn{align-self:flex-start;padding:6px 12px}
 .legend{position:absolute;left:56px;bottom:calc(var(--barH) + 16px);max-width:calc(100% - 200px);min-width:170px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:6px;font-size:14px;z-index:2;box-shadow:var(--shadow)}
+.rel{position:absolute;left:56px;top:16px;z-index:2;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 10px;box-shadow:var(--shadow);font-size:13px;display:flex;flex-direction:column;gap:5px;max-width:calc(100% - 90px)}
+.rel button.rt{all:unset;cursor:pointer;font:700 11px var(--f-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:6px}
+.rel button.rt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.rel .ri{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.rel svg{flex:none}
+.fopen .rel{left:calc(min(330px,88%) + 16px)}
+@media (max-width:759px){.fopen .rel{left:56px}}
 .legend .it{display:flex;align-items:center;gap:8px;min-width:0}
 .legend .it span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .legend .n{color:var(--muted);font-variant-numeric:tabular-nums}
@@ -197,6 +204,7 @@ textarea,.sheet input[type=text]{width:100%;font:16px var(--f-node);color:var(--
   <symbol id="i-chr" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
   <symbol id="i-broom" viewBox="0 0 24 24"><path d="M14 4l6 6M11 7l6 6-5 7H5l-1-8z M7 13l3 3"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-mov" viewBox="0 0 24 24"><path d="M3 12h4M10 12h4M17 12h2M16 8l4 4-4 4"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
   <symbol id="i-elbow" viewBox="0 0 24 24"><path d="M3 18h7V6h9M16 3l3 3-3 3"/></symbol>
   <symbol id="i-curve" viewBox="0 0 24 24"><path d="M3 18C11 18 11 6 19 6M16 3l3 3-3 3"/></symbol>
@@ -262,6 +270,7 @@ textarea,.sheet input[type=text]{width:100%;font:16px var(--f-node);color:var(--
           <button class="tb" id="tVTipo"><svg class="ic"><use href="#i-type"/></svg><span>Tipos</span></button>
           <button class="tb" id="tVOrig"><svg class="ic"><use href="#i-compare"/></svg><span>Comparar</span></button>
         </div>
+        <button class="tb" id="tMov"><svg class="ic"><use href="#i-mov"/></svg>Movimento</button>
         <button class="tb" id="tCalmo"><svg class="ic"><use href="#i-leaf"/></svg>Modo calmo</button>
         <button class="tb" id="tClear"><svg class="ic"><use href="#i-broom"/></svg><span>Limpar tudo</span></button>
       </div>
@@ -300,6 +309,7 @@ textarea,.sheet input[type=text]{width:100%;font:16px var(--f-node);color:var(--
       <button id="zFit" class="btn txt">Ajustar</button>
     </div>
     <div id="legend" class="legend" hidden></div>
+    <div id="rel" class="rel" hidden></div>
     <div id="hint" class="hint" hidden>
       <b>Como usar</b>
       <ul>
@@ -341,6 +351,7 @@ textarea,.sheet input[type=text]{width:100%;font:16px var(--f-node);color:var(--
   <div class="sh-head"><h2>Frase de ligação</h2><button id="pkDone" class="btn primary">Pronto</button></div>
   <div id="pkCur" class="cur"></div>
   <div class="row"><input id="pkCustom" type="text" placeholder="Escreva sua própria frase" style="flex:1;min-width:0"><button id="pkAdd" class="btn">Usar</button></div>
+  <div class="grp"><div class="lbl">Tipo de relação</div><div id="pkFam" class="chips"></div></div>
   <div id="pkGroups" class="grp" style="gap:12px"></div>
   <div class="row"><button id="pkFlip" class="btn">Inverter seta</button><button id="pkNone" class="btn">Sem frase</button><button id="pkDel" class="btn danger">Excluir ligação</button></div>
 </div>
@@ -387,6 +398,16 @@ const NODE_CSS=`
 .arh{fill:var(--link)}
 ${OK.map(k=>`.origem .lk.o-${k}{stroke:var(--o-${k}-line)} .arh-${k}{fill:var(--o-${k}-line)}`).join('\n')}
 .origem .lk.o-comum{stroke:var(--ink);stroke-width:1.8} .arh-comum{fill:var(--ink)} .origem .lk.o-none{stroke:var(--link)} .arh-none{fill:var(--link)}
+.lk.f-oposicao{stroke:#c0392b;stroke-width:1.8;stroke-dasharray:7 5} .arh-foposicao{fill:#c0392b}
+.lk.f-causa{stroke:#2e8b57;stroke-width:2;stroke-dasharray:9 6} .arh-fcausa{fill:#2e8b57}
+.lk.f-origem{stroke:#2c5b8f;stroke-width:2.3} .arh-forigem{fill:#2c5b8f}
+.lk.f-parte{stroke:#8a94a3;stroke-width:1.5;stroke-dasharray:1.5 4;stroke-linecap:round} .arh-fparte{fill:#8a94a3}
+.xm circle{fill:#fff;stroke:#c0392b;stroke-width:1.6} .xm path{stroke:#c0392b;stroke-width:1.8;stroke-linecap:round;fill:none}
+.mov .lk.f-causa{animation:flui 1.6s linear infinite}
+.mov .lk.run{stroke-dasharray:9 6;animation:flui .9s linear infinite}
+.mov .lk.f-parte.run{stroke-dasharray:1.5 4;animation:fluip .9s linear infinite}
+@keyframes flui{to{stroke-dashoffset:-15}} @keyframes fluip{to{stroke-dashoffset:-11}}
+@media (prefers-reduced-motion:reduce){.lk{animation:none!important}}
 .lk.sel,.origem .lk.sel{stroke:var(--accent);stroke-width:2.4} .arh2{fill:var(--accent)}
 .ll{font:500 13px 'Alegreya Sans',system-ui,sans-serif;fill:var(--link);paint-order:stroke;stroke:var(--bg2);stroke-width:6px;stroke-linejoin:round;cursor:pointer}
 .ll.sel{fill:var(--accent)}
@@ -510,7 +531,19 @@ const HPP=()=>{const m=T('Mudança e permanência',[
    ['ms','op','gera apenas'],['pl','ce','busca o'],['mi','ce','sustenta o'],['mi','es','guarda a'],['es','pe','é o que permanece:']]);
   const W={'Mudança (devir)':'devir','Permanência (ser)':'ser','Opinião (doxa)':'opiniao','Conhecimento estável':'conhecimento'};
   m.nodes.forEach(n=>{if(W[n.text])n.wiki=W[n.text]});return m};
+const GUIA=()=>T('Guia das relações',[
+  ['fi','Filosofia','tema',0,0],['gr','Grécia Antiga','periodo',0,-230],
+  ['es','Espanto','conceito',-430,-130],['pe','Perguntas','conceito',430,-130],['co','Conhecimento','conceito',830,-130],
+  ['ra','Razão','conceito',430,90],['mi','Mito','conceito',-430,140],
+  ['so','Sócrates','filosofo',-830,0],['pl','Platão','filosofo',-830,-190],['sf','Sofistas','conceito',-830,190],
+  ['et','Ética','conceito',0,240],['vi','Virtude','conceito',430,260],['cg','Coragem','conceito',830,260]],
+  [['es','fi','leva à'],['fi','pe','gera'],['pe','co','produzem o'],
+   ['fi','mi','é oposta ao'],['so','sf','critica os'],
+   ['fi','gr','origina-se na'],['fi','ra','fundamenta-se na'],['so','pl','influenciou'],
+   ['et','fi','faz parte da'],['cg','vi','é exemplo de'],
+   ['et','vi','estuda a'],['so','fi','pratica a']]);
 const TPL=[
+ {name:'Guia das relações',desc:'Um exemplo de cada tipo de seta, com movimento',make:GUIA},
  {name:'Mudança e permanência',desc:'Heráclito, Parmênides e Platão',make:HPP},
  {name:'Estética em Platão',desc:'Abra este primeiro',make:PLATAO,join:true},
  {name:'Estética em Aristóteles',desc:'Depois toque em Juntar para comparar com Platão',make:ARIST,join:true},
@@ -537,7 +570,7 @@ const TPL=[
 /* ---------- salvar ---------- */
 function mapObj(){return{app:'agora-mapas',v:2,title:st.title,nodes:st.nodes,links:st.links,custom:st.custom,sources:st.sources,view:st.view}}
 function snap(){return JSON.stringify({title:st.title,nodes:st.nodes,links:st.links,sources:st.sources,view:st.view})}
-function save(){try{localStorage.setItem(KEY,JSON.stringify({...mapObj(),calmo,linkStyle,filesOpen,toolsOpen}))}catch(e){toast('Sem espaço para salvar neste navegador. Baixe o arquivo do mapa em Arquivos.')}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({...mapObj(),calmo,linkStyle,filesOpen,toolsOpen,movimento,relOpen}))}catch(e){toast('Sem espaço para salvar neste navegador. Baixe o arquivo do mapa em Arquivos.')}}
 function pushHist(){hist.push(snap());if(hist.length>60)hist.shift();$('bUndo').disabled=false}
 function undo(){const s=hist.pop();if(!s)return;const o=JSON.parse(s);Object.assign(st,o);$('title').value=st.title;
   selNode=selLink=linkFrom=uniteFrom=null;closeSheets(true);commit();$('bUndo').disabled=!hist.length}
@@ -591,7 +624,17 @@ function oKey(src){if(st.sources.length<2)return'';const s=src||[];if(!s.length)
 const origemOn=()=>st.view==='origem'&&st.sources.length>=2;
 
 /* ---------- desenho ---------- */
-const MARKERS='<defs>'+['','2',...OK.map(k=>'-'+k)].map(k=>`<marker id="ar${k}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="${k==='2'?6:7}" markerHeight="${k==='2'?6:7}" orient="auto-start-reverse"><path class="arh${k}" d="M0,0L10,5L0,10z"/></marker>`).join('')+'</defs>';
+const FAM={
+ oposicao:{nome:'Oposição e crítica',cor:'#c0392b',re:/^(critic|refut|e oposto|e oposta|opoe|op[oõ]e|combat|nega|rompe|impede|contrast|denunci|recusa|contradiz|desmente|questiona|rejeit)/},
+ causa:{nome:'Causa e consequência',cor:'#2e8b57',re:/^(leva|caus|gera|produz|pode gerar|resulta|transforma|provoca|desperta|impulsion|estimula|desenvolve|permite|possibilita|alimenta|intensifica|faz surgir|cria)/},
+ origem:{nome:'Origem e fundamento',cor:'#2c5b8f',re:/^(origina|fundamenta|influenci|retoma|e condicao|escreveu|e a base|e base|pressupoe|sustenta|surge|responde|deriva|parte d|depende)/},
+ parte:{nome:'Parte e exemplo',cor:'#8a94a3',re:/^(faz parte|e exemplo|exemplifica|expressa|e forma|e uma|e um |compoe|pertence|e etapa|inclui|ilustra|e tipo)/},
+ outra:{nome:'Outras relações',cor:'',re:null}};
+const FK=['oposicao','causa','origem','parte'];
+function famOf(l){if(l.fam&&FAM[l.fam])return l.fam;const t=String(l.label||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase().trim();
+  if(!t)return'outra';for(const k of FK)if(FAM[k].re.test(t))return k;return'outra'}
+let movimento=true;
+const MARKERS='<defs>'+['','2',...OK.map(k=>'-'+k),...FK.map(k=>'-f'+k)].map(k=>`<marker id="ar${k}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="${k==='2'?6:7}" markerHeight="${k==='2'?6:7}" orient="auto-start-reverse"><path class="arh${k}" d="M0,0L10,5L0,10z"/></marker>`).join('')+'</defs>';
 function nodeSvg(n,o){const l=L[n.id],x0=-l.w/2,y0=-l.h/2;let y=y0+14,s='';const ok=origemOn()?' o-'+oKey(n.src):'';
   s+=`<g class="node t-${n.type}${n.color&&COLORS[n.color]?" c-"+n.color:""}${ok}${o.sel?' sel':''}${o.from?' from':''}" data-node="${n.id}" transform="translate(${r1(n.x)},${r1(n.y)})"><rect class="box" x="${r1(x0)}" y="${r1(y0)}" width="${r1(l.w)}" height="${r1(l.h)}" rx="10"/>`;
   if(n.img){s+=`<clipPath id="cp${n.id}"><rect x="${r1(x0+8)}" y="${r1(y0+8)}" width="${r1(l.w-16)}" height="${l.imgH}" rx="7"/></clipPath><image href="${n.img}" x="${r1(x0+8)}" y="${r1(y0+8)}" width="${r1(l.w-16)}" height="${l.imgH}" preserveAspectRatio="xMidYMid slice" clip-path="url(#cp${n.id})"/>`;y=y0+8+l.imgH+12}
@@ -605,14 +648,15 @@ function render(){L={};st.nodes.forEach(n=>L[n.id]=layout(n));
   const vis=present!=null?new Set(pOrder.slice(0,present+1)):null;let s=MARKERS;
   const links=st.links.filter(k=>byId(k.from)&&byId(k.to)&&k.from!==k.to&&(!vis||(vis.has(k.from)&&vis.has(k.to))));
   const R=routeAll(links),og=origemOn();
-  for(const k of links){const r=R[k.id];if(!r)continue;const{d,lx,ly}=pathFor(k,r),se=k.id===selLink,ok=og?oKey(k.src):'';
-    s+=`<g data-link="${k.id}"><path class="hit" d="${d}"/><path class="lk${ok?' o-'+ok:''}${se?' sel':''}" d="${d}" marker-end="url(#ar${se?'2':ok?'-'+ok:''})"/>`;
+  for(const k of links){const r=R[k.id];if(!r)continue;const{d,lx,ly}=pathFor(k,r),se=k.id===selLink,ok=og?oKey(k.src):'',fm=famOf(k),run=present==null&&selNode&&k.from===selNode;
+    s+=`<g data-link="${k.id}"><path class="hit" d="${d}"/><path class="lk f-${fm}${ok?' o-'+ok:''}${se?' sel':''}${run?' run':''}" d="${d}" marker-end="url(#ar${se?'2':ok?'-'+ok:fm!=='outra'?'-f'+fm:''})"/>`;
     if(k.label)s+=`<text class="ll${se?' sel':''}" x="${r1(lx)}" y="${r1(ly)}" text-anchor="middle" dominant-baseline="central">${esc(k.label)}</text>`;
+    if(fm==='oposicao'){const yy=k.label?ly-15:ly;s+=`<g class="xm" transform="translate(${r1(lx)},${r1(yy)})"><circle r="7"/><path d="M-3 -3L3 3M3 -3L-3 3"/></g>`}
     s+='</g>'}
   const order=st.nodes.filter(n=>!vis||vis.has(n.id)).sort((a,b)=>(a.id===selNode)-(b.id===selNode));
   for(const n of order)s+=nodeSvg(n,{sel:n.id===selNode,from:n.id===linkFrom||n.id===uniteFrom});
   if(drag&&drag.kind==='link'){const a=byId(drag.from);if(a)s+=`<path class="tmp" d="M${r1(a.x)} ${r1(a.y)}L${r1(drag.p.x)} ${r1(drag.p.y)}"/>`}
-  world.innerHTML=s;$('empty').hidden=st.nodes.length>0;svg.classList.toggle('calmo',calmo);svg.classList.toggle('origem',og);renderTools()}
+  world.innerHTML=s;$('empty').hidden=st.nodes.length>0;svg.classList.toggle('calmo',calmo);svg.classList.toggle('origem',og);svg.classList.toggle('mov',movimento&&!calmo);renderTools();renderRel()}
 function applyView(){world.setAttribute('transform',`translate(${r1(view.x)},${r1(view.y)}) scale(${view.k})`);
   svg.style.backgroundSize=`${22*view.k}px ${22*view.k}px`;svg.style.backgroundPosition=`${view.x}px ${view.y}px`}
 function bbox(){let a=1e9,b=1e9,c=-1e9,d=-1e9;for(const n of st.nodes){const l=L[n.id]||layout(n);
@@ -647,17 +691,27 @@ $('tColors').innerHTML='<button class="tb" data-c="" title="Cor do tipo"><i clas
   Object.entries(COLORS).map(([k,[nm,bg,ln]])=>`<button class="tb" data-c="${k}" title="${nm}"><i class="sw" style="background:${bg};border-color:${ln}"></i><span>${nm}</span></button>`).join('');
 $('tColors').addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(!b)return;const c=b.dataset.c;curColor=c;
   const n=selNode&&byId(selNode);if(n){pushHist();if(c)n.color=c;else delete n.color;commit()}else{renderTools();toast(c?'Os próximos nós nascem na cor '+COLORS[c][0].toLowerCase()+'.':'Os próximos nós usam a cor do tipo.')}});
+let relOpen=true;
+function relSample(k){const c=FAM[k].cor||'var(--link)';const da={oposicao:'7 5',causa:'9 6',parte:'1.5 4'}[k]||'';
+  return `<svg width="38" height="14" viewBox="0 0 38 14"><path d="M2 7H30" stroke="${c}" stroke-width="2" ${da?`stroke-dasharray="${da}"`:''} stroke-linecap="round" fill="none" ${k==='causa'?'class="lk f-causa"':''}/><path d="M29 3L36 7L29 11z" fill="${c}"/>${k==='oposicao'?'<g class="xm" transform="translate(16,7)"><circle r="5"/><path d="M-2 -2L2 2M2 -2L-2 2"/></g>':''}</svg>`}
+function renderRel(){const el=$('rel');if(!el)return;const used=new Set(st.links.map(famOf));
+  if(present!=null||!st.links.length){el.hidden=true;return}
+  let h=`<button class="rt" id="relT" aria-expanded="${relOpen}">Relações ${relOpen?'▾':'▸'}</button>`;
+  if(relOpen)h+=['oposicao','causa','origem','parte','outra'].filter(k=>used.has(k)).map(k=>`<div class="ri">${relSample(k)}<span>${FAM[k].nome}</span></div>`).join('');
+  el.innerHTML=h;el.hidden=false;el.classList.toggle('mov',movimento&&!calmo);
+  $('relT').onclick=()=>{relOpen=!relOpen;renderRel()}}
 function renderTools(){const has=!!(selNode||selLink);
   {const sn=selNode&&byId(selNode),cc=sn?(sn.color||''):curColor;document.querySelectorAll('#tColors [data-c]').forEach(b=>b.classList.toggle('on',b.dataset.c===cc))}
   $('tLink').classList.toggle('on',!!linkFrom);$('tUnite').classList.toggle('on',!!uniteFrom);
   $('tUnite').disabled=!!selLink;$('tDel').disabled=!has;
   document.querySelectorAll('#tStyles [data-s]').forEach(b=>b.classList.toggle('on',b.dataset.s===linkStyle));
   const two=st.sources.length>=2;$('tVOrig').disabled=!two;$('tVTipo').classList.toggle('on',!origemOn());$('tVOrig').classList.toggle('on',origemOn());
-  $('tCalmo').classList.toggle('on',calmo)}
+  $('tCalmo').classList.toggle('on',calmo);$('tMov').classList.toggle('on',movimento);$('tMov').disabled=calmo}
 $('tStyles').addEventListener('click',e=>{const b=e.target.closest('[data-s]');if(!b)return;linkStyle=b.dataset.s;commit()});
 $('tVTipo').onclick=()=>{st.view='tipo';commit()};
 $('tVOrig').onclick=()=>{if(st.sources.length<2)return;st.view='origem';commit()};
 $('tCalmo').onclick=()=>{calmo=!calmo;commit()};
+$('tMov').onclick=()=>{movimento=!movimento;commit();toast(movimento?'Movimento ligado: setas de causa e consequência correm, e as que saem do conceito tocado também.':'Movimento desligado.')};
 $('tLink').onclick=()=>{if(linkFrom){linkFrom=null;render();return}if(!selNode){toast('Toque num nó primeiro.');return}linkFrom=selNode;uniteFrom=null;render();toast('Agora toque no nó de destino.')};
 $('tUnite').onclick=()=>{if(uniteFrom){uniteFrom=null;render();return}if(!selNode){toast('Toque num nó e depois em Unir para juntar dois conceitos iguais.');return}uniteFrom=selNode;linkFrom=null;closeSheets(true);render();toast('Toque no nó que representa o mesmo conceito.')};
 $('tEdit').onclick=()=>{if(selNode)openEditor(selNode);else if(selLink)openPicker(selLink);else toast('Toque num nó ou numa seta para editar.')};
@@ -718,7 +772,7 @@ function mergeMaps(B,nameA,nameB,unify){
   let shared=0;
   for(const bl of B.links||[]){const from=idm[bl.from],to=idm[bl.to];if(!from||!to||from===to)continue;const src=mapSrc(bl.src);
     const ex=st.links.find(l=>l.from===from&&l.to===to&&norm(l.label)===norm(bl.label));
-    if(ex){ex.src=uniq([...(ex.src||[]),...src]);shared++}else st.links.push({id:uid(),from,to,label:bl.label||'',src})}
+    if(ex){ex.src=uniq([...(ex.src||[]),...src]);shared++}else st.links.push({id:uid(),from,to,label:bl.label||'',src,...(bl.fam?{fam:bl.fam}:{})})}
   if(Array.isArray(B.custom))st.custom=uniq([...st.custom,...B.custom]);
   render();const P=st.nodes.map(n=>({x:n.x,y:n.y,w:L[n.id].w,h:L[n.id].h}));deoverlap(P,-1);st.nodes.forEach((n,i)=>{n.x=Math.round(P[i].x);n.y=Math.round(P[i].y)});
   st.view='origem';return{common:anchors.length,fresh:fresh.length,shared}}
@@ -819,7 +873,10 @@ function openPicker(id){const keep=pendingPick===id?null:pendingPick;closeSheets
   const groups=Object.assign(st.custom.length?{'Minhas frases':st.custom}:{},PHRASES);
   $('pkGroups').innerHTML=Object.entries(groups).map(([g,ps])=>`<div class="grp"><div class="lbl">${esc(g)}</div><div class="chips">${
     ps.map(p=>`<button class="chip${l.label===p?' on':''}" data-p="${esc(p)}">${esc(p)}</button>`).join('')}</div></div>`).join('');
-  $('pk').hidden=false;render()}
+  renderFam();$('pk').hidden=false;render()}
+function renderFam(){const l=lkById(pkId);if(!l)return;const auto=famOf({label:l.label});
+  $('pkFam').innerHTML=`<button class="chip${!l.fam?' on':''}" data-f="">Automático (${FAM[auto].nome.toLowerCase()})</button>`+['oposicao','causa','origem','parte','outra'].map(k=>`<button class="chip${l.fam===k?' on':''}" data-f="${k}"><span class="dot" style="background:${FAM[k].cor||'var(--link)'}"></span>${FAM[k].nome}</button>`).join('')}
+$('pkFam').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;const l=lkById(pkId);if(!l)return;pushHist();if(b.dataset.f)l.fam=b.dataset.f;else delete l.fam;commit();renderFam()});
 function setLabel(p){const l=lkById(pkId);if(!l)return;pushHist();l.label=p;commit();closeSheets()}
 $('pkGroups').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(b)setLabel(b.dataset.p)});
 function useCustom(){const v=$('pkCustom').value.trim();if(!v)return;if(!st.custom.includes(v)&&!Object.values(PHRASES).flat().includes(v))st.custom.unshift(v);setLabel(v)}
@@ -974,7 +1031,7 @@ let tt;function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clear
 let wantFiles=!mq.matches;
 try{const o=JSON.parse(localStorage.getItem(KEY)||'null');if(o&&Array.isArray(o.nodes)&&o.nodes.length){
   st={title:o.title||'Mapa',nodes:o.nodes,links:o.links||[],custom:o.custom||[],sources:o.sources||[],view:o.view||'tipo'};calmo=!!o.calmo;if(STYLES[o.linkStyle])linkStyle=o.linkStyle;
-  if(typeof o.filesOpen==='boolean'&&!mq.matches)wantFiles=o.filesOpen;if(typeof o.toolsOpen==='boolean')toolsOpen=o.toolsOpen}}catch(_){}
+  if(typeof o.filesOpen==='boolean'&&!mq.matches)wantFiles=o.filesOpen;if(typeof o.movimento==='boolean')movimento=o.movimento;if(typeof o.relOpen==='boolean')relOpen=o.relOpen;if(typeof o.toolsOpen==='boolean')toolsOpen=o.toolsOpen}}catch(_){}
 let fresh=!st.nodes.length;try{if(!localStorage.getItem('agora-ex-edu')){if(st.title==='Aluno 1 · Conhecimento científico'&&!st.sources.length)fresh=true;localStorage.setItem('agora-ex-edu','1')}}catch(_){}
 if(fresh){const m=EDU();st={...st,title:m.title,nodes:m.nodes,links:m.links,sources:[],view:'tipo'}}
 try{if(!localStorage.getItem(LIBKEY)){const a=ALUNO1(),b=ALUNO2(),now=Date.now();
