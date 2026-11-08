@@ -408,7 +408,6 @@ ${OK.map(k=>`.origem .lk.o-${k}{stroke:var(--o-${k}-line)} .arh-${k}{fill:var(--
 .mov .lk.run{stroke-dasharray:9 6;animation:flui .9s linear infinite}
 .mov .lk.f-parte.run{stroke-dasharray:2 5;animation:fluip .9s linear infinite}
 @keyframes flui{to{stroke-dashoffset:-15}} @keyframes fluip{to{stroke-dashoffset:-14}}
-@media (prefers-reduced-motion:reduce){.lk{animation:none!important}}
 .lk.sel,.origem .lk.sel{stroke:var(--accent);stroke-width:2.4} .arh2{fill:var(--accent)}
 .ll{font:500 13px 'Alegreya Sans',system-ui,sans-serif;fill:var(--link);paint-order:stroke;stroke:var(--bg2);stroke-width:6px;stroke-linejoin:round;cursor:pointer}
 .ll.sel{fill:var(--accent)}
@@ -653,7 +652,7 @@ function render(){L={};st.nodes.forEach(n=>L[n.id]=layout(n));
   for(const k of links){const r=R[k.id];if(!r)continue;const{d,lx,ly}=pathFor(k,r),se=k.id===selLink,ok=og?oKey(k.src):'',fm=famOf(k),run=present==null&&selNode&&k.from===selNode;
     s+=`<g data-link="${k.id}"><path class="hit" d="${d}"/><path class="lk f-${fm}${ok?' o-'+ok:''}${se?' sel':''}${run?' run':''}" d="${d}" marker-end="url(#ar${se?'2':ok?'-'+ok:fm!=='outra'?'-f'+fm:''})"/>`;
     if(k.label)s+=`<text class="ll${se?' sel':''}" x="${r1(lx)}" y="${r1(ly)}" text-anchor="middle" dominant-baseline="central">${esc(k.label)}</text>`;
-    if(movimento&&!calmo&&!reducedMotion()){const dur=fm==='causa'?1.8:fm==='oposicao'?2.2:2.6;s+=`<g class="flow"><circle class="fd f-${fm}${ok?' o-'+ok:''}" r="4.6"><animateMotion dur="${dur}s" begin="-${(Math.random()*dur).toFixed(2)}s" repeatCount="indefinite" path="${d}"/></circle></g>`}
+    if(movimento&&!calmo){const dur=fm==='causa'?1.8:fm==='oposicao'?2.2:2.6;s+=`<g class="flow"><circle class="fd f-${fm}${ok?' o-'+ok:''}" r="4.6"><animateMotion dur="${dur}s" begin="${(Math.random()*dur).toFixed(2)}s" repeatCount="indefinite" path="${d}"/></circle></g>`}
     if(fm==='oposicao'){const yy=k.label?ly-15:ly;s+=`<g class="xm" transform="translate(${r1(lx)},${r1(yy)})"><circle r="7"/><path d="M-3 -3L3 3M3 -3L-3 3"/></g>`}
     s+='</g>'}
   const order=st.nodes.filter(n=>!vis||vis.has(n.id)).sort((a,b)=>(a.id===selNode)-(b.id===selNode));
@@ -1034,7 +1033,7 @@ let tt;function toast(m){const t=$('toast');t.textContent=m;t.hidden=false;clear
 let wantFiles=!mq.matches;
 try{const o=JSON.parse(localStorage.getItem(KEY)||'null');if(o&&Array.isArray(o.nodes)&&o.nodes.length){
   st={title:o.title||'Mapa',nodes:o.nodes,links:o.links||[],custom:o.custom||[],sources:o.sources||[],view:o.view||'tipo'};calmo=!!o.calmo;if(STYLES[o.linkStyle])linkStyle=o.linkStyle;
-  if(typeof o.filesOpen==='boolean'&&!mq.matches)wantFiles=o.filesOpen;if(typeof o.curColor==='string'&&(o.curColor===''||COLORS[o.curColor]))curColor=o.curColor;if(typeof o.movimento==='boolean')movimento=o.movimento;if(typeof o.relOpen==='boolean')relOpen=o.relOpen;if(typeof o.toolsOpen==='boolean')toolsOpen=o.toolsOpen}}catch(_){}
+  if(typeof o.filesOpen==='boolean'&&!mq.matches)wantFiles=o.filesOpen;if(typeof o.curColor==='string'&&(o.curColor===''||COLORS[o.curColor]))curColor=o.curColor;if(typeof o.movimento==='boolean')movimento=o.movimento;try{if(!localStorage.getItem('agora-mov-v2')){movimento=true;localStorage.setItem('agora-mov-v2','1')}}catch(_){}if(typeof o.relOpen==='boolean')relOpen=o.relOpen;if(typeof o.toolsOpen==='boolean')toolsOpen=o.toolsOpen}}catch(_){}
 let fresh=!st.nodes.length;try{if(!localStorage.getItem('agora-ex-edu')){if(st.title==='Aluno 1 · Conhecimento científico'&&!st.sources.length)fresh=true;localStorage.setItem('agora-ex-edu','1')}}catch(_){}
 if(fresh){const m=EDU();st={...st,title:m.title,nodes:m.nodes,links:m.links,sources:[],view:'tipo'}}
 try{if(!localStorage.getItem(LIBKEY)){const a=ALUNO1(),b=ALUNO2(),now=Date.now();
