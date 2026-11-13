@@ -180,6 +180,8 @@ summary{cursor:pointer;color:var(--ouro);font-family:var(--display);font-size:1r
 .sug-rodape{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;font-size:.8rem;color:var(--apagado)}
 .sug-rodape input[type=text]{font:inherit;font-size:.85rem;padding:.25rem .5rem;width:11rem;border-width:1px}
 .sug-rodape .sug-btn{margin:0}
+.sug-fim{display:flex;justify-content:center;border-top:1px dashed var(--fio);padding-top:.6rem}
+.sug-fim .sug-btn{margin:0;padding:.25rem .9rem;font-size:.82rem}
 .rimahint.bate{color:var(--ok)}.rimahint.nao{color:var(--longe)}
 .sil{font-family:var(--mono);font-size:.8rem;font-variant-numeric:tabular-nums;text-align:center;margin-top:.45rem;padding:.1rem 0;border-radius:2px;border:1px solid var(--fio);color:var(--apagado)}
 .sil.ok{border-color:var(--ok);color:var(--ok)}.sil.perto{border-color:var(--perto);color:var(--perto)}.sil.longe{border-color:var(--longe);color:var(--longe)}
@@ -817,7 +819,8 @@ function pintaSug(){
   p.innerHTML=`<div class="sug-topo"><b>${k?esc(sugAberta.rot||("Rimas em -"+k)):"Nenhuma rima encontrada"}</b><span>Toque numa palavra para pôr no fim do verso</span></div>`+
     (mostra.length?`<div class="sug-chips">${mostra.map(w=>`<button type="button" class="sug-palavra" data-w="${esc(w)}">${esc(w)}<small>${silabasPalavra(w)}</small></button>`).join("")}</div>`:`<p class="sug-vazio">Não achei palavras para essa terminação. Tente uma terminação mais curta.</p>`)+
     (!sugAberta.mais&&lista.length>30?`<div><button type="button" class="sug-btn sug-mais" style="margin:0">Ver mais rimas (as mais raras ficam no fim)</button></div>`:"")+
-    `<div class="sug-rodape"><label for="sug-busca">Procurar outra terminação:</label><input type="text" id="sug-busca" value="" placeholder="-ão, -or ou uma palavra" autocomplete="off"><button type="button" class="sug-btn sug-buscar">Buscar</button><span>· o número é a quantidade de sílabas</span></div>`;
+    `<div class="sug-rodape"><label for="sug-busca">Procurar outra terminação:</label><input type="text" id="sug-busca" value="" placeholder="-ão, -or ou uma palavra" autocomplete="off"><button type="button" class="sug-btn sug-buscar">Buscar</button><span>· o número é a quantidade de sílabas</span></div>`+
+    `<div class="sug-fim"><button type="button" class="sug-btn sug-recolher">Recolher sugestões ▴</button></div>`;
   rh.after(p);
 }
 document.getElementById("estrofes").addEventListener("click",ev=>{
@@ -825,7 +828,12 @@ document.getElementById("estrofes").addEventListener("click",ev=>{
   if(t.classList.contains("sug-btn")&&t.dataset.k!==undefined&&!t.classList.contains("sug-mais")&&!t.classList.contains("sug-buscar")){
     const e=+t.dataset.e,l=+t.dataset.l;
     if(sugAberta.e===e&&sugAberta.l===l){sugAberta.e=-1;}else{sugAberta.e=e;sugAberta.l=l;sugAberta.k=t.dataset.k.replace(/s$/,"");sugAberta.mais=false;sugAberta.rot=t.dataset.w?"Rimas com “"+t.dataset.w+"”":"";}
-    atualiza(e);return;
+    atualiza(e);pintaSug();return;
+  }
+  if(t.classList.contains("sug-recolher")){
+    const {e,l}=sugAberta;sugAberta.e=-1;atualiza(e);pintaSug();
+    const inp=$(`v-${e}-${l}`);if(inp){inp.scrollIntoView({block:"center",behavior:"smooth"});inp.focus({preventScroll:true});}
+    return;
   }
   if(t.classList.contains("sug-mais")){sugAberta.mais=true;pintaSug();return;}
   if(t.classList.contains("sug-buscar")){const q=$("sug-busca").value.trim(),k=chaveRima(q);if(k){sugAberta.k=k;sugAberta.mais=false;sugAberta.rot=q.startsWith("-")?"Rimas em "+q:"Rimas com “"+q+"”";pintaSug();const i=$("sug-busca");if(i)i.focus();}return;}
