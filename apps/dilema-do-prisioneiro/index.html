@@ -2,994 +2,814 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dilema do Prisioneiro — Roteiro + Simulação</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Dilema do Prisioneiro · Prática Filosófica</title>
+<meta name="description" content="Jogue o Dilema do Prisioneiro contra a máquina e assista a um torneio de estratégias, com animações rodada a rodada.">
+<script>try{ document.documentElement.dataset.tema = localStorage.getItem("tema")==="escuro" ? "escuro" : "claro"; }catch(e){ document.documentElement.dataset.tema="claro"; }</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600&family=Inter:wght@400;500;600&display=swap">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap');
-
-:root {
-  --cinza-escuro: #111214;
-  --cinza-cela: #18191d;
-  --cinza-medio: #25272c;
-  --borda: rgba(255,255,255,0.08);
-  --vermelho: #e03e3e;
-  --vermelho-soft: rgba(224,62,62,0.12);
-  --verde: #2ecc71;
-  --verde-soft: rgba(46,204,113,0.12);
-  --amarelo: #f0c040;
-  --amarelo-soft: rgba(240,192,64,0.1);
-  --branco: #e8e9eb;
-  --cinza-texto: #8b8f99;
+/* Layout: mesma família visual do site Prática Filosófica. Barra no topo, explicação curta, palco animado em duas colunas. */
+:root{
+  --fundo:#faf8f5; --fundo2:#f0ece6; --cartao:#ffffff; --tinta:#121212; --apagado:#5d5751; --borda:#e2ddd5;
+  --destaque:#c1272d; --destaque-suave:#f7e2e2;
+  --coop:#23845a; --coop-suave:#dff1e8; --trai:#c1272d; --trai-suave:#f7e2e2; --ambos:#c27417; --ambos-suave:#f8ead8;
+  --serif:"Fraunces",Georgia,serif; --sans:"Inter",system-ui,sans-serif;
+  color-scheme:light;
 }
+@media (prefers-color-scheme:dark){:root:not([data-tema="claro"]){
+  --fundo:#111111; --fundo2:#1b1b1b; --cartao:#171717; --tinta:#f3f0eb; --apagado:#aaa39b; --borda:#2f2c29;
+  --destaque:#e8484e; --destaque-suave:#3b1a1c;
+  --coop:#4cc58c; --coop-suave:#16301f; --trai:#ef5a5f; --trai-suave:#3b1a1c; --ambos:#e7a35c; --ambos-suave:#33261a; color-scheme:dark}}
+:root[data-tema="escuro"]{
+  --fundo:#111111; --fundo2:#1b1b1b; --cartao:#171717; --tinta:#f3f0eb; --apagado:#aaa39b; --borda:#2f2c29;
+  --destaque:#e8484e; --destaque-suave:#3b1a1c;
+  --coop:#4cc58c; --coop-suave:#16301f; --trai:#ef5a5f; --trai-suave:#3b1a1c; --ambos:#e7a35c; --ambos-suave:#33261a; color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--fundo);color:var(--tinta);line-height:1.5;font-size:15px;min-height:100vh}
+button,input,select{font:inherit;color:inherit}
+a{color:var(--destaque)}
+:focus-visible{outline:2px solid var(--destaque);outline-offset:2px}
+[hidden]{display:none!important}
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* barra superior */
+.topo{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--tinta);background:var(--fundo);flex-wrap:wrap}
+.voltar{font-size:.82rem;color:var(--apagado);text-decoration:none;white-space:nowrap}
+.voltar:hover{color:var(--destaque)}
+.marca{font-family:var(--serif);font-weight:800;font-size:1.45rem;letter-spacing:-.02em;text-transform:lowercase;white-space:nowrap}
+.marca i{color:var(--destaque)}
+.espaco{flex:1}
+.abas{display:flex;border:1.5px solid var(--borda);border-radius:999px;overflow:hidden}
+.abas button{border:0;background:var(--cartao);padding:6px 14px;cursor:pointer;font-size:.85rem;font-weight:500}
+.abas button[aria-pressed="true"]{background:var(--tinta);color:var(--fundo)}
+.tema{border:1.5px solid var(--borda);background:var(--cartao);border-radius:999px;padding:6px 12px;cursor:pointer;font-size:.85rem}
+.tema:hover{border-color:var(--destaque)}
 
-body {
-  background: var(--cinza-escuro);
-  color: var(--branco);
-  font-family: 'Inter', sans-serif;
-  font-weight: 300;
-  min-height: 100vh;
-  overflow-x: hidden;
+.wrap{max-width:1120px;margin:0 auto;padding:22px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
+.selo{display:inline-block;font-size:.72rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--destaque);padding-bottom:4px;border-bottom:2px solid var(--destaque);margin-bottom:12px}
+h1{font-family:var(--serif);font-weight:800;font-size:clamp(2rem,5vw,3rem);line-height:1;letter-spacing:-.03em;text-transform:lowercase}
+h1 span{color:var(--destaque);font-style:italic}
+h2{font-family:var(--serif);font-weight:600;font-size:1.15rem;letter-spacing:-.01em}
+.lead{color:var(--apagado);max-width:68ch;margin-top:10px;font-size:1.02rem}
+.intro{margin-bottom:18px}
+
+.cartao{background:var(--cartao);border:1px solid var(--borda);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.cartao.forte{border-color:var(--tinta);box-shadow:4px 4px 0 var(--fundo2)}
+.palco{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:16px;align-items:start}
+.coluna{display:flex;flex-direction:column;gap:16px;min-width:0}
+@media (max-width:860px){.palco{grid-template-columns:1fr}}
+.dica{font-size:.82rem;color:var(--apagado)}
+
+/* controles */
+.controles{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.controles label{font-size:.8rem;font-weight:600;color:var(--apagado);display:flex;align-items:center;gap:6px}
+select{border:1.5px solid var(--borda);background:var(--cartao);border-radius:4px;padding:6px 8px;font-size:.88rem;color:var(--tinta)}
+.pilula{font-size:.85rem;font-weight:600;padding:7px 14px;border-radius:999px;border:1.5px solid var(--borda);background:var(--cartao);cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:border-color .2s,color .2s}
+.pilula:hover:not(:disabled){border-color:var(--destaque);color:var(--destaque)}
+.pilula.vermelha{background:var(--destaque);border-color:var(--destaque);color:#fff}
+.pilula.vermelha:hover:not(:disabled){color:#fff;filter:brightness(1.1)}
+.pilula:disabled{opacity:.45;cursor:not-allowed}
+
+/* celas */
+.celas{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch}
+.cela{display:flex;flex-direction:column;gap:6px;min-width:0}
+.cela-topo{display:flex;justify-content:space-between;align-items:baseline;gap:6px;flex-wrap:wrap}
+.cela-nome{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--apagado)}
+.total{font-family:var(--serif);font-weight:800;font-size:1.5rem;line-height:1}
+.total small{font-family:var(--sans);font-size:.72rem;font-weight:500;color:var(--apagado)}
+.total.pulsa{animation:pulsa .6s}
+@keyframes pulsa{30%{transform:scale(1.25);color:var(--destaque)}}
+.cela-fundo{position:relative;height:190px;border:1.5px solid var(--tinta);border-radius:4px;background:var(--fundo2);overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.rosto{font-size:2.6rem;line-height:1;transition:transform .3s}
+.rosto.reage{animation:reage .5s}
+@keyframes reage{40%{transform:scale(1.3) rotate(-8deg)}}
+.grade{position:absolute;inset:0;pointer-events:none;transform:translateY(-102%);transition:transform .55s cubic-bezier(.5,1.6,.5,1);
+  background:repeating-linear-gradient(90deg,transparent 0 16px,var(--tinta) 16px 21px);opacity:.82}
+.grade::before,.grade::after{content:"";position:absolute;left:0;right:0;height:6px;background:var(--tinta)}
+.grade::before{top:18%}.grade::after{bottom:18%}
+.cela.presa .grade{transform:translateY(0)}
+.pena{position:absolute;left:50%;bottom:10px;transform:translateX(-50%) scale(.4);opacity:0;z-index:2;font-weight:700;font-size:.95rem;background:var(--cartao);border:1.5px solid var(--tinta);border-radius:999px;padding:3px 12px;white-space:nowrap;transition:transform .35s cubic-bezier(.4,1.8,.5,1),opacity .2s}
+.pena.mostra{opacity:1;transform:translateX(-50%) scale(1)}
+.pena.livre{border-color:var(--coop);color:var(--coop)}
+.meio{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-align:center;font-size:.72rem;color:var(--apagado);min-width:54px}
+.meio b{font-family:var(--serif);font-size:1.6rem;color:var(--tinta);line-height:1}
+.meio .x{font-family:var(--serif);font-style:italic;font-size:1.2rem;color:var(--destaque)}
+
+/* carta que vira */
+.carta{width:min(118px,90%);height:58px;perspective:700px;position:relative;z-index:1}
+.carta .in{position:absolute;inset:0;transition:transform .5s;transform-style:preserve-3d}
+.carta.virada .in{transform:rotateY(180deg)}
+.carta .f,.carta .v{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:1.5px solid var(--borda);background:var(--cartao);font-weight:600;font-size:.85rem;line-height:1.15}
+.carta .f{color:var(--apagado);font-family:var(--serif);font-size:1.5rem}
+.carta .v{transform:rotateY(180deg)}
+.carta .v span{font-size:1.25rem}
+.carta .v.c{border-color:var(--coop);color:var(--coop);background:var(--coop-suave)}
+.carta .v.t{border-color:var(--trai);color:var(--trai);background:var(--trai-suave)}
+.pensando .f{animation:pensa .8s infinite}
+@keyframes pensa{50%{opacity:.35}}
+
+.escolhas{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.escolha{border:1.5px solid var(--tinta);background:var(--cartao);border-radius:6px;padding:12px 10px;cursor:pointer;font-weight:600;font-size:.98rem;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .15s,background .2s,box-shadow .2s}
+.escolha small{font-weight:400;font-size:.75rem;color:var(--apagado)}
+.escolha.c:hover:not(:disabled){background:var(--coop-suave);border-color:var(--coop);box-shadow:3px 3px 0 var(--coop)}
+.escolha.t:hover:not(:disabled){background:var(--trai-suave);border-color:var(--trai);box-shadow:3px 3px 0 var(--trai)}
+.escolha:active:not(:disabled){transform:translate(2px,2px);box-shadow:none}
+.escolha:disabled{opacity:.4;cursor:not-allowed}
+.narrador{min-height:3em;border-left:3px solid var(--destaque);padding:2px 0 2px 12px;font-size:.95rem}
+.narrador.entra{animation:entra .4s}
+@keyframes entra{from{opacity:0;transform:translateY(6px)}}
+
+/* matriz */
+.matriz{display:grid;grid-template-columns:auto 1fr 1fr;gap:6px;font-size:.85rem}
+.matriz .cab{font-size:.72rem;font-weight:600;color:var(--apagado);text-align:center;align-self:end;line-height:1.25}
+.matriz .lado{font-size:.72rem;font-weight:600;color:var(--apagado);writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;align-self:center}
+.celula{position:relative;border:1.5px solid var(--borda);border-radius:6px;padding:10px 8px;text-align:center;line-height:1.35;transition:transform .2s}
+.celula b{display:block;font-size:.95rem}
+.celula.CC{background:var(--coop-suave)}.celula.TT{background:var(--ambos-suave)}
+.celula.CT,.celula.TC{background:var(--fundo2)}
+.celula .conta{position:absolute;top:-8px;right:-6px;min-width:22px;height:22px;border-radius:11px;background:var(--tinta);color:var(--fundo);font-size:.72rem;font-weight:700;display:grid;place-items:center;padding:0 5px;transform:scale(0);transition:transform .3s cubic-bezier(.4,1.8,.5,1)}
+.celula .conta.tem{transform:scale(1)}
+.celula.acesa{border-color:var(--tinta);animation:acende 1s}
+@keyframes acende{0%{transform:scale(1)}25%{transform:scale(1.07);box-shadow:0 0 0 4px var(--destaque-suave)}100%{transform:scale(1)}}
+.celula.atual{border-color:var(--tinta);box-shadow:3px 3px 0 var(--tinta)}
+
+/* gráfico e histórico */
+#grafico{width:100%;height:auto;display:block}
+#grafico text{font-family:var(--sans);font-size:9px;fill:var(--apagado)}
+.legenda{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.78rem;color:var(--apagado)}
+.legenda i{display:inline-block;width:16px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}
+.historia{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}
+.historia .rot{font-size:.72rem;font-weight:600;color:var(--apagado)}
+.fichas{display:flex;flex-wrap:wrap;gap:4px;min-height:24px}
+.ficha{width:24px;height:24px;border-radius:4px;display:grid;place-items:center;font-size:.7rem;font-weight:700;color:#fff;animation:surge .35s cubic-bezier(.4,1.8,.5,1)}
+.ficha.c{background:var(--coop)}.ficha.t{background:var(--trai)}
+@keyframes surge{from{transform:scale(0) rotate(-30deg)}}
+.vazio{font-size:.82rem;color:var(--apagado)}
+
+.fim{border-color:var(--destaque);animation:entra .5s}
+.fim h2{font-size:1.5rem}
+.numeros{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.numeros div{background:var(--fundo2);border-radius:6px;padding:10px}
+.numeros b{display:block;font-family:var(--serif);font-size:1.5rem;line-height:1.1}
+.numeros span{font-size:.78rem;color:var(--apagado)}
+.palpites{display:flex;flex-wrap:wrap;gap:8px}
+
+/* voo da pena até o placar */
+.voo{position:fixed;z-index:50;pointer-events:none;font-weight:800;font-size:1rem;background:var(--cartao);border:1.5px solid currentColor;border-radius:999px;padding:2px 10px;white-space:nowrap}
+
+/* torneio */
+.participantes{display:flex;flex-wrap:wrap;gap:8px}
+.participante{border:1.5px solid var(--borda);background:var(--cartao);border-radius:999px;padding:6px 12px;cursor:pointer;font-size:.85rem;font-weight:500;transition:.2s}
+.participante[aria-pressed="true"]{background:var(--tinta);color:var(--fundo);border-color:var(--tinta)}
+.participante:disabled{opacity:.5;cursor:not-allowed}
+details.quem summary{cursor:pointer;font-size:.85rem;font-weight:600;color:var(--apagado)}
+details.quem ul{list-style:none;margin-top:8px;display:grid;gap:6px;font-size:.85rem}
+details.quem li b{font-weight:600}
+input[type=range]{accent-color:var(--destaque);width:120px}
+.progresso{height:6px;background:var(--fundo2);border-radius:3px;overflow:hidden}
+.progresso i{display:block;height:100%;width:0;background:var(--destaque);transition:width .3s}
+.partida-titulo{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.partida-titulo small{font-size:.78rem;color:var(--apagado)}
+.duelo{display:grid;grid-template-columns:minmax(0,9.5rem) 1fr auto;gap:8px 10px;align-items:center}
+.duelo .nome{font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.duelo .pts{font-family:var(--serif);font-weight:800;font-size:1.25rem;min-width:2.2em;text-align:right;font-variant-numeric:tabular-nums}
+.quadros{display:grid;gap:2px;height:18px}
+.quadros i{border-radius:2px;background:var(--fundo2)}
+.quadros i.c{background:var(--coop);animation:surge .25s}
+.quadros i.t{background:var(--trai);animation:surge .25s}
+.placar-partida{font-size:.85rem;color:var(--apagado)}
+.ranking{position:relative}
+.linha-rank{position:absolute;left:0;right:0;height:42px;display:grid;grid-template-columns:2.1em minmax(0,8.5rem) 1fr 3.2em;gap:8px;align-items:center;transition:top .6s cubic-bezier(.3,1.3,.5,1)}
+.linha-rank .pos{font-family:var(--serif);font-weight:800;font-size:1.05rem;color:var(--apagado)}
+.linha-rank.lider .pos{color:var(--destaque)}
+.linha-rank .nome{font-size:.85rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.linha-rank .barra{height:14px;background:var(--fundo2);border-radius:3px;overflow:hidden}
+.linha-rank .barra i{display:block;height:100%;width:0;background:var(--tinta);transition:width .4s}
+.linha-rank.lider .barra i{background:var(--destaque)}
+.linha-rank b{font-variant-numeric:tabular-nums;font-size:.88rem;text-align:right}
+.linha-rank.joga .nome{color:var(--destaque)}
+.registro{list-style:none;display:flex;flex-direction:column;gap:4px;max-height:300px;overflow:auto;font-size:.84rem}
+.registro li{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;padding:5px 8px;border-radius:4px;background:var(--fundo2);animation:entra .35s}
+.registro li span:first-child{text-align:right}
+.registro li .ganha{color:var(--coop);font-weight:600}
+.registro li .meio-r{font-variant-numeric:tabular-nums;font-weight:600}
+.campeao{border-color:var(--destaque);animation:entra .5s}
+.campeao h2{font-size:1.4rem}
+
+footer{max-width:1120px;margin:0 auto;padding:14px 16px 30px;font-size:.82rem;color:var(--apagado);border-top:1px solid var(--borda)}
+@media (max-width:520px){
+  .marca{font-size:1.2rem}
+  .cela-fundo{height:196px;justify-content:flex-start;padding-top:14px;gap:8px}
+  .rosto{font-size:2rem}
+  .carta{height:52px}
+  .cela-topo{flex-direction:column;align-items:flex-start;gap:2px}
+  .cela-nome{font-size:.66rem;letter-spacing:.08em}
+  .total{font-size:1.25rem}
+  .meio{min-width:40px}
+  .duelo{grid-template-columns:minmax(0,6.5rem) 1fr auto}
+  .linha-rank{grid-template-columns:1.8em minmax(0,6.8rem) 1fr 3em}
 }
-
-/* ── PROGRESS ── */
-#barra-prog {
-  position: fixed; top: 0; left: 0;
-  height: 2px; background: var(--vermelho);
-  transition: width 0.4s ease; z-index: 200;
-}
-
-/* ── MODO TABS ── */
-#modo-tabs {
-  position: fixed; top: 0; left: 0; right: 0;
-  display: flex; z-index: 150;
-  background: rgba(17,18,20,0.95);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid var(--borda);
-}
-
-.modo-tab {
-  flex: 1; padding: 14px;
-  background: none; border: none;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; letter-spacing: 0.1em;
-  color: var(--cinza-texto); cursor: pointer;
-  text-transform: uppercase;
-  transition: all 0.2s;
-  border-bottom: 2px solid transparent;
-}
-
-.modo-tab:hover { color: var(--branco); }
-.modo-tab.ativo { color: var(--vermelho); border-bottom-color: var(--vermelho); }
-
-/* ── WRAPPER VIEWS ── */
-#view-slides, #view-simulacao { display: none; }
-#view-slides.visivel, #view-simulacao.visivel { display: block; }
-
-/* ══════════════════════════════
-   SLIDES
-══════════════════════════════ */
-.slide {
-  display: none; min-height: 100vh;
-  padding: 72px 56px 56px;
-  max-width: 860px; margin: 0 auto;
-  flex-direction: column; justify-content: center;
-}
-.slide.ativo { display: flex; }
-
-.eyebrow {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; letter-spacing: 0.18em;
-  text-transform: uppercase; color: var(--vermelho);
-  margin-bottom: 18px;
-}
-
-h1 {
-  font-family: 'Syne', sans-serif;
-  font-size: clamp(2rem, 5vw, 3.6rem);
-  font-weight: 800; line-height: 1.05;
-  margin-bottom: 20px;
-}
-
-h2 {
-  font-family: 'Syne', sans-serif;
-  font-size: clamp(1.5rem, 3.5vw, 2.4rem);
-  font-weight: 700; line-height: 1.15;
-  margin-bottom: 18px;
-}
-
-p {
-  font-size: 1rem; line-height: 1.75;
-  color: rgba(232,233,235,0.78);
-  max-width: 660px; margin-bottom: 14px;
-}
-
-/* CENA DO DILEMA */
-.cena {
-  background: var(--cinza-cela);
-  border: 1px solid var(--borda);
-  border-radius: 8px; padding: 28px;
-  margin: 20px 0; font-size: 0.95rem;
-  line-height: 1.7; color: rgba(232,233,235,0.85);
-}
-
-.cena strong { color: var(--branco); }
-
-/* MATRIZ PAYOFF */
-.matriz-wrap { margin: 24px 0; overflow-x: auto; }
-
-.matriz {
-  border-collapse: collapse;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.85rem; width: 100%;
-}
-
-.matriz th {
-  padding: 10px 18px;
-  color: var(--cinza-texto); font-weight: 400;
-  font-size: 0.8rem; letter-spacing: 0.05em;
-}
-
-.matriz td {
-  border: 1px solid var(--borda);
-  padding: 18px 22px; text-align: center;
-  vertical-align: middle; min-width: 140px;
-}
-
-.matriz td.cc { background: var(--verde-soft); color: var(--verde); }
-.matriz td.ct { background: var(--vermelho-soft); color: var(--vermelho); }
-.matriz td.tc { background: var(--vermelho-soft); color: var(--vermelho); }
-.matriz td.tt { background: var(--amarelo-soft); color: var(--amarelo); }
-
-.label-jogador {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; letter-spacing: 0.12em;
-  text-transform: uppercase; color: var(--cinza-texto);
-}
-
-/* CARDS */
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin-top: 20px; }
-
-.card {
-  background: var(--cinza-cela);
-  border: 1px solid var(--borda);
-  border-radius: 6px; padding: 18px;
-  transition: border-color 0.2s;
-}
-.card:hover { border-color: rgba(224,62,62,0.4); }
-
-.card-icon { font-size: 1.6rem; margin-bottom: 10px; }
-.card-titulo { font-weight: 500; font-size: 0.92rem; margin-bottom: 6px; color: var(--branco); }
-.card p { font-size: 0.85rem; margin: 0; }
-
-/* HIGHLIGHT BOX */
-.box {
-  background: var(--cinza-medio);
-  border-left: 3px solid var(--vermelho);
-  padding: 16px 20px; border-radius: 0 6px 6px 0;
-  margin: 18px 0;
-}
-.box p { margin: 0; font-size: 0.95rem; }
-.box strong { color: var(--branco); }
-
-/* NAV SLIDES */
-.nav-slide { display: flex; gap: 10px; margin-top: 36px; align-items: center; }
-
-.btn-nav {
-  background: none;
-  border: 1px solid rgba(255,255,255,0.15);
-  color: var(--branco); font-family: 'Inter', sans-serif;
-  font-size: 0.85rem; padding: 9px 20px;
-  cursor: pointer; transition: all 0.2s; border-radius: 3px;
-}
-.btn-nav:hover { border-color: var(--vermelho); color: var(--vermelho); }
-.btn-nav.p { background: var(--vermelho); border-color: var(--vermelho); color: #fff; font-weight: 500; }
-.btn-nav.p:hover { background: #c43535; }
-
-.slide-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; color: var(--cinza-texto);
-  margin-left: auto;
-}
-
-/* CONCEITOS FINAIS */
-.grade-final { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-.conceito {
-  background: var(--cinza-cela); border: 1px solid var(--borda);
-  border-radius: 6px; padding: 14px; display: flex; gap: 10px; align-items: flex-start;
-}
-.dot-r { width: 7px; height: 7px; background: var(--vermelho); border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
-.conceito span { font-size: 0.87rem; line-height: 1.5; color: rgba(232,233,235,0.75); }
-
-/* ══════════════════════════════
-   SIMULAÇÃO
-══════════════════════════════ */
-#view-simulacao { padding-top: 50px; }
-
-.sim-wrap {
-  max-width: 820px; margin: 0 auto;
-  padding: 40px 40px 60px;
-}
-
-.sim-titulo {
-  font-family: 'Syne', sans-serif;
-  font-weight: 800; font-size: 1.8rem;
-  margin-bottom: 6px;
-}
-
-.sim-sub {
-  font-size: 0.9rem; color: var(--cinza-texto);
-  margin-bottom: 32px;
-}
-
-/* PLACAR */
-.placar {
-  display: grid; grid-template-columns: 1fr auto 1fr;
-  gap: 16px; align-items: center; margin-bottom: 28px;
-}
-
-.jogador-card {
-  background: var(--cinza-cela);
-  border: 1px solid var(--borda);
-  border-radius: 8px; padding: 20px;
-  text-align: center;
-}
-
-.jogador-nome {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; letter-spacing: 0.15em;
-  text-transform: uppercase; color: var(--cinza-texto);
-  margin-bottom: 8px;
-}
-
-.jogador-pontos {
-  font-family: 'Syne', sans-serif;
-  font-size: 2.4rem; font-weight: 800;
-  line-height: 1;
-}
-
-.jogador-pontos.vermelho { color: var(--vermelho); }
-.jogador-pontos.verde { color: var(--verde); }
-
-.rodada-info {
-  text-align: center;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; color: var(--cinza-texto);
-  line-height: 1.8;
-}
-
-.rodada-num { font-size: 1.5rem; font-weight: 500; color: var(--branco); display: block; }
-
-/* ARENA */
-.arena {
-  background: var(--cinza-cela);
-  border: 1px solid var(--borda);
-  border-radius: 10px; padding: 28px;
-  margin-bottom: 20px;
-}
-
-.arena-titulo {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; letter-spacing: 0.15em;
-  text-transform: uppercase; color: var(--cinza-texto);
-  margin-bottom: 20px;
-}
-
-.escolhas-grid {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 14px; margin-bottom: 20px;
-}
-
-.painel-jogador { text-align: center; }
-
-.painel-nome {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; letter-spacing: 0.12em;
-  text-transform: uppercase; color: var(--cinza-texto);
-  margin-bottom: 12px;
-}
-
-.btn-escolha {
-  display: block; width: 100%;
-  padding: 14px 10px; margin-bottom: 10px;
-  background: var(--cinza-medio);
-  border: 1px solid var(--borda);
-  color: var(--branco); font-family: 'Inter', sans-serif;
-  font-size: 0.9rem; cursor: pointer;
-  border-radius: 6px; transition: all 0.18s;
-}
-
-.btn-escolha:hover:not(:disabled) {
-  border-color: var(--vermelho);
-  background: var(--vermelho-soft);
-}
-
-.btn-escolha.escolhido-c {
-  border-color: var(--verde);
-  background: var(--verde-soft);
-  color: var(--verde);
-}
-
-.btn-escolha.escolhido-t {
-  border-color: var(--vermelho);
-  background: var(--vermelho-soft);
-  color: var(--vermelho);
-}
-
-.btn-escolha:disabled { cursor: default; opacity: 0.7; }
-
-.indicador-ia {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; color: var(--cinza-texto);
-  margin-top: 6px; min-height: 20px;
-}
-
-/* RESULTADO RODADA */
-#resultado-rodada {
-  display: none;
-  background: var(--cinza-medio);
-  border: 1px solid var(--borda);
-  border-radius: 8px; padding: 20px;
-  text-align: center; margin-bottom: 20px;
-}
-
-.res-titulo {
-  font-family: 'Syne', sans-serif;
-  font-weight: 700; font-size: 1.2rem;
-  margin-bottom: 8px;
-}
-
-.res-detalhe {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.85rem; color: var(--cinza-texto);
-  line-height: 1.7;
-}
-
-.btn-proxima {
-  background: var(--vermelho); border: none;
-  color: #fff; font-family: 'Inter', sans-serif;
-  font-size: 0.9rem; font-weight: 500;
-  padding: 10px 28px; border-radius: 4px;
-  cursor: pointer; margin-top: 12px;
-  transition: background 0.2s;
-}
-.btn-proxima:hover { background: #c43535; }
-
-/* HISTÓRICO */
-.historico-wrap { margin-top: 8px; }
-
-.hist-titulo {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; letter-spacing: 0.15em;
-  text-transform: uppercase; color: var(--cinza-texto);
-  margin-bottom: 10px;
-}
-
-.hist-linha {
-  display: flex; gap: 10px; align-items: center;
-  padding: 7px 0; border-bottom: 1px solid var(--borda);
-  font-size: 0.82rem;
-}
-
-.hist-r {
-  font-family: 'JetBrains Mono', monospace;
-  color: var(--cinza-texto); width: 24px; flex-shrink: 0;
-}
-
-.tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; padding: 2px 8px; border-radius: 3px;
-}
-.tag-c { background: var(--verde-soft); color: var(--verde); }
-.tag-t { background: var(--vermelho-soft); color: var(--vermelho); }
-
-.hist-pts { margin-left: auto; color: var(--cinza-texto); font-size: 0.8rem; }
-
-/* FIM DE JOGO */
-#tela-fim {
-  display: none; text-align: center;
-  padding: 40px 20px;
-}
-
-.fim-titulo {
-  font-family: 'Syne', sans-serif;
-  font-weight: 800; font-size: 2rem;
-  margin-bottom: 10px;
-}
-
-.fim-analise {
-  background: var(--cinza-cela);
-  border: 1px solid var(--borda);
-  border-radius: 8px; padding: 20px;
-  text-align: left; margin: 20px 0;
-  font-size: 0.9rem; line-height: 1.7;
-  color: rgba(232,233,235,0.8);
-}
-
-.btn-reiniciar {
-  background: none; border: 1px solid var(--vermelho);
-  color: var(--vermelho); font-family: 'Inter', sans-serif;
-  font-size: 0.9rem; padding: 10px 28px;
-  border-radius: 4px; cursor: pointer; margin-top: 10px;
-  transition: all 0.2s;
-}
-.btn-reiniciar:hover { background: var(--vermelho-soft); }
-
-/* CONFIG */
-.config-bar {
-  display: flex; gap: 10px; align-items: center;
-  margin-bottom: 20px; flex-wrap: wrap;
-}
-
-.config-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; letter-spacing: 0.12em;
-  text-transform: uppercase; color: var(--cinza-texto);
-}
-
-.config-select {
-  background: var(--cinza-cela);
-  border: 1px solid var(--borda);
-  color: var(--branco); font-family: 'Inter', sans-serif;
-  font-size: 0.85rem; padding: 6px 12px;
-  border-radius: 4px; cursor: pointer;
-}
-
-@media (max-width: 600px) {
-  .slide { padding: 60px 20px 40px; }
-  .sim-wrap { padding: 24px 18px 48px; }
-  .placar { grid-template-columns: 1fr; }
-  .grade-final { grid-template-columns: 1fr; }
-  .escolhas-grid { grid-template-columns: 1fr; }
-}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
-
-<div id="barra-prog"></div>
-
-<div id="modo-tabs">
-  <button class="modo-tab ativo" onclick="setModo('slides')">📖 Roteiro</button>
-  <button class="modo-tab" onclick="setModo('simulacao')">🎮 Simulação</button>
-</div>
-
-<!-- ═══════════════ SLIDES ═══════════════ -->
-<div id="view-slides" class="visivel">
-
-  <!-- NAV SLIDES -->
-  <nav style="position:fixed;top:42px;right:0;padding:12px 20px;display:flex;gap:6px;z-index:140;background:rgba(17,18,20,0.9);backdrop-filter:blur(6px);">
-    <span id="nav-dots-wrap" style="display:flex;gap:6px;"></span>
-  </nav>
-
-  <!-- S0: CAPA -->
-  <section class="slide ativo" id="s0">
-    <div class="eyebrow">Experimento Filosófico · Teoria dos Jogos</div>
-    <h1>Dois suspeitos.<br>Uma escolha.<br>Nenhuma comunicação.</h1>
-    <p>O Dilema do Prisioneiro é o experimento mais famoso da teoria dos jogos — e uma das mais poderosas ferramentas para pensar sobre cooperação, traição, racionalidade e moral.</p>
-    <div class="nav-slide">
-      <button class="btn-nav p" onclick="sp(1)">Começar →</button>
-      <span class="slide-num">1 / 8</span>
-    </div>
-  </section>
-
-  <!-- S1: CONTEXTO -->
-  <section class="slide" id="s1">
-    <div class="eyebrow">Passo 1 — O Cenário</div>
-    <h2>A situação original</h2>
-    <div class="cena">
-      <strong>Dois suspeitos — A e B — são presos por um crime.</strong> A polícia não tem provas suficientes para condená-los pelo crime maior. Eles são colocados em celas separadas, sem poder se comunicar. Cada um recebe a mesma proposta:
-      <br><br>
-      🤐 <strong>Ficar em silêncio (cooperar)</strong> — não entregar o outro.<br>
-      🗣️ <strong>Testemunhar (trair)</strong> — contar tudo à polícia.
-      <br><br>
-      O que acontece depende do que <em>os dois</em> decidem — individualmente, sem saber a escolha do outro.
-    </div>
-    <div class="nav-slide">
-      <button class="btn-nav" onclick="sp(0)">← Voltar</button>
-      <button class="btn-nav p" onclick="sp(2)">Próximo →</button>
-      <span class="slide-num">2 / 8</span>
-    </div>
-  </section>
-
-  <!-- S2: MATRIZ -->
-  <section class="slide" id="s2">
-    <div class="eyebrow">Passo 2 — A Estrutura</div>
-    <h2>A matriz de resultados</h2>
-    <p>Os resultados (anos de prisão) dependem da combinação das escolhas. Cada célula mostra: <strong>A / B</strong>.</p>
-
-    <div class="matriz-wrap">
-      <table class="matriz">
-        <thead>
-          <tr>
-            <th></th>
-            <th><span class="label-jogador">B coopera (silêncio)</span></th>
-            <th><span class="label-jogador">B trai (testemunha)</span></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="label-jogador">A coopera (silêncio)</span></td>
-            <td class="cc">A: 1 ano<br>B: 1 ano</td>
-            <td class="ct">A: 3 anos<br>B: livre</td>
-          </tr>
-          <tr>
-            <td><span class="label-jogador">A trai (testemunha)</span></td>
-            <td class="tc">A: livre<br>B: 3 anos</td>
-            <td class="tt">A: 2 anos<br>B: 2 anos</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="box">
-      <p>O resultado coletivamente <strong>melhor</strong> é ambos cooperarem (1 ano cada). Mas o resultado individualmente <em>racional</em> é sempre trair — independente do que o outro faça.</p>
-    </div>
-
-    <div class="nav-slide">
-      <button class="btn-nav" onclick="sp(1)">← Voltar</button>
-      <button class="btn-nav p" onclick="sp(3)">Próximo →</button>
-      <span class="slide-num">3 / 8</span>
-    </div>
-  </section>
-
-  <!-- S3: EQUILÍBRIO -->
-  <section class="slide" id="s3">
-    <div class="eyebrow">Passo 3 — O Paradoxo</div>
-    <h2>Por que trair é "racional" — e isso é um problema</h2>
-    <p>A lógica da traição parece irrefutável:</p>
-
-    <div class="cards">
-      <div class="card">
-        <div class="card-icon">🔴</div>
-        <div class="card-titulo">Se B cooperar…</div>
-        <p>Trair me deixa livre. Cooperar me dá 1 ano. <strong>Melhor trair.</strong></p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🔴</div>
-        <div class="card-titulo">Se B trair…</div>
-        <p>Trair me dá 2 anos. Cooperar me dá 3 anos. <strong>Melhor trair.</strong></p>
-      </div>
-    </div>
-
-    <div class="box" style="margin-top:20px;">
-      <p>Trair é uma <strong>estratégia dominante</strong>: é a melhor resposta em qualquer cenário. Mas se os dois raciocinam assim, ambos trairão e pegarão 2 anos — quando poderiam ter pego apenas 1.</p>
-    </div>
-
-    <p>Isso é chamado de <strong>Equilíbrio de Nash</strong>: um ponto onde ninguém tem incentivo de mudar de decisão unilateralmente — mesmo que o resultado coletivo seja ruim.</p>
-
-    <div class="nav-slide">
-      <button class="btn-nav" onclick="sp(2)">← Voltar</button>
-      <button class="btn-nav p" onclick="sp(4)">Próximo →</button>
-      <span class="slide-num">4 / 8</span>
-    </div>
-  </section>
-
-  <!-- S4: FILOSOFIA -->
-  <section class="slide" id="s4">
-    <div class="eyebrow">Passo 4 — Leituras Filosóficas</div>
-    <h2>O que os filósofos enxergam aqui?</h2>
-
-    <div class="cards">
-      <div class="card">
-        <div class="card-icon">⚔️</div>
-        <div class="card-titulo">Hobbes</div>
-        <p>Sem um poder coercitivo externo (o Estado), os indivíduos racionais traem uns aos outros — levando à guerra de todos contra todos.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🤝</div>
-        <div class="card-titulo">Rousseau</div>
-        <p>A cooperação é possível quando há confiança mútua e interesse comum reconhecido — o contrato social como solução ao dilema.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🔢</div>
-        <div class="card-titulo">Kant</div>
-        <p>O imperativo categórico perguntaria: "E se todos traíssem?" O resultado universal da traição revela sua irracionalidade moral.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">📈</div>
-        <div class="card-titulo">Utilitarismo</div>
-        <p>A cooperação maximiza o bem coletivo. A traição racional é utilitariamente irracional quando calculada para todos os envolvidos.</p>
-      </div>
-    </div>
-
-    <div class="nav-slide">
-      <button class="btn-nav" onclick="sp(3)">← Voltar</button>
-      <button class="btn-nav p" onclick="sp(5)">Próximo →</button>
-      <span class="slide-num">5 / 8</span>
-    </div>
-  </section>
-
-  <!-- S5: REPETIÇÃO -->
-  <section class="slide" id="s5">
-    <div class="eyebrow">Passo 5 — O Jogo Repetido</div>
-    <h2>E se jogarmos várias vezes?</h2>
-    <p>Quando o dilema é jogado uma única vez entre estranhos, a traição domina. Mas o que acontece quando as mesmas pessoas interagem repetidamente?</p>
-
-    <div class="box">
-      <p>Robert Axelrod realizou um torneio computacional em 1980. A estratégia vencedora foi a mais simples: <strong>Tit for Tat</strong> — coopere na primeira rodada, depois repita o que o outro fez.</p>
-    </div>
-
-    <div class="cards" style="margin-top:16px;">
-      <div class="card">
-        <div class="card-icon">🌱</div>
-        <div class="card-titulo">Reputação importa</div>
-        <p>Quando haverá interações futuras, construir confiança tem valor estratégico real.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🔄</div>
-        <div class="card-titulo">Reciprocidade emerge</div>
-        <p>A cooperação pode surgir espontaneamente entre agentes egoístas — sem necessidade de regras impostas.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">👁️</div>
-        <div class="card-titulo">Sombra do futuro</div>
-        <p>A possibilidade de encontros futuros muda o cálculo racional do presente.</p>
-      </div>
-    </div>
-
-    <div class="nav-slide">
-      <button class="btn-nav" onclick="sp(4)">← Voltar</button>
-      <button class="btn-nav p" onclick="sp(6)">Próximo →</button>
-      <span class="slide-num">6 / 8</span>
-    </div>
-  </section>
-
-  <!-- S6: APLICAÇÕES -->
-  <section class="slide" id="s6">
-    <div class="eyebrow">Passo 6 — Onde aparece na vida real</div>
-    <h2>O dilema está em todo lugar</h2>
-
-    <div class="cards">
-      <div class="card">
-        <div class="card-icon">🌍</div>
-        <div class="card-titulo">Mudança climática</div>
-        <p>Cada país prefere que os outros reduzam emissões enquanto mantém sua indústria. Resultado: todos perdem.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">💊</div>
-        <div class="card-titulo">Corrida armamentista</div>
-        <p>Países investem em armas porque o outro pode investir. Ambos ficam mais inseguros e pobres.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🏢</div>
-        <div class="card-titulo">Concorrência de preços</div>
-        <p>Empresas baixam preços para ganhar clientes — até as margens de todas colapsarem.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">🎓</div>
-        <div class="card-titulo">Cola em prova</div>
-        <p>Se todos estudam, a vantagem de colar é pequena. Mas o medo de que outros colem cria o incentivo.</p>
-      </div>
-    </div>
-
-    <div class="nav-slide">
-      <button class="btn-nav" onclick="sp(5)">← Voltar</button>
-      <button class="btn-nav p" onclick="sp(7)">Próximo →</button>
-      <span class="slide-num">7 / 8</span>
-    </div>
-  </section>
-
-  <!-- S7: CONCLUSÃO -->
-  <section class="slide" id="s7">
-    <div class="eyebrow">Conclusão</div>
-    <h2>O que o dilema nos ensina</h2>
-    <p>O Dilema do Prisioneiro revela uma tensão fundamental: entre o que é <strong>racional para o indivíduo</strong> e o que é <strong>melhor para o coletivo</strong>. Essa tensão não é apenas teórica — é a base de problemas morais, políticos e sociais reais.</p>
-
-    <div class="grade-final">
-      <div class="conceito"><div class="dot-r"></div><span><strong>Estratégia dominante</strong> — melhor resposta independente do outro</span></div>
-      <div class="conceito"><div class="dot-r"></div><span><strong>Equilíbrio de Nash</strong> — estabilidade onde ninguém muda sozinho</span></div>
-      <div class="conceito"><div class="dot-r"></div><span><strong>Tit for Tat</strong> — coopere primeiro, depois espelhe o outro</span></div>
-      <div class="conceito"><div class="dot-r"></div><span><strong>Tragédia dos comuns</strong> — dilemas coletivos em recursos compartilhados</span></div>
-      <div class="conceito"><div class="dot-r"></div><span><strong>Jogo repetido</strong> — quando o futuro muda o cálculo do presente</span></div>
-      <div class="conceito"><div class="dot-r"></div><span><strong>Racionalidade vs. moralidade</strong> — o que é lógico pode ser injusto</span></div>
-    </div>
-
-    <div class="box" style="margin-top:20px;">
-      <p>💡 <strong>Pergunta de encerramento:</strong> Você consegue pensar em um dilema do prisioneiro que viveu recentemente — em casa, na escola, no trabalho?</p>
-    </div>
-
-    <div class="nav-slide">
-      <button class="btn-nav" onclick="sp(6)">← Voltar</button>
-      <button class="btn-nav" onclick="setModo('simulacao')" style="color:var(--vermelho);border-color:rgba(224,62,62,0.4);">🎮 Jogar simulação →</button>
-      <span class="slide-num">8 / 8</span>
-    </div>
-  </section>
-
-</div>
-<!-- fim view-slides -->
-
-<!-- ═══════════════ SIMULAÇÃO ═══════════════ -->
-<div id="view-simulacao">
-  <div class="sim-wrap">
-    <div class="sim-titulo">Simulação: Dilema do Prisioneiro</div>
-    <p class="sim-sub">Você é o Suspeito A. Enfrente a IA em 5 rodadas. Pontos = anos na prisão — quanto menor, melhor para você.</p>
-
-    <div class="config-bar">
-      <span class="config-label">Estratégia da IA:</span>
-      <select class="config-select" id="estrategia-ia" onchange="reiniciarJogo()">
-        <option value="tit4tat">Tit for Tat</option>
-        <option value="sempre_coopera">Sempre coopera</option>
-        <option value="sempre_trai">Sempre trai</option>
-        <option value="aleatorio">Aleatório</option>
-      </select>
-      <span class="config-label" style="margin-left:12px;">Rodadas:</span>
-      <select class="config-select" id="num-rodadas" onchange="reiniciarJogo()">
-        <option value="5">5</option>
-        <option value="10">10</option>
-        <option value="3">3</option>
-      </select>
-    </div>
-
-    <!-- PLACAR -->
-    <div class="placar">
-      <div class="jogador-card">
-        <div class="jogador-nome">Você (Suspeito A)</div>
-        <div class="jogador-pontos vermelho" id="pts-a">0</div>
-        <div style="font-size:0.75rem;color:var(--cinza-texto);margin-top:4px;">anos acumulados</div>
-      </div>
-      <div class="rodada-info">
-        <span class="rodada-num" id="num-rodada">1</span>
-        rodada
-      </div>
-      <div class="jogador-card">
-        <div class="jogador-nome">IA (Suspeito B)</div>
-        <div class="jogador-pontos verde" id="pts-b">0</div>
-        <div style="font-size:0.75rem;color:var(--cinza-texto);margin-top:4px;">anos acumulados</div>
-      </div>
-    </div>
-
-    <!-- ARENA -->
-    <div class="arena" id="arena-jogo">
-      <div class="arena-titulo">Faça sua escolha — Rodada <span id="arena-rodada">1</span></div>
-      <div class="escolhas-grid">
-        <div class="painel-jogador">
-          <div class="painel-nome">Você</div>
-          <button class="btn-escolha" id="btn-cooperar" onclick="jogar('C')">🤐 Ficar em silêncio<br><small style="opacity:0.6;font-size:0.75rem;">Cooperar</small></button>
-          <button class="btn-escolha" id="btn-trair" onclick="jogar('T')">🗣️ Testemunhar<br><small style="opacity:0.6;font-size:0.75rem;">Trair</small></button>
-        </div>
-        <div class="painel-jogador">
-          <div class="painel-nome">IA</div>
-          <div id="ia-status" class="indicador-ia" style="padding:14px;background:var(--cinza-medio);border-radius:6px;color:var(--cinza-texto);text-align:center;">Aguardando<br>sua escolha…</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- RESULTADO RODADA -->
-    <div id="resultado-rodada">
-      <div class="res-titulo" id="res-titulo-texto"></div>
-      <div class="res-detalhe" id="res-detalhe-texto"></div>
-      <button class="btn-proxima" id="btn-proxima" onclick="proximaRodada()">Próxima rodada →</button>
-    </div>
-
-    <!-- FIM -->
-    <div id="tela-fim">
-      <div class="fim-titulo" id="fim-titulo"></div>
-      <div class="fim-analise" id="fim-analise"></div>
-      <button class="btn-reiniciar" onclick="reiniciarJogo()">↺ Jogar novamente</button>
-    </div>
-
-    <!-- HISTÓRICO -->
-    <div class="historico-wrap" id="historico-wrap" style="display:none;">
-      <div class="hist-titulo">Histórico de rodadas</div>
-      <div id="historico-linhas"></div>
-    </div>
-
+<header class="topo">
+  <a class="voltar" href="../../">← Prática Filosófica</a>
+  <div class="marca">dilema do <i>prisioneiro</i></div>
+  <span class="espaco"></span>
+  <div class="abas" role="group" aria-label="Modo">
+    <button type="button" data-aba="jogar" aria-pressed="true">Jogar</button>
+    <button type="button" data-aba="torneio" aria-pressed="false">Torneio</button>
   </div>
-</div>
+  <button type="button" class="tema" id="tema">◐ Tema</button>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <span class="selo">Teoria dos jogos · Ética</span>
+    <h1>silêncio ou <span>traição?</span></h1>
+    <p class="lead">Dois suspeitos estão em celas separadas, sem poder conversar. Cada um escolhe: <b>ficar em silêncio</b> (cooperar) ou <b>entregar o outro</b> (trair). Para cada um, trair parece sempre mais vantajoso. Mas, se os dois traem, os dois ficam mais tempo presos do que se tivessem confiado um no outro. Quanto menos anos de prisão, melhor.</p>
+  </section>
+
+  <!-- ===== JOGAR ===== -->
+  <section id="jogar">
+    <div class="palco">
+      <div class="coluna">
+        <div class="cartao forte">
+          <div class="controles">
+            <label>Máquina joga como
+              <select id="estrategia"></select>
+            </label>
+            <label>Rodadas
+              <select id="rodadas"><option>5</option><option selected>10</option><option>20</option></select>
+            </label>
+            <span class="espaco"></span>
+            <button type="button" class="pilula" id="recomecar">↺ Recomeçar</button>
+          </div>
+
+          <div class="celas">
+            <div class="cela" id="celaA">
+              <div class="cela-topo"><span class="cela-nome">Você</span><span class="total" id="totA">0 <small>anos</small></span></div>
+              <div class="cela-fundo">
+                <div class="rosto" id="rostoA">😐</div>
+                <div class="carta" id="cartaA"><div class="in"><div class="f">?</div><div class="v"></div></div></div>
+                <div class="grade"></div>
+                <div class="pena" id="penaA"></div>
+              </div>
+            </div>
+            <div class="meio">rodada<b id="rodN">1</b>de <span id="rodT">10</span><span class="x">×</span></div>
+            <div class="cela" id="celaB">
+              <div class="cela-topo"><span class="cela-nome" id="nomeB">Máquina</span><span class="total" id="totB">0 <small>anos</small></span></div>
+              <div class="cela-fundo">
+                <div class="rosto" id="rostoB">🤖</div>
+                <div class="carta" id="cartaB"><div class="in"><div class="f">?</div><div class="v"></div></div></div>
+                <div class="grade"></div>
+                <div class="pena" id="penaB"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="escolhas">
+            <button type="button" class="escolha c" data-e="C">🤐 Ficar em silêncio<small>cooperar · tecla S</small></button>
+            <button type="button" class="escolha t" data-e="T">🗣️ Entregar o outro<small>trair · tecla T</small></button>
+          </div>
+          <p class="narrador" id="narrador">Faça sua escolha. A máquina decide ao mesmo tempo, sem saber o que você escolheu.</p>
+        </div>
+
+        <div class="cartao fim" id="fim" hidden></div>
+      </div>
+
+      <div class="coluna">
+        <div class="cartao">
+          <h2>As penas de cada combinação</h2>
+          <div class="matriz" id="matriz">
+            <span></span><span class="cab">máquina fica<br>em silêncio</span><span class="cab">máquina<br>entrega</span>
+            <span class="lado">você fica em silêncio</span>
+            <div class="celula CC" data-k="CC"><b>1 ano · 1 ano</b>bom para os dois<span class="conta"></span></div>
+            <div class="celula CT" data-k="CT"><b>3 anos · livre</b>você é traído<span class="conta"></span></div>
+            <span class="lado">você entrega</span>
+            <div class="celula TC" data-k="TC"><b>livre · 3 anos</b>você trai<span class="conta"></span></div>
+            <div class="celula TT" data-k="TT"><b>2 anos · 2 anos</b>ruim para os dois<span class="conta"></span></div>
+          </div>
+          <p class="dica">Primeiro número: você. Segundo: a máquina. O número no canto conta quantas vezes cada caso aconteceu.</p>
+        </div>
+
+        <div class="cartao">
+          <h2>Anos acumulados</h2>
+          <svg id="grafico" viewBox="0 0 320 180" role="img" aria-label="Gráfico dos anos acumulados por rodada"></svg>
+          <div class="legenda">
+            <span><i style="background:var(--destaque)"></i>você</span>
+            <span><i style="background:var(--tinta)"></i>máquina</span>
+            <span><i style="background:var(--coop);opacity:.6"></i>se os dois sempre cooperassem</span>
+            <span><i style="background:var(--ambos);opacity:.6"></i>se os dois sempre traíssem</span>
+          </div>
+        </div>
+
+        <div class="cartao">
+          <h2>O que já aconteceu</h2>
+          <div class="historia">
+            <span class="rot">Você</span><div class="fichas" id="fichasA"><span class="vazio">Nenhuma rodada ainda.</span></div>
+            <span class="rot">Máquina</span><div class="fichas" id="fichasB"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TORNEIO ===== -->
+  <section id="torneio" hidden>
+    <div class="palco">
+      <div class="coluna">
+        <div class="cartao forte">
+          <h2>Torneio de estratégias</h2>
+          <p class="dica" style="font-size:.9rem">Em 1980, o cientista político Robert Axelrod pôs programas de computador para jogar o dilema muitas vezes, uns contra os outros. Escolha quem participa e veja quem termina com menos anos de prisão.</p>
+          <div class="participantes" id="participantes"></div>
+          <details class="quem"><summary>Como cada estratégia joga</summary><ul id="quem"></ul></details>
+          <div class="controles">
+            <label>Rodadas por partida
+              <select id="tRodadas"><option>10</option><option selected>20</option><option>50</option></select>
+            </label>
+            <label>Velocidade <input type="range" id="tVel" min="1" max="10" value="5"></label>
+          </div>
+          <div class="controles">
+            <button type="button" class="pilula vermelha" id="tPlay">▶ Começar</button>
+            <button type="button" class="pilula" id="tPular">⏭ Ir para o fim</button>
+            <button type="button" class="pilula" id="tReset">↺ Recomeçar</button>
+          </div>
+          <div class="progresso"><i id="tProg"></i></div>
+          <span class="dica" id="tProgTxt"></span>
+        </div>
+
+        <div class="cartao">
+          <div class="partida-titulo"><h2>Partida em andamento</h2><small id="tPartidaN"></small></div>
+          <div class="duelo" id="duelo">
+            <span class="nome" id="dNomeX">…</span><div class="quadros" id="qX"></div><span class="pts" id="dPtsX">0</span>
+            <span class="nome" id="dNomeY">…</span><div class="quadros" id="qY"></div><span class="pts" id="dPtsY">0</span>
+          </div>
+          <p class="placar-partida" id="dTexto">Verde: ficou em silêncio. Vermelho: entregou o outro. Os números são anos de prisão nesta partida.</p>
+        </div>
+
+        <div class="cartao campeao" id="campeao" hidden></div>
+      </div>
+
+      <div class="coluna">
+        <div class="cartao">
+          <h2>Classificação</h2>
+          <p class="dica">Média de anos de prisão por rodada. Quanto menor, melhor.</p>
+          <div class="ranking" id="ranking"></div>
+        </div>
+        <div class="cartao">
+          <h2>Partidas concluídas</h2>
+          <ul class="registro" id="registro"><li style="display:block;background:none" class="vazio">Nenhuma partida ainda.</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>Criado por Artur Merlin · Instagram @arturmerlins · <a href="http://lattes.cnpq.br/4544860184760544" target="_blank" rel="noopener">Currículo Lattes</a></footer>
 
 <script>
-// ═══════════ SLIDES ═══════════
-const TOTAL_SLIDES = 8;
-let slideAtual = 0;
+(function(){
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const lento = !matchMedia("(prefers-reduced-motion: reduce)").matches;
+const espera = ms => new Promise(r => setTimeout(r, lento ? ms : 0));
+const num = (x, d=0) => Number(x).toLocaleString("pt-BR", {minimumFractionDigits:d, maximumFractionDigits:d});
+const anos = n => n === 0 ? "livre" : n === 1 ? "1 ano" : n + " anos";
 
-function sp(n) {
-  document.getElementById('s' + slideAtual).classList.remove('ativo');
-  slideAtual = n;
-  document.getElementById('s' + slideAtual).classList.add('ativo');
-  atualizarNavDots();
-  document.getElementById('barra-prog').style.width = ((slideAtual + 1) / TOTAL_SLIDES * 100) + '%';
-  window.scrollTo(0, 0);
+/* ---------- tema (igual ao site) ---------- */
+const h = document.documentElement;
+$("#tema").onclick = () => {
+  const escuro = h.dataset.tema ? h.dataset.tema === "escuro" : matchMedia("(prefers-color-scheme: dark)").matches;
+  h.dataset.tema = escuro ? "claro" : "escuro";
+  try{ localStorage.setItem("tema", h.dataset.tema); }catch(e){}
+  desenharGrafico();
+};
+
+/* ---------- regras ---------- */
+const PENA = {CC:[1,1], CT:[3,0], TC:[0,3], TT:[2,2]};
+const EST = {
+  olho:{nome:"Olho por olho", ic:"🪞", desc:"Começa cooperando e depois repete o que o outro fez na rodada anterior.", boa:true,
+    f:(eu,ele)=> ele.length ? ele[ele.length-1] : "C"},
+  coopera:{nome:"Sempre coopera", ic:"😇", desc:"Fica em silêncio em todas as rodadas.", boa:true, f:()=>"C"},
+  trai:{nome:"Sempre trai", ic:"😈", desc:"Entrega o outro em todas as rodadas.", boa:false, f:()=>"T"},
+  aleatoria:{nome:"Aleatória", ic:"🎲", desc:"Tira cara ou coroa a cada rodada.", boa:false, f:()=> Math.random()<.5 ? "C" : "T"},
+  rancorosa:{nome:"Rancorosa", ic:"😤", desc:"Coopera até ser traída uma vez. Depois, trai para sempre.", boa:true,
+    f:(eu,ele)=> ele.includes("T") ? "T" : "C"},
+  perdoadora:{nome:"Perdoadora", ic:"🕊️", desc:"Só trai depois de ser traída duas vezes seguidas.", boa:true,
+    f:(eu,ele)=>{ const n=ele.length; return n>=2 && ele[n-1]==="T" && ele[n-2]==="T" ? "T" : "C"; }},
+  desconfiada:{nome:"Desconfiada", ic:"🧐", desc:"Começa traindo e depois repete o que o outro fez.", boa:false,
+    f:(eu,ele)=> ele.length ? ele[ele.length-1] : "T"},
+  pavlov:{nome:"Pavlov", ic:"🔔", desc:"Se a última rodada foi boa para ela, repete a escolha. Se foi ruim, muda.", boa:true,
+    f:(eu,ele)=>{ const n=eu.length; if(!n) return "C"; const p=PENA[eu[n-1]+ele[n-1]][0]; return p<=1 ? eu[n-1] : (eu[n-1]==="C" ? "T" : "C"); }}
+};
+const NARRA = {
+  CC:"Os dois ficaram em silêncio. Cada um pega 1 ano: o melhor resultado para a dupla.",
+  CT:"Você ficou em silêncio e a máquina te entregou. Você pega 3 anos e ela sai livre.",
+  TC:"Você entregou a máquina, que ficou em silêncio. Você sai livre e ela pega 3 anos.",
+  TT:"Os dois se entregaram. Cada um pega 2 anos: pior do que se tivessem confiado um no outro."
+};
+const ROSTO = ["😎","🙂","😟","😭"];
+
+/* ---------- abas ---------- */
+function abrir(aba){
+  $$(".abas button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.aba === aba)));
+  $("#jogar").hidden = aba !== "jogar";
+  $("#torneio").hidden = aba !== "torneio";
+  if(aba === "torneio") desenharRanking();
+  else desenharGrafico();
+  history.replaceState(null, "", aba === "torneio" ? "#torneio" : location.pathname + location.search);
 }
+$$(".abas button").forEach(b => b.onclick = () => abrir(b.dataset.aba));
 
-function atualizarNavDots() {
-  const wrap = document.getElementById('nav-dots-wrap');
-  wrap.innerHTML = '';
-  for (let i = 0; i < TOTAL_SLIDES; i++) {
-    const b = document.createElement('button');
-    b.style.cssText = `background:none;border:1px solid ${i === slideAtual ? 'var(--vermelho)' : 'rgba(255,255,255,0.15)'};color:${i === slideAtual ? 'var(--vermelho)' : 'var(--cinza-texto)'};font-family:JetBrains Mono,monospace;font-size:10px;padding:4px 8px;cursor:pointer;`;
-    b.textContent = String(i + 1).padStart(2, '0');
-    b.onclick = () => sp(i);
-    wrap.appendChild(b);
-  }
-}
+/* =========================================================
+   JOGAR CONTRA A MÁQUINA
+   ========================================================= */
+const OPC_JOGO = ["olho","coopera","trai","aleatoria","rancorosa","perdoadora","pavlov"];
+const sel = $("#estrategia");
+OPC_JOGO.forEach(k => sel.add(new Option(EST[k].ic + " " + EST[k].nome, k)));
+sel.add(new Option("❓ Estratégia secreta", "secreta"));
+sel.value = "secreta";
 
-atualizarNavDots();
-
-// ═══════════ MODO TABS ═══════════
-function setModo(m) {
-  document.querySelectorAll('.modo-tab').forEach((t, i) => {
-    t.classList.toggle('ativo', (i === 0 && m === 'slides') || (i === 1 && m === 'simulacao'));
+let J = {};
+function novoJogo(){
+  const total = +$("#rodadas").value;
+  const escolhida = sel.value;
+  J = {total, escolhida, real: escolhida === "secreta" ? OPC_JOGO[Math.floor(Math.random()*OPC_JOGO.length)] : escolhida,
+       r:0, a:[], b:[], ya:0, yb:0, ocupado:false, fim:false, contas:{CC:0,CT:0,TC:0,TT:0}};
+  $("#rodN").textContent = 1; $("#rodT").textContent = total;
+  $("#nomeB").textContent = escolhida === "secreta" ? "Máquina ❓" : "Máquina " + EST[escolhida].ic;
+  $("#totA").innerHTML = "0 <small>anos</small>"; $("#totB").innerHTML = "0 <small>anos</small>";
+  ["A","B"].forEach(l => {
+    $("#carta"+l).classList.remove("virada","pensando");
+    $("#cela"+l).classList.remove("presa");
+    $("#pena"+l).className = "pena";
   });
-  document.getElementById('view-slides').classList.toggle('visivel', m === 'slides');
-  document.getElementById('view-simulacao').classList.toggle('visivel', m === 'simulacao');
-  document.getElementById('barra-prog').style.display = m === 'slides' ? 'block' : 'none';
+  $("#rostoA").textContent = "😐"; $("#rostoB").textContent = "🤖";
+  $$(".celula").forEach(c => { c.classList.remove("acesa","atual"); const n=c.querySelector(".conta"); n.textContent=""; n.classList.remove("tem"); });
+  $("#fichasA").innerHTML = '<span class="vazio">Nenhuma rodada ainda.</span>'; $("#fichasB").innerHTML = "";
+  narrar(escolhida === "secreta"
+    ? "A máquina recebeu uma estratégia secreta. Jogue e tente descobrir qual é."
+    : "A máquina joga como " + EST[escolhida].nome + ". " + EST[escolhida].desc);
+  $("#fim").hidden = true;
+  botoes(true);
+  desenharGrafico();
+}
+function botoes(on){ $$(".escolha").forEach(b => b.disabled = !on); }
+function narrar(t){ const n=$("#narrador"); n.classList.remove("entra"); void n.offsetWidth; n.textContent=t; n.classList.add("entra"); }
+
+function mostrarCarta(l, e){
+  const v = $("#carta"+l+" .v");
+  v.className = "v " + (e === "C" ? "c" : "t");
+  v.innerHTML = e === "C" ? "<span>🤐</span>silêncio" : "<span>🗣️</span>entregou";
+  $("#carta"+l).classList.remove("pensando");
+  $("#carta"+l).classList.add("virada");
+}
+function contar(el, de, ate, ms){
+  const t0 = performance.now();
+  return new Promise(res => {
+    const passo = t => {
+      const k = Math.min(1, (t - t0) / (lento ? ms : 1));
+      el.innerHTML = Math.round(de + (ate - de) * k) + " <small>" + (ate === 1 && k === 1 ? "ano" : "anos") + "</small>";
+      if(k < 1) requestAnimationFrame(passo); else { el.classList.remove("pulsa"); void el.offsetWidth; el.classList.add("pulsa"); res(); }
+    };
+    requestAnimationFrame(passo);
+  });
+}
+function voar(de, para, texto, cor){
+  if(!lento) return Promise.resolve();
+  const a = de.getBoundingClientRect(), b = para.getBoundingClientRect();
+  const v = document.createElement("div");
+  v.className = "voo"; v.textContent = texto; v.style.color = cor;
+  document.body.appendChild(v);
+  const w = v.offsetWidth, hh = v.offsetHeight;
+  const x0 = a.left + a.width/2 - w/2, y0 = a.top + a.height/2 - hh/2;
+  const x1 = b.left + b.width/2 - w/2, y1 = b.top + b.height/2 - hh/2;
+  v.style.left = x0 + "px"; v.style.top = y0 + "px";
+  const an = v.animate([
+    {transform:"translate(0,0) scale(1)", opacity:1},
+    {transform:`translate(${(x1-x0)*.5}px,${(y1-y0)*.5 - 40}px) scale(1.15)`, opacity:1, offset:.5},
+    {transform:`translate(${x1-x0}px,${y1-y0}px) scale(.6)`, opacity:.2}
+  ], {duration:700, easing:"cubic-bezier(.5,0,.3,1)"});
+  return an.finished.then(() => v.remove()).catch(() => v.remove());
 }
 
-// ═══════════ SIMULAÇÃO ═══════════
-let estado = {};
+async function jogar(eu){
+  if(J.ocupado || J.fim) return;
+  J.ocupado = true; botoes(false);
+  const maq = EST[J.real].f(J.b.slice(), J.a.slice());
 
-function reiniciarJogo() {
-  const totalR = parseInt(document.getElementById('num-rodadas').value);
-  estado = {
-    rodada: 1,
-    totalRodadas: totalR,
-    ptsA: 0, ptsB: 0,
-    historico: [],
-    ultimaJogadaA: null,
-    ativo: true
+  // limpa a rodada anterior
+  if(J.r > 0){
+    ["A","B"].forEach(l => { $("#carta"+l).classList.remove("virada"); $("#cela"+l).classList.remove("presa"); $("#pena"+l).className = "pena"; });
+    $("#rostoA").textContent = "😐"; $("#rostoB").textContent = "🤖";
+    $$(".celula").forEach(c => c.classList.remove("acesa","atual"));
+    $("#rodN").textContent = J.r + 1;
+    await espera(380);
+  }
+
+  // 1. as duas escolhas
+  mostrarCarta("A", eu);
+  $("#cartaB").classList.add("pensando");
+  narrar("Você escolheu " + (eu === "C" ? "ficar em silêncio" : "entregar a máquina") + ". E a máquina?");
+  await espera(850);
+  mostrarCarta("B", maq);
+  await espera(600);
+
+  // 2. a matriz acende
+  const k = eu + maq, [pa, pb] = PENA[k];
+  const cel = $(`.celula[data-k="${k}"]`);
+  cel.classList.add("acesa","atual");
+  J.contas[k]++;
+  const c = cel.querySelector(".conta"); c.textContent = "×" + J.contas[k]; c.classList.add("tem");
+  await espera(450);
+
+  // 3. a pena de cada um
+  [["A",pa],["B",pb]].forEach(([l,p]) => {
+    const el = $("#pena"+l);
+    el.textContent = p === 0 ? "🕊️ livre!" : "+" + anos(p);
+    el.className = "pena mostra" + (p === 0 ? " livre" : "");
+    if(p > 0) $("#cela"+l).classList.add("presa");
+    const r = $("#rosto"+l); r.textContent = ROSTO[p]; r.classList.remove("reage"); void r.offsetWidth; r.classList.add("reage");
+  });
+  narrar(NARRA[k]);
+  await espera(650);
+
+  // 4. os anos voam para o placar
+  const ya0 = J.ya, yb0 = J.yb;
+  J.ya += pa; J.yb += pb; J.a.push(eu); J.b.push(maq); J.r++;
+  await Promise.all([
+    pa ? voar($("#penaA"), $("#totA"), "+" + pa, "var(--destaque)") : null,
+    pb ? voar($("#penaB"), $("#totB"), "+" + pb, "var(--tinta)") : null
+  ]);
+  contar($("#totA"), ya0, J.ya, 400); contar($("#totB"), yb0, J.yb, 400);
+
+  // 5. histórico e gráfico
+  if(J.r === 1) $("#fichasA").innerHTML = "";
+  ficha("#fichasA", eu, J.r); ficha("#fichasB", maq, J.r);
+  segmento(J.r, ya0, J.ya, "var(--destaque)");
+  segmento(J.r, yb0, J.yb, "var(--tinta)");
+
+  J.ocupado = false;
+  if(J.r >= J.total){ J.fim = true; await espera(700); terminar(); }
+  else botoes(true);
+}
+function ficha(alvo, e, r){
+  const f = document.createElement("span");
+  f.className = "ficha " + (e === "C" ? "c" : "t");
+  f.textContent = r; f.title = "Rodada " + r + ": " + (e === "C" ? "silêncio" : "entregou");
+  $(alvo).appendChild(f);
+}
+$$(".escolha").forEach(b => b.onclick = () => jogar(b.dataset.e));
+document.addEventListener("keydown", e => {
+  if($("#jogar").hidden || e.target.closest("select,input")) return;
+  const t = e.key.toLowerCase();
+  if(t === "s" || t === "c") jogar("C");
+  if(t === "t") jogar("T");
+});
+sel.onchange = novoJogo; $("#rodadas").onchange = novoJogo; $("#recomecar").onclick = novoJogo;
+
+/* ---------- gráfico dos anos acumulados ---------- */
+const G = {w:320, h:180, ml:28, mr:10, mt:10, mb:24};
+const gx = r => G.ml + (r / J.total) * (G.w - G.ml - G.mr);
+const gy = v => G.mt + (1 - v / (J.total * 3)) * (G.h - G.mt - G.mb);
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, at, pai){ const e = document.createElementNS(NS, tag); for(const k in at) e.setAttribute(k, at[k]); (pai || $("#grafico")).appendChild(e); return e; }
+function desenharGrafico(){
+  const svg = $("#grafico"); if(!J.total) return;
+  svg.innerHTML = "";
+  const T = J.total;
+  [0, T, 2*T, 3*T].forEach(v => {
+    el("line", {x1:G.ml, x2:G.w-G.mr, y1:gy(v), y2:gy(v), stroke:"var(--borda)", "stroke-width":1});
+    const t = el("text", {x:G.ml-5, y:gy(v)+3, "text-anchor":"end"}); t.textContent = v;
+  });
+  const passoX = T <= 10 ? 1 : 5;
+  for(let r = 0; r <= T; r += passoX){ const t = el("text", {x:gx(r), y:G.h-G.mb+13, "text-anchor":"middle"}); t.textContent = r; }
+  const t = el("text", {x:G.w-G.mr, y:G.h-2, "text-anchor":"end"}); t.textContent = "rodada";
+  el("line", {x1:gx(0), y1:gy(0), x2:gx(T), y2:gy(T), stroke:"var(--coop)", "stroke-width":2, "stroke-dasharray":"4 4", opacity:.6});
+  el("line", {x1:gx(0), y1:gy(0), x2:gx(T), y2:gy(2*T), stroke:"var(--ambos)", "stroke-width":2, "stroke-dasharray":"4 4", opacity:.6});
+  // redesenha o caminho já percorrido (sem animação)
+  let ya = 0, yb = 0;
+  for(let i = 0; i < J.r; i++){
+    const [pa, pb] = PENA[J.a[i] + J.b[i]];
+    segmento(i+1, ya, ya+pa, "var(--destaque)", true); segmento(i+1, yb, yb+pb, "var(--tinta)", true);
+    ya += pa; yb += pb;
+  }
+}
+function segmento(r, v0, v1, cor, semAnimar){
+  const x0 = gx(r-1), y0 = gy(v0), x1 = gx(r), y1 = gy(v1);
+  const ln = el("line", {x1:x0, y1:y0, x2:x1, y2:y1, stroke:cor, "stroke-width":2.5, "stroke-linecap":"round"});
+  const pt = el("circle", {cx:x1, cy:y1, r:3, fill:cor});
+  if(semAnimar || !lento) return;
+  const L = Math.hypot(x1-x0, y1-y0);
+  ln.setAttribute("stroke-dasharray", L);
+  ln.animate([{strokeDashoffset:L}, {strokeDashoffset:0}], {duration:500, easing:"ease-out", fill:"forwards"});
+  pt.animate([{r:0, opacity:0}, {r:3, opacity:0, offset:.6}, {r:5, opacity:1, offset:.8}, {r:3, opacity:1}], {duration:700});
+}
+
+/* ---------- fim de jogo ---------- */
+function terminar(){
+  const box = $("#fim");
+  const coop = J.a.filter(x => x === "C").length, trai = J.total - coop;
+  const juntos = J.ya + J.yb, ideal = J.total * 2;
+  let titulo = J.ya < J.yb ? "Você passou menos tempo preso." : J.ya > J.yb ? "A máquina passou menos tempo presa." : "Empate: as mesmas penas.";
+  const cab = `<span class="selo" style="margin:0">Fim de jogo</span><h2>${titulo}</h2>
+    <div class="numeros">
+      <div><b>${J.ya}</b><span>seus anos</span></div>
+      <div><b>${J.yb}</b><span>anos da máquina</span></div>
+      <div><b>${juntos}</b><span>anos da dupla</span></div>
+      <div><b>${ideal}</b><span>se os dois sempre cooperassem</span></div>
+    </div>
+    <p>Você ficou em silêncio ${coop} ${coop===1?"vez":"vezes"} e entregou a máquina ${trai} ${trai===1?"vez":"vezes"}. ${
+      juntos === ideal ? "A dupla chegou ao melhor resultado possível: confiança total." :
+      "Juntos, vocês somaram " + (juntos - ideal) + " anos a mais do que se tivessem confiado um no outro o tempo todo."}</p>`;
+  const rodape = `<p class="narrador" style="min-height:0">Para pensar: ganhar da máquina e ter um bom resultado são a mesma coisa? Onde, na sua vida, alguém precisa confiar sem garantia?</p>
+    <div class="controles"><button type="button" class="pilula vermelha" id="denovo">↺ Jogar de novo</button><button type="button" class="pilula" id="irTorneio">Ver o torneio de estratégias →</button></div>`;
+  const revela = () => {
+    const E = EST[J.real];
+    return `<p><b>A máquina jogava como ${E.ic} ${E.nome}.</b> ${E.desc}</p>`;
   };
-
-  document.getElementById('pts-a').textContent = '0';
-  document.getElementById('pts-b').textContent = '0';
-  document.getElementById('num-rodada').textContent = '1';
-  document.getElementById('arena-rodada').textContent = '1';
-  document.getElementById('resultado-rodada').style.display = 'none';
-  document.getElementById('tela-fim').style.display = 'none';
-  document.getElementById('arena-jogo').style.display = 'block';
-  document.getElementById('historico-wrap').style.display = 'none';
-  document.getElementById('historico-linhas').innerHTML = '';
-  document.getElementById('ia-status').textContent = 'Aguardando\nsua escolha…';
-  document.getElementById('ia-status').style.color = 'var(--cinza-texto)';
-
-  const btns = document.querySelectorAll('.btn-escolha');
-  btns.forEach(b => { b.disabled = false; b.className = 'btn-escolha'; });
+  if(J.escolhida === "secreta"){
+    box.innerHTML = cab + `<p><b>Qual era a estratégia secreta da máquina?</b></p><div class="palpites">${
+      OPC_JOGO.map(k => `<button type="button" class="pilula" data-p="${k}">${EST[k].ic} ${EST[k].nome}</button>`).join("")}</div><div id="revela"></div>` + rodape;
+    box.querySelectorAll("[data-p]").forEach(b => b.onclick = () => {
+      box.querySelectorAll("[data-p]").forEach(x => { x.disabled = true; if(x.dataset.p === J.real) x.classList.add("vermelha"); });
+      const ok = b.dataset.p === J.real;
+      $("#revela").innerHTML = `<p class="narrador entra" style="min-height:0">${ok ? "✅ Acertou!" : "❌ Não era essa."} ${revela().replace(/<\/?p>/g,"")}</p>`;
+    });
+  } else box.innerHTML = cab + revela() + rodape;
+  box.hidden = false;
+  $("#denovo").onclick = () => { novoJogo(); window.scrollTo({top:0, behavior:"smooth"}); };
+  $("#irTorneio").onclick = () => { abrir("torneio"); window.scrollTo({top:0, behavior:"smooth"}); };
+  box.scrollIntoView({behavior:"smooth", block:"nearest"});
 }
 
-function iaDecide(jogadaA) {
-  const est = document.getElementById('estrategia-ia').value;
-  if (est === 'sempre_coopera') return 'C';
-  if (est === 'sempre_trai') return 'T';
-  if (est === 'aleatorio') return Math.random() > 0.5 ? 'C' : 'T';
-  if (est === 'tit4tat') {
-    if (estado.rodada === 1) return 'C';
-    return estado.ultimaJogadaA || 'C';
+/* =========================================================
+   TORNEIO
+   ========================================================= */
+const TODAS = ["olho","coopera","trai","aleatoria","rancorosa","perdoadora","desconfiada","pavlov"];
+const T = {sel:new Set(["olho","coopera","trai","rancorosa","desconfiada","perdoadora"]), fila:[], i:0, p:null, st:{}, timer:null, rodando:false, feito:false, rodadas:20};
+const nomeEst = k => EST[k].ic + " " + EST[k].nome;
+
+$("#quem").innerHTML = TODAS.map(k => `<li><b>${nomeEst(k)}:</b> ${EST[k].desc}</li>`).join("");
+function chips(){
+  $("#participantes").innerHTML = "";
+  TODAS.forEach(k => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "participante"; b.textContent = nomeEst(k);
+    b.setAttribute("aria-pressed", String(T.sel.has(k)));
+    b.onclick = () => {
+      if(T.sel.has(k)){ if(T.sel.size <= 2) return; T.sel.delete(k); } else T.sel.add(k);
+      montar(); chips();
+    };
+    $("#participantes").appendChild(b);
+  });
+}
+function montar(){
+  parar();
+  T.rodadas = +$("#tRodadas").value;
+  const ids = TODAS.filter(k => T.sel.has(k));
+  T.fila = [];
+  for(let i = 0; i < ids.length; i++) for(let j = i; j < ids.length; j++) T.fila.push([ids[i], ids[j]]);
+  T.i = 0; T.p = null; T.feito = false;
+  T.st = {}; ids.forEach(k => T.st[k] = {anos:0, rod:0});
+  $("#registro").innerHTML = '<li style="display:block;background:none" class="vazio">Nenhuma partida ainda.</li>';
+  $("#campeao").hidden = true;
+  $("#tPlay").textContent = "▶ Começar"; $("#tPlay").disabled = false; $("#tPular").disabled = false;
+  $("#dNomeX").textContent = "…"; $("#dNomeY").textContent = "…"; $("#dPtsX").textContent = "0"; $("#dPtsY").textContent = "0";
+  $("#qX").innerHTML = ""; $("#qY").innerHTML = ""; $("#tPartidaN").textContent = "";
+  $("#ranking").innerHTML = "";
+  progresso(); desenharRanking();
+}
+function progresso(){
+  $("#tProg").style.width = (T.i / T.fila.length * 100) + "%";
+  $("#tProgTxt").textContent = `${T.i} de ${T.fila.length} partidas (cada estratégia enfrenta todas as outras e também uma cópia de si mesma)`;
+}
+function novaPartida(){
+  const [x, y] = T.fila[T.i];
+  T.p = {x, y, hx:[], hy:[], ax:0, ay:0};
+  $("#tPartidaN").textContent = `partida ${T.i+1} de ${T.fila.length}`;
+  $("#dNomeX").textContent = nomeEst(x); $("#dNomeY").textContent = nomeEst(y) + (x === y ? " (cópia)" : "");
+  $("#dPtsX").textContent = "0"; $("#dPtsY").textContent = "0";
+  ["#qX","#qY"].forEach(q => { const e = $(q); e.style.gridTemplateColumns = `repeat(${T.rodadas},1fr)`; e.innerHTML = "<i></i>".repeat(T.rodadas); });
+  $("#dTexto").textContent = "Verde: ficou em silêncio. Vermelho: entregou o outro. Os números são anos de prisão nesta partida.";
+  marcarJogando();
+}
+function rodadaTorneio(desenhar){
+  if(!T.p){ if(T.i >= T.fila.length) return false; if(desenhar) novaPartida(); else { const [x,y] = T.fila[T.i]; T.p = {x, y, hx:[], hy:[], ax:0, ay:0}; } }
+  const p = T.p;
+  const cx = EST[p.x].f(p.hx.slice(), p.hy.slice()), cy = EST[p.y].f(p.hy.slice(), p.hx.slice());
+  const [px, py] = PENA[cx + cy];
+  p.hx.push(cx); p.hy.push(cy); p.ax += px; p.ay += py;
+  T.st[p.x].anos += px; T.st[p.x].rod++;
+  if(p.x !== p.y){ T.st[p.y].anos += py; T.st[p.y].rod++; }
+  if(desenhar){
+    const n = p.hx.length - 1;
+    $("#qX").children[n].className = cx === "C" ? "c" : "t";
+    $("#qY").children[n].className = cy === "C" ? "c" : "t";
+    $("#dPtsX").textContent = p.ax; $("#dPtsY").textContent = p.ay;
   }
-  return 'C';
+  if(p.hx.length >= T.rodadas){ concluir(desenhar); return "fim"; }
+  return true;
 }
-
-const PAYOFF = {
-  CC: [1, 1], CT: [3, 0], TC: [0, 3], TT: [2, 2]
+function concluir(desenhar){
+  const p = T.p;
+  const li = document.createElement("li");
+  const gx_ = p.ax < p.ay, gy_ = p.ay < p.ax;
+  li.innerHTML = `<span class="${gx_?"ganha":""}">${nomeEst(p.x)}</span><span class="meio-r">${p.ax} × ${p.ay}</span><span class="${gy_?"ganha":""}">${nomeEst(p.y)}${p.x===p.y?" (cópia)":""}</span>`;
+  const reg = $("#registro"); if(reg.querySelector(".vazio")) reg.innerHTML = ""; reg.prepend(li);
+  if(desenhar){
+    $("#dTexto").textContent = p.ax === p.ay ? `Empate: ${p.ax} anos para cada uma.`
+      : `${EST[p.ax < p.ay ? p.x : p.y].nome} passou menos tempo presa nesta partida (${Math.min(p.ax,p.ay)} contra ${Math.max(p.ax,p.ay)} anos).`;
+  }
+  T.i++; T.p = null; progresso();
+  if(T.i >= T.fila.length) encerrar();
+}
+function ordem(){
+  return Object.keys(T.st).sort((a, b) => {
+    const A = T.st[a], B = T.st[b];
+    if(!A.rod && !B.rod) return TODAS.indexOf(a) - TODAS.indexOf(b);
+    if(!A.rod) return 1; if(!B.rod) return -1;
+    return A.anos/A.rod - B.anos/B.rod;
+  });
+}
+function desenharRanking(){
+  const box = $("#ranking"); const ks = ordem();
+  box.style.height = (ks.length * 42) + "px";
+  ks.forEach((k, i) => {
+    let lin = box.querySelector(`[data-k="${k}"]`);
+    if(!lin){
+      lin = document.createElement("div"); lin.className = "linha-rank"; lin.dataset.k = k;
+      lin.innerHTML = `<span class="pos"></span><span class="nome">${nomeEst(k)}</span><div class="barra"><i></i></div><b>…</b>`;
+      lin.style.top = (i * 42) + "px";
+      box.appendChild(lin);
+    }
+    const s = T.st[k], m = s.rod ? s.anos / s.rod : null;
+    lin.style.top = (i * 42) + "px";
+    lin.querySelector(".pos").textContent = (i+1) + "º";
+    lin.querySelector("i").style.width = m === null ? "0" : (m / 3 * 100) + "%";
+    lin.querySelector("b").textContent = m === null ? "…" : num(m, 2);
+    lin.classList.toggle("lider", i === 0 && m !== null);
+  });
+  box.querySelectorAll(".linha-rank").forEach(l => { if(!T.st[l.dataset.k]) l.remove(); });
+  marcarJogando();
+}
+function marcarJogando(){
+  $$(".linha-rank").forEach(l => l.classList.toggle("joga", !!T.p && !T.feito && (l.dataset.k === T.p.x || l.dataset.k === T.p.y)));
+}
+const ATRASO = [0, 650, 450, 300, 200, 130, 80, 45, 22, 10, 0];
+function ciclo(){
+  if(!T.rodando) return;
+  const v = +$("#tVel").value;
+  const porVez = v === 10 ? 6 : 1;
+  let r = true;
+  for(let i = 0; i < porVez && r === true; i++) r = rodadaTorneio(true);
+  desenharRanking();
+  if(r === false || T.feito){ parar(); return; }
+  T.timer = setTimeout(ciclo, r === "fim" ? Math.max(350, ATRASO[v] * 4) : ATRASO[v]);
+}
+function parar(){ T.rodando = false; clearTimeout(T.timer); if(!T.feito) $("#tPlay").textContent = T.i || T.p ? "▶ Continuar" : "▶ Começar"; }
+$("#tPlay").onclick = () => {
+  if(T.feito) return;
+  if(T.rodando){ parar(); return; }
+  T.rodando = true; $("#tPlay").textContent = "⏸ Pausar"; ciclo();
 };
-
-const DESCRICAO = {
-  CC: ['🤝 Ambos cooperaram', 'Resultado ótimo para os dois! 1 ano cada.'],
-  CT: ['😔 Você cooperou, a IA traiu', 'Você levou 3 anos. A IA saiu livre. Confiar foi arriscado.'],
-  TC: ['😈 Você traiu, a IA cooperou', 'Você saiu livre. A IA levou 3 anos. A traição compensou — desta vez.'],
-  TT: ['😤 Ambos traíram', 'Resultado mediano para os dois. 2 anos cada. O equilíbrio de Nash em ação.']
+$("#tPular").onclick = () => {
+  if(T.feito) return;
+  parar();
+  const ultima = T.fila.length - 1;
+  while(T.i < ultima) rodadaTorneio(false);
+  if(!T.p) novaPartida();
+  while(rodadaTorneio(true) === true);
+  desenharRanking();
 };
+$("#tReset").onclick = montar;
+$("#tRodadas").onchange = montar;
 
-function jogar(escolhaA) {
-  if (!estado.ativo) return;
-
-  const escolhaIA = iaDecide(escolhaA);
-  const chave = escolhaA + escolhaIA;
-  const [ptA, ptB] = PAYOFF[chave];
-  const [titulo, detalhe] = DESCRICAO[chave];
-
-  estado.ptsA += ptA;
-  estado.ptsB += ptB;
-  estado.ultimaJogadaA = escolhaA;
-
-  estado.historico.push({ r: estado.rodada, a: escolhaA, b: escolhaIA, ptA, ptB });
-
-  // Atualiza UI escolha
-  const btnC = document.getElementById('btn-cooperar');
-  const btnT = document.getElementById('btn-trair');
-  btnC.disabled = true; btnT.disabled = true;
-  btnC.className = 'btn-escolha' + (escolhaA === 'C' ? ' escolhido-c' : '');
-  btnT.className = 'btn-escolha' + (escolhaA === 'T' ? ' escolhido-t' : '');
-
-  // IA status
-  const iaEl = document.getElementById('ia-status');
-  iaEl.textContent = escolhaIA === 'C' ? '🤐 Cooperou' : '🗣️ Traiu';
-  iaEl.style.color = escolhaIA === 'C' ? 'var(--verde)' : 'var(--vermelho)';
-
-  // Placar
-  document.getElementById('pts-a').textContent = estado.ptsA;
-  document.getElementById('pts-b').textContent = estado.ptsB;
-
-  // Resultado
-  const resDiv = document.getElementById('resultado-rodada');
-  document.getElementById('res-titulo-texto').textContent = titulo;
-  document.getElementById('res-detalhe-texto').innerHTML =
-    detalhe + `<br><br>Você: +${ptA} ano(s) &nbsp;|&nbsp; IA: +${ptB} ano(s)`;
-  resDiv.style.display = 'block';
-
-  const btnP = document.getElementById('btn-proxima');
-  const ehUltima = estado.rodada >= estado.totalRodadas;
-  btnP.textContent = ehUltima ? 'Ver resultado final →' : 'Próxima rodada →';
-
-  adicionarHistorico(estado.rodada, escolhaA, escolhaIA, ptA, ptB);
+function encerrar(){
+  T.feito = true; T.rodando = false; clearTimeout(T.timer);
+  $("#tPlay").textContent = "✔ Fim"; $("#tPlay").disabled = true; $("#tPular").disabled = true;
+  desenharRanking(); marcarJogando();
+  const ks = ordem(), v = ks[0], u = ks[ks.length-1], E = EST[v];
+  const m = k => num(T.st[k].anos / T.st[k].rod, 2);
+  const leitura = E.boa
+    ? "Ela nunca é a primeira a trair. Estratégias assim, que cooperam mas reagem à traição, costumam ficar no topo quando jogam muitas vezes umas com as outras: a confiança rende mais do que a esperteza."
+    : "Com estes participantes, trair compensou. Experimente incluir mais estratégias que cooperam e reagem à traição e veja se o resultado muda.";
+  const c = $("#campeao");
+  c.innerHTML = `<span class="selo" style="margin:0">Resultado</span><h2>🏆 ${E.ic} ${E.nome}</h2>
+    <p>Terminou com <b>${m(v)}</b> anos por rodada, em média. Em último ficou ${nomeEst(u)}, com ${m(u)}.</p>
+    <p>${leitura}</p>
+    <p class="narrador" style="min-height:0">Para pensar: Hobbes dizia que, sem um poder acima de todos, cada um trairia o outro. O torneio confirma ou contradiz essa ideia?</p>`;
+  c.hidden = false;
 }
 
-function adicionarHistorico(r, a, b, ptA, ptB) {
-  document.getElementById('historico-wrap').style.display = 'block';
-  const linha = document.createElement('div');
-  linha.className = 'hist-linha';
-  linha.innerHTML = `
-    <span class="hist-r">#${r}</span>
-    <span>Você:</span>
-    <span class="tag ${a === 'C' ? 'tag-c' : 'tag-t'}">${a === 'C' ? 'Cooperou' : 'Traiu'}</span>
-    <span>IA:</span>
-    <span class="tag ${b === 'C' ? 'tag-c' : 'tag-t'}">${b === 'C' ? 'Cooperou' : 'Traiu'}</span>
-    <span class="hist-pts">+${ptA} / +${ptB} anos</span>
-  `;
-  document.getElementById('historico-linhas').prepend(linha);
-}
-
-function proximaRodada() {
-  if (estado.rodada >= estado.totalRodadas) {
-    mostrarFim();
-    return;
-  }
-  estado.rodada++;
-  document.getElementById('num-rodada').textContent = estado.rodada;
-  document.getElementById('arena-rodada').textContent = estado.rodada;
-  document.getElementById('resultado-rodada').style.display = 'none';
-  document.getElementById('ia-status').textContent = 'Aguardando\nsua escolha…';
-  document.getElementById('ia-status').style.color = 'var(--cinza-texto)';
-
-  const btnC = document.getElementById('btn-cooperar');
-  const btnT = document.getElementById('btn-trair');
-  btnC.disabled = false; btnT.disabled = false;
-  btnC.className = 'btn-escolha'; btnT.className = 'btn-escolha';
-}
-
-function mostrarFim() {
-  document.getElementById('arena-jogo').style.display = 'none';
-  document.getElementById('resultado-rodada').style.display = 'none';
-  const fim = document.getElementById('tela-fim');
-  fim.style.display = 'block';
-
-  const pA = estado.ptsA, pB = estado.ptsB;
-  let titulo, analise;
-
-  const coops = estado.historico.filter(h => h.a === 'C').length;
-  const traicoes = estado.historico.filter(h => h.a === 'T').length;
-  const iaCoops = estado.historico.filter(h => h.b === 'C').length;
-
-  if (pA < pB) {
-    titulo = '🏆 Você foi melhor!';
-    analise = `Você acumulou ${pA} anos vs ${pB} da IA — menos é melhor aqui.`;
-  } else if (pA > pB) {
-    titulo = '😓 A IA teve melhor resultado.';
-    analise = `A IA acumulou ${pB} anos vs seus ${pA}.`;
-  } else {
-    titulo = '🤝 Empate!';
-    analise = `Ambos acumularam ${pA} anos.`;
-  }
-
-  const estNome = { tit4tat: 'Tit for Tat', sempre_coopera: 'Sempre Coopera', sempre_trai: 'Sempre Trai', aleatorio: 'Aleatória' };
-  const est = document.getElementById('estrategia-ia').value;
-
-  const reflexao = coops > traicoes
-    ? 'Você cooperou mais do que traiu — isso reflete uma tendência altruísta ou estratégica. Em jogos repetidos, essa postura costuma construir confiança e beneficiar ambos a longo prazo.'
-    : traicoes > coops
-    ? 'Você traiu mais do que cooperou — uma estratégia racionalmente defensável, mas que pode destruir possibilidades de ganho mútuo se ambos os lados pensam igual.'
-    : 'Você equilibrou cooperação e traição. Isso pode refletir adaptação ao comportamento da IA ou indecisão estratégica.';
-
-  document.getElementById('fim-titulo').textContent = titulo;
-  document.getElementById('fim-analise').innerHTML = `
-    <strong>Suas escolhas:</strong> ${coops} cooperação(ões), ${traicoes} traição(ões)<br>
-    <strong>IA (${estNome[est]}):</strong> ${iaCoops} cooperação(ões)<br>
-    <strong>Placar final:</strong> Você ${pA} anos | IA ${pB} anos<br><br>
-    ${reflexao}<br><br>
-    <strong>Reflexão filosófica:</strong> Seu padrão de escolhas revela algo sobre como você pondera interesse próprio e confiança mútua — o coração do dilema.
-  `;
-}
-
-reiniciarJogo();
+/* ---------- início ---------- */
+novoJogo();
+chips(); montar();
+if(location.hash === "#torneio") abrir("torneio");
+})();
 </script>
 </body>
 </html>
