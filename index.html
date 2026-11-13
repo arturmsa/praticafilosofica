@@ -212,6 +212,29 @@ footer{border-top:1px solid var(--tinta);padding:36px 0 40px;font-size:.88rem;co
 }
 
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}.faixa-trilho{animation:none}}
+/* Pix flutuante: acompanha a rolagem no lado direito */
+.pix-flutuante{position:fixed;right:18px;top:50%;transform:translateY(-50%);z-index:25;width:156px;background:var(--cartao);border:1px solid var(--tinta);border-radius:4px;box-shadow:6px 6px 0 var(--destaque);padding:12px 12px 10px;text-align:center;transition:opacity .25s,transform .25s}
+.pix-flutuante .pf-topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.pix-flutuante .pf-rotulo{font-size:.66rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--destaque)}
+.pix-flutuante .pf-fechar{background:none;border:none;cursor:pointer;color:var(--apagado);font-size:1.1rem;line-height:1;padding:0 2px}
+.pix-flutuante .pf-fechar:hover{color:var(--destaque)}
+.pix-flutuante .pf-qr{background:#fff;border:1px solid var(--borda);border-radius:4px;padding:6px;width:130px;height:130px;margin:0 auto}
+.pix-flutuante .pf-qr svg{display:block;width:100%;height:100%}
+.pix-flutuante p{font-size:.74rem;color:var(--apagado);line-height:1.35;margin:8px 0}
+.pix-flutuante p b{display:block;font-family:"Fraunces",Georgia,serif;font-size:.98rem;color:var(--tinta);font-weight:600}
+.pix-flutuante .copiar{width:100%;justify-content:center;font-size:.76rem;padding:6px 8px;white-space:normal}
+.pix-flutuante .pf-mais{display:block;font-size:.72rem;color:var(--apagado);margin-top:7px;text-decoration:underline;text-underline-offset:2px}
+.pix-flutuante .pf-mais:hover{color:var(--destaque)}
+.pix-botao{position:fixed;right:18px;bottom:18px;z-index:25;display:none;align-items:center;gap:6px;font:inherit;font-size:.88rem;font-weight:700;cursor:pointer;padding:11px 16px;border-radius:999px;border:none;background:var(--destaque);color:#fff;box-shadow:3px 3px 0 var(--tinta)}
+.pix-botao:hover{filter:brightness(1.1)}
+body.pix-recolhido .pix-flutuante{display:none}
+body.pix-recolhido .pix-botao{display:inline-flex}
+body.pix-escondido .pix-flutuante,body.pix-escondido .pix-botao{opacity:0;pointer-events:none}
+/* telas onde o cartão cobriria o conteúdo: começa recolhido e abre por cima ao clicar */
+@media (max-width:1479px){
+  .pix-flutuante{top:auto;bottom:74px;transform:none}
+}
+@media print{.pix-flutuante,.pix-botao{display:none!important}}
 </style>
 </head>
 <body>
@@ -326,6 +349,15 @@ footer{border-top:1px solid var(--tinta);padding:36px 0 40px;font-size:.88rem;co
     <p class="rodape-site rodape-fim">Prática Filosófica · materiais interativos para a sala de aula</p>
   </div>
 </footer>
+
+<aside class="pix-flutuante" id="pix-flutuante" aria-label="Apoie o site via Pix">
+  <div class="pf-topo"><span class="pf-rotulo">Apoie via Pix</span><button type="button" class="pf-fechar" id="pf-fechar" aria-label="Recolher o Pix">×</button></div>
+  <div class="pf-qr" id="pf-qr" title="QR Code Pix"></div>
+  <p><b>Ajude o site a crescer</b>Domínio e servidor para ampliar as atividades.</p>
+  <button type="button" class="copiar" data-copiar="pix-copiacola">Copiar código Pix</button>
+  <a class="pf-mais" href="#apoio">ver chave e detalhes</a>
+</aside>
+<button type="button" class="pix-botao" id="pix-botao" aria-controls="pix-flutuante" aria-expanded="false">♥ Pix</button>
 
 <script>
 /* =====================================================================
@@ -752,6 +784,31 @@ temaBtn.onclick = () => {
   rotuloTema();
 };
 rotuloTema();
+
+/* ---------- Pix flutuante ---------- */
+(() => {
+  const caixa = $("pix-flutuante"), botao = $("pix-botao"), corpo = document.body;
+  const qr = document.querySelector("#apoio .apoio-qr svg");
+  if (qr) $("pf-qr").appendChild(qr.cloneNode(true));
+  const largo = () => window.matchMedia("(min-width:1480px)").matches;
+  let guardado = null;
+  try { guardado = sessionStorage.getItem("pix-recolhido"); } catch (e) {}
+  function recolher(sim, salvar) {
+    corpo.classList.toggle("pix-recolhido", sim);
+    botao.setAttribute("aria-expanded", String(!sim));
+    if (salvar) try { sessionStorage.setItem("pix-recolhido", sim ? "1" : "0"); } catch (e) {}
+  }
+  /* em telas largas começa aberto; nas menores, começa como botão */
+  recolher(guardado !== null ? guardado === "1" : !largo(), false);
+  $("pf-fechar").onclick = () => { recolher(true, true); botao.focus(); };
+  botao.onclick = () => { recolher(false, true); $("pf-fechar").focus(); };
+  caixa.querySelector(".pf-mais").addEventListener("click", () => { if (!largo()) recolher(true, false); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !largo() && !corpo.classList.contains("pix-recolhido")) recolher(true, true); });
+  /* some quando o quadro do Pix do rodapé já está na tela, para não repetir */
+  const alvo = $("apoio");
+  if (alvo && "IntersectionObserver" in window)
+    new IntersectionObserver(([en]) => corpo.classList.toggle("pix-escondido", en.isIntersecting), { threshold: .15 }).observe(alvo);
+})();
 
 /* Botões de copiar a chave Pix */
 document.querySelectorAll(".copiar").forEach(b => b.onclick = async () => {
