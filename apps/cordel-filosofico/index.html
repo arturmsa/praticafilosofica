@@ -264,6 +264,49 @@ textarea.copia{position:absolute;left:-9999px}
 .palco .nota{z-index:2}
 @media (max-width:560px){.pv{grid-template-columns:3.6em minmax(0,1fr)}.palco-base .btn{min-width:0}.palco-pos{order:-1;flex-basis:100%}}
 
+/* ---------- celular ---------- */
+@media (max-width:560px){
+  .painel{padding:1.25rem .8rem;gap:1.25rem}
+  .passo{grid-template-columns:2rem minmax(0,1fr);column-gap:.6rem}
+  .passo .n{width:1.9rem;height:1.9rem;font-size:.9rem}
+  .passo .t{font-size:1.08rem}
+  .seg button,.btn{padding:.55rem .8rem}
+  .mote{padding:1rem .8rem .9rem}
+  .mote .versos{font-size:1.1rem}
+  .estrofe{padding:.85rem .55rem .65rem}
+  .estrofe.ativa{box-shadow:3px 3px 0 var(--ocre)}
+  .cab h3{font-size:1.05rem}
+  .cab .acoes-est{gap:.4rem}
+  .mini{padding:.35rem .7rem;font-size:.82rem}
+  .donos button{padding:.35rem .6rem}
+  .verso{grid-template-columns:1.5rem minmax(0,1fr) 2.1rem;gap:.35rem}
+  .num{flex-direction:column;gap:0;align-items:center;font-size:.7rem;padding-top:.45rem;line-height:1.15}
+  .sil{font-size:.75rem;margin-top:.5rem}
+  .verso.d0 .corpo,.verso.d1 .corpo{padding-left:.4rem}
+  .corpo input[type=text]{font-size:16px;padding:.42rem 0}
+  .corpo .fixo{font-size:1rem}
+  .sep{margin-left:1.85rem}
+  .rimahint{font-size:.8rem;line-height:1.7}
+  .sug-btn{padding:.25rem .65rem;font-size:.8rem}
+  .sug-painel{margin-left:-1.85rem;margin-right:-2.45rem;padding:.75rem .6rem}
+  .sug-chips button{font-size:.92rem;padding:.3rem .7rem}
+  .sug-rodape label{flex-basis:100%}
+  .sug-rodape input[type=text]{font-size:16px;flex:1;width:auto;min-width:0}
+  .sug-fim .sug-btn{padding:.45rem 1rem}
+  .capas{gap:.5rem}
+  .paginas{grid-template-columns:minmax(0,1fr)}
+  .barra .btn{flex:1 1 auto}
+  .autoria-nome{font-size:1.4rem}
+}
+@media (max-width:380px){
+  .wrap{padding-inline:14px}
+  .painel{padding-inline:.65rem}
+  .estrofe{padding-inline:.4rem}
+  .verso{grid-template-columns:1.3rem minmax(0,1fr) 1.9rem;gap:.3rem}
+  .verso.d0 .corpo,.verso.d1 .corpo{padding-left:.3rem}
+  .sep{margin-left:1.6rem}
+  .sug-painel{margin-left:-1.6rem;margin-right:-2.2rem}
+}
 @media (prefers-reduced-motion:reduce){
   .palco-astro svg,.pv,.palco-trilho,.pe{animation:none!important;transition:none!important}
   .cenario *,.emblema *,.sol-gira,.nucleo{animation:none!important}
