@@ -154,6 +154,7 @@ h1 span{color:var(--accent)}
   <nav class="abas" role="tablist" aria-label="Conjunto de dilemas">
     <button type="button" class="aba" role="tab" id="aba-geral" data-curso="geral" aria-selected="true">Escola e vida</button>
     <button type="button" class="aba" role="tab" id="aba-consciencia" data-curso="consciencia" aria-selected="false">Consciência Negra</button>
+    <button type="button" class="aba" role="tab" id="aba-mulher" data-curso="mulher" aria-selected="false">Violência contra a mulher</button>
     <button type="button" class="aba" role="tab" id="aba-administracao" data-curso="administracao" aria-selected="false">Administração</button>
   </nav>
 
@@ -234,9 +235,36 @@ const DILEMAS_CN = [
    info:"A liberdade de crença é garantida pela Constituição (art. 5º). As religiões de matriz africana são as que mais sofrem ataques de intolerância no Brasil.",
    tw:["A igreja do bairro também faz cultos com som alto e ninguém reclama.","Sua avó assinou o abaixo-assinado e pede que você assine também."]}
 ];
+const DILEMAS_VM = [
+  {t:"O celular", txt:"Sua amiga conta que o namorado exige a senha do celular dela, lê as conversas e diz com quem ela pode falar. Ela acha normal: \"é porque ele me ama\".",
+   info:"Controlar, vigiar e isolar é violência psicológica. Desde 2021 ela é crime no Brasil (Lei 14.188).",
+   tw:["Ela pede para você não contar para ninguém.","Ele é seu amigo também e sempre foi gente boa com você."]},
+  {t:"Os gritos", txt:"Toda noite você ouve gritos e barulho de coisas quebrando na casa vizinha. Sua família diz: \"em briga de marido e mulher não se mete a colher\".",
+   info:"Qualquer pessoa pode denunciar, sem se identificar, pelo Ligue 180. Em caso de emergência, o número é 190.",
+   tw:["Hoje você ouviu a vizinha pedir socorro.","O vizinho é parente do dono da casa onde sua família mora de aluguel."]},
+  {t:"A foto", txt:"Chega no grupo da sala uma foto íntima de uma colega. Ela mandou só para o ex-namorado. Agora está circulando e todo mundo está comentando.",
+   info:"Divulgar foto ou vídeo íntimo de alguém sem consentimento é crime (Código Penal, art. 218-C). Quem repassa também responde.",
+   tw:["Quem postou diz que foi \"só para zoar\" e que vai apagar depois.","A colega faltou à aula hoje e não responde ninguém."]},
+  {t:"O ônibus", txt:"No ônibus lotado, você vê um homem se encostando de propósito numa mulher. Ela parece paralisada e ninguém fala nada.",
+   info:"Isso é importunação sexual, crime previsto no Código Penal desde 2018 (art. 215-A).",
+   tw:["O homem é bem maior e mais forte que você.","A mulher desce do ônibus antes que você decida o que fazer."]},
+  {t:"O salário", txt:"Sua tia trabalha o mês inteiro, mas o marido pega todo o salário dela e decide sozinho como gastar. Ela precisa pedir dinheiro até para comprar remédio.",
+   info:"A Lei Maria da Penha (Lei 11.340/2006) reconhece cinco formas de violência: física, psicológica, sexual, patrimonial e moral. Controlar o dinheiro da mulher é violência patrimonial.",
+   tw:["Ela diz que sempre foi assim na família e que não quer confusão.","Ela tem dois filhos pequenos e não sabe como se sustentaria sozinha."]},
+  {t:"A roupa", txt:"Depois que uma menina foi assediada numa festa, um colega comenta: \"também, com aquela roupa, ela pediu\". Vários concordam.",
+   info:"A responsabilidade é sempre de quem agride, nunca da vítima. Roupa, horário ou lugar não são convite.",
+   tw:["Quem disse isso foi uma menina.","Você já pensou a mesma coisa em outra situação."]},
+  {t:"A saída", txt:"Um amigo não aceita o fim do namoro. Ele aparece todo dia na saída da escola da ex, manda mensagens de vários perfis e pede que você ajude a \"reconquistar\" ela.",
+   info:"Perseguir alguém de forma repetida, pessoalmente ou pela internet, é crime de perseguição (stalking) desde 2021 (Lei 14.132).",
+   tw:["Ele diz que está sofrendo muito e que você é o único amigo dele.","A ex dele pediu ajuda a você para ele parar."]},
+  {t:"A reunião", txt:"No trabalho em grupo, uma colega é sempre interrompida. Quando um menino repete a ideia dela, todos elogiam ele.",
+   info:"Interromper e apagar a fala das mulheres é uma forma de violência simbólica, que muitas vezes passa despercebida.",
+   tw:["O professor vai dar nota individual para quem \"mais participou\".","A colega diz que já desistiu de falar."]}
+];
 const CURSOS = {
   geral:{dilemas:DILEMAS_GERAL, sub:"Gire, receba um dilema e uma lente. Defenda a decisão com os olhos daquele filósofo."},
   consciencia:{dilemas:DILEMAS_CN, sub:"Racismo, racismo recreativo, identidade e respeito. Decida o que fazer e defenda a escolha com a lente sorteada."},
+  mulher:{dilemas:DILEMAS_VM, sub:"Controle, assédio, ciúme e respeito. Decida o que fazer e defenda a escolha com a lente sorteada."},
   administracao:{dilemas:DILEMAS_ADM, sub:"Dilemas do dia a dia de uma empresa. Decida como gestor e defenda a escolha com a lente sorteada."}
 };
 let curso = "geral";
@@ -484,7 +512,7 @@ function trocaCurso(c){
   try{ history.replaceState(null, "", c === "geral" ? location.pathname : "#" + c); }catch(e){}
 }
 document.querySelectorAll(".aba").forEach(b => b.onclick = () => { if(!spin1.disabled) trocaCurso(b.dataset.curso); });
-if(location.hash === "#administracao" || location.hash === "#consciencia") trocaCurso(location.hash.slice(1));
+if(["#administracao","#consciencia","#mulher"].includes(location.hash)) trocaCurso(location.hash.slice(1));
 document.getElementById("fs").onclick = ()=>{
   try{ document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(()=>{}); }catch(e){}
 };
