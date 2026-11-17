@@ -94,6 +94,8 @@ h1 span{color:var(--accent)}
   60%{filter:blur(2px)}
   100%{clip-path:circle(120% at 50% 40%);filter:blur(0);transform:rotate(0) scale(1)}}
 .task{font-family:var(--display);font-weight:500;background:color-mix(in srgb,var(--accent) 14%,transparent);border-radius:10px;padding:12px 16px;margin:0}
+.info{font-size:.85em;color:var(--muted);border-left:3px solid var(--line);padding:4px 0 4px 14px;margin:0;max-width:66ch}
+.info b{font-family:var(--display);color:var(--ink)}
 .twist{border:2px dashed var(--accent);border-radius:10px;padding:12px 16px;margin:0}
 .twist b{font-family:var(--display);color:var(--accent)}
 .actions{display:flex;gap:12px;flex-wrap:wrap}
@@ -151,6 +153,7 @@ h1 span{color:var(--accent)}
   <div class="meander" aria-hidden="true"></div>
   <nav class="abas" role="tablist" aria-label="Conjunto de dilemas">
     <button type="button" class="aba" role="tab" id="aba-geral" data-curso="geral" aria-selected="true">Escola e vida</button>
+    <button type="button" class="aba" role="tab" id="aba-consciencia" data-curso="consciencia" aria-selected="false">Consciência Negra</button>
     <button type="button" class="aba" role="tab" id="aba-administracao" data-curso="administracao" aria-selected="false">Administração</button>
   </nav>
 
@@ -204,8 +207,36 @@ const DILEMAS_ADM = [
   {t:"Hora extra", txt:"Um prazo apertado exige que a equipe trabalhe no fim de semana. O gerente sugere pedir isso sem pagar hora extra, prometendo folga \"um dia\".",
    tw:["Se o prazo não for cumprido, a empresa paga multa e perde o cliente.","A equipe já trabalhou três fins de semana seguidos este mês."]}
 ];
+const DILEMAS_CN = [
+  {t:"A piada", txt:"No grupo da turma, alguém manda uma \"piada\" sobre o cabelo crespo de uma colega negra. Todo mundo manda risada. Quem reclama ouve: \"é só brincadeira\". O que você faz?",
+   info:"Racismo recreativo é o preconceito disfarçado de humor (Adilson Moreira). Desde 2023, a Lei 14.532 trata a injúria racial como crime de racismo e aumenta a pena quando acontece em contexto de \"brincadeira\".",
+   tw:["A colega da piada está no grupo e não disse nada.","Quem mandou a piada é o seu melhor amigo."]},
+  {t:"O apelido", txt:"Um colega negro tem um apelido que faz referência à cor da pele dele. Ele ri junto, mas você percebe que ele fica sem graça quando ninguém está olhando.",
+   info:"Rir junto nem sempre é aceitar. Muitas vezes é o jeito que a pessoa encontra para não ficar isolada do grupo.",
+   tw:["Ele mesmo diz: \"deixa, eu já me acostumei\".","Um aluno novo começa a usar o apelido de um jeito ainda mais pesado."]},
+  {t:"A loja", txt:"Você entra numa loja com um amigo negro. O segurança passa a seguir só ele pelos corredores. Seu amigo percebe e fica calado.",
+   info:"Esse tratamento desigual por causa da cor da pele é chamado de perfilamento racial.",
+   tw:["Seu amigo pede para você não fazer escândalo.","A loja é do tio de um colega da escola."]},
+  {t:"O cabelo", txt:"A coordenação pede que uma aluna prenda o cabelo black \"para ficar mais arrumada\" na foto da formatura. Ninguém pediu isso para as alunas de cabelo liso.",
+   info:"Exigir que só um tipo de cabelo seja \"arrumado\" carrega a ideia de que os traços negros são menos bonitos ou menos aceitáveis.",
+   tw:["A mãe da aluna concorda com a coordenação.","A aluna diz que o cabelo é parte da identidade dela e da avó."]},
+  {t:"As cotas", txt:"Num debate, um colega diz que cotas raciais são injustas porque \"todo mundo é igual\". Outra colega responde que a igualdade só existe no papel.",
+   info:"A Lei de Cotas (Lei 12.711/2012) reserva vagas em universidades e institutos federais para estudantes de escola pública, pretos, pardos, indígenas e quilombolas, entre outros.",
+   tw:["O colega conta que não passou no vestibular por poucos pontos.","A colega é a primeira da família a chegar perto da universidade."]},
+  {t:"O vídeo", txt:"Um vídeo zombando do jeito de falar e do corpo de uma influenciadora negra está viralizando. Seus amigos pedem para você compartilhar porque \"está muito engraçado\".",
+   tw:["O vídeo já tem um milhão de visualizações, um a mais não muda nada.","A influenciadora postou dizendo que está sofrendo com os comentários."]},
+  {t:"A feira", txt:"Na feira do Dia da Consciência Negra, a sugestão é falar só da escravidão. Parte da turma quer mostrar também Zumbi, Dandara, a ciência, a música e a culinária negra.",
+   info:"Desde 2024, 20 de novembro é feriado nacional, Dia Nacional de Zumbi e da Consciência Negra. A Lei 10.639/2003 tornou obrigatório o ensino de história e cultura afro-brasileira nas escolas.",
+   tw:["O tempo da apresentação é curto e dá para escolher só um tema.","Um colega diz que o assunto \"divide a turma\" e que seria melhor nem fazer a feira."]},
+  {t:"A vaga", txt:"Duas candidatas têm o mesmo currículo para uma vaga de atendimento. O gerente diz que vai escolher a de \"boa aparência\", e você sabe o que ele quer dizer com isso.",
+   tw:["Você é o assistente que vai dar a notícia às candidatas.","Se você discordar, pode perder a chance de ser promovido."]},
+  {t:"O terreiro", txt:"Na sua rua há um terreiro de candomblé. Alguns vizinhos fazem um abaixo-assinado para tirá-lo dali, dizendo que é por causa do barulho.",
+   info:"A liberdade de crença é garantida pela Constituição (art. 5º). As religiões de matriz africana são as que mais sofrem ataques de intolerância no Brasil.",
+   tw:["A igreja do bairro também faz cultos com som alto e ninguém reclama.","Sua avó assinou o abaixo-assinado e pede que você assine também."]}
+];
 const CURSOS = {
   geral:{dilemas:DILEMAS_GERAL, sub:"Gire, receba um dilema e uma lente. Defenda a decisão com os olhos daquele filósofo."},
+  consciencia:{dilemas:DILEMAS_CN, sub:"Racismo, racismo recreativo, identidade e respeito. Decida o que fazer e defenda a escolha com a lente sorteada."},
   administracao:{dilemas:DILEMAS_ADM, sub:"Dilemas do dia a dia de uma empresa. Decida como gestor e defenda a escolha com a lente sorteada."}
 };
 let curso = "geral";
@@ -383,6 +414,7 @@ function render(){
   result.innerHTML = `
     <div><p class="tag">Dilema</p><h3 class="dtitle">${D.t}</h3></div>
     <p class="dtext">${D.txt}</p>
+    ${D.info ? `<p class="info"><b>Para saber:</b> ${D.info}</p>` : ""}
     ${twists}
     ${lensHtml}
     <div class="actions">
@@ -452,7 +484,7 @@ function trocaCurso(c){
   try{ history.replaceState(null, "", c === "geral" ? location.pathname : "#" + c); }catch(e){}
 }
 document.querySelectorAll(".aba").forEach(b => b.onclick = () => { if(!spin1.disabled) trocaCurso(b.dataset.curso); });
-if(location.hash === "#administracao") trocaCurso("administracao");
+if(location.hash === "#administracao" || location.hash === "#consciencia") trocaCurso(location.hash.slice(1));
 document.getElementById("fs").onclick = ()=>{
   try{ document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(()=>{}); }catch(e){}
 };
