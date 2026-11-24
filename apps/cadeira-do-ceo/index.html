@@ -35,7 +35,10 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-off
 .inicio{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:18px;padding:20px 4px}
 .inicio h1{font-size:clamp(2.2rem,8vw,3rem)}
 .inicio h1 span:nth-child(1){color:var(--eq)}.inicio h1 span:nth-child(2){color:var(--cl)}.inicio h1 span:nth-child(3){color:var(--cx)}.inicio h1 span:nth-child(4){color:var(--rp)}
-.inicio .sub{color:var(--muted);max-width:34ch;margin:0}
+.inicio .sub{color:var(--ink);max-width:36ch;margin:0;font-family:var(--display);font-weight:500;font-size:1.2rem;line-height:1.45;background:#fff;border-radius:18px;padding:22px 22px 20px;box-shadow:0 8px 24px rgba(60,40,10,.10);position:relative;overflow:hidden}
+.inicio .sub::before{content:"";position:absolute;top:0;left:0;right:0;height:7px;background:linear-gradient(90deg,var(--eq) 0 25%,var(--cl) 25% 50%,var(--cx) 50% 75%,var(--rp) 75%)}
+.inicio .sub b{color:var(--accent)}
+.inicio .sub .alerta{display:block;margin-top:10px;font-family:var(--body);font-size:.95rem;font-weight:800;color:var(--danger)}
 .cadeira{width:110px;height:110px;color:var(--accent)}
 .pilares-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%;max-width:360px}
 .pilares-mini div{background:var(--pc);border-radius:14px;padding:10px 4px;font-size:.78rem;font-weight:800;color:#fff}
@@ -140,7 +143,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-off
   <section class="inicio" id="tela-inicio">
     <svg class="cadeira" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 8h24a4 4 0 0 1 4 4v18H16V12a4 4 0 0 1 4-4z"/><path d="M12 30h40v8H12z"/><path d="M32 38v12M20 58l12-8 12 8M10 26v8M54 26v8"/></svg>
     <h1><span>A</span> <span>Cadeira</span> <span>do</span> <span>CEO</span></h1>
-    <p class="sub">Você acaba de assumir a direção da <b>Maré Alta S.A.</b> Equilibre os quatro pilares. Se algum zerar ou estourar, o conselho tira você do cargo.</p>
+    <p class="sub">Você acaba de assumir a direção da <b>Maré Alta S.A.</b> Equilibre os quatro pilares da empresa.<span class="alerta">Se algum zerar ou estourar, o conselho tira você do cargo.</span></p>
     <div class="pilares-mini" id="pilares-mini"></div>
     <button class="btn primario" id="bt-comecar" type="button">Assumir a empresa</button>
     <p class="recorde" id="recorde"></p>
