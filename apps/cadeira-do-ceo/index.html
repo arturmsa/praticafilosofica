@@ -87,6 +87,11 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-off
 .ilu svg .agua{stroke:var(--cor);stroke-width:4}
 .ilu svg .x{stroke:var(--danger)}
 .ilu svg .p{fill:var(--ink);stroke:none}
+.carta.boasvindas{background:#fff;border:2px solid var(--line)}
+.carta.boasvindas::before{content:"";position:absolute;top:0;left:0;right:0;height:9px;border-radius:20px 20px 0 0;background:linear-gradient(90deg,var(--eq) 0 25%,var(--cl) 25% 50%,var(--cx) 50% 75%,var(--rp) 75%)}
+.carta.boasvindas .fala{font-size:1.2rem;text-align:center}
+.carta.boasvindas .fala b{color:var(--accent)}
+.carta.boasvindas .fala .alerta{display:block;margin-top:10px;font:800 .95rem var(--body);color:var(--danger)}
 .dica{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);gap:10px}
 .carta.consequencia .fala::before{content:"Consequência  ";display:block;font:800 .72rem var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--danger);margin-bottom:6px}
 
@@ -233,6 +238,7 @@ const PILARES = [
    ================================================== */
 const INTRO = {id:"intro", n:"Conselho", r:"Conselho de administração", c:8,
   t:"Bem-vindo à Maré Alta S.A. A cadeira é sua. Cada pessoa que entrar nesta sala vai pedir alguma coisa. Pronto?",
+  html:'Bem-vindo à <b>Maré Alta S.A.</b> A cadeira é sua. Cada pessoa que entrar nesta sala vai pedir alguma coisa.<span class="alerta">Arraste a carta para a esquerda ou para a direita para decidir.</span>',
   e:["Pronto", {}], d:["Mais que pronto", {}]};
 
 const CARTAS = [
@@ -655,7 +661,8 @@ function mostraCarta(c){
   $("ilu").innerHTML = ilustra(c);
   $("nome").textContent = c.n;
   $("cargo").textContent = c.r;
-  $("fala").textContent = c.t;
+  carta.classList.toggle("boasvindas", c.id === "intro");
+  if(c.html) $("fala").innerHTML = c.html; else $("fala").textContent = c.t;
   $("bt-esq").textContent = "← " + c.e[0];
   $("bt-dir").textContent = c.d[0] + " →";
   $("escolha").style.opacity = 0;
