@@ -371,7 +371,7 @@ textarea.copia{position:absolute;left:-9999px}
       <div class="conteudo">
         <div class="seg" role="group" aria-label="Métrica">
           <button type="button" id="m7" data-m="7">Sete sílabas</button>
-          <button type="button" id="m11" data-m="11">Onze sílabas</button>
+          <button type="button" id="m11" data-m="11">Galope à beira-mar</button>
           <button type="button" id="mLv" data-m="7">Décima livre</button>
           <button type="button" id="mSx" data-m="7">Sextilha</button>
           <button type="button" id="mQd" data-m="7">Quadras</button>
@@ -807,7 +807,20 @@ const PAG_CSS=`
 .pag .rosto h4{font-family:"Alfa Slab One",Rockwell,Georgia,serif;font-style:normal;font-weight:400;font-size:6.4cqw;line-height:1.1;margin:0;text-wrap:balance}
 .pag .rosto .de{font-size:3.6cqw;margin:0}
 .pag .mote-g{font-size:4.2cqw;line-height:1.45;color:#8B1A1A;font-weight:700;text-align:center;margin:0}
-.pag .contra{text-align:center;align-items:center;gap:4.5cqw}
+.pag .contra{text-align:center;align-items:center;gap:3.2cqw}
+.pag .contra.com-mote{gap:2.4cqw}
+.pag .forma-t{font-family:"Alfa Slab One",Rockwell,Georgia,serif;font-style:normal;font-weight:400;font-size:5cqw;line-height:1.1;margin:0}
+.pag .oque{font-size:3cqw;line-height:1.45;margin:0;max-width:68cqw}
+.pag .regras{display:flex;flex-direction:column;gap:1cqw;align-items:center}
+.pag .regras p{margin:0;font-size:2.6cqw;line-height:1.35;font-style:normal;max-width:68cqw}
+.pag .regras p::before{content:"◆ ";color:#8B1A1A;font-size:.8em}
+.pag .ritmo-bloco{display:flex;flex-direction:column;align-items:center;gap:1cqw}
+.pag .ritmo{display:flex;gap:.7cqw}
+.pag .ritmo b{width:4.3cqw;height:4.3cqw;display:grid;place-items:center;border:.3cqw solid #1A1208;border-radius:50%;font:500 2cqw "IBM Plex Mono",monospace;font-style:normal}
+.pag .ritmo b.t{background:#8B1A1A;border-color:#8B1A1A;color:#FFFCF3}
+.pag .contra .vinh{width:34cqw}
+.pag .contra.com-mote .vinh{width:26cqw}
+.pag .contra .vinh-vazia{height:22cqw}
 .pag .esq{display:flex;gap:1.2cqw;justify-content:center;flex-wrap:wrap;font:600 3.6cqw "Literata",Georgia,serif;font-style:normal}
 .pag .esq b{width:5.4cqw;height:5.4cqw;display:grid;place-items:center;border:.35cqw solid #1A1208;font-weight:600}
 .pag .esq b.m{background:#8B1A1A;border-color:#8B1A1A;color:#FFFCF3}
@@ -1146,6 +1159,15 @@ function faixaB(i){return desenhar()?`<div class="fx-vazia"></div>`:FX(BASE[i%BA
 const mt=t=>t&&t.trim()?esc(t):`<span class="lin" style="display:inline-block;width:46cqw;height:1.2em;border-bottom:.25cqw solid #A8977A"></span>`;
 function pagina(inner,num,i,cls=""){return `<div class="pag ${cls}"><div class="pi"><div class="fx">${faixaT(i)}</div>${inner}<div class="num">${num}</div><div class="fx">${faixaB(i)}</div></div></div>`;}
 function vinheta(){return `<svg viewBox="0 0 200 120" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M0 116H200" stroke="currentColor" stroke-width="2"/>${U("sol-raios",64,0,72,72)+U("sol-nucleo",64,0,72,72)+U("mandacaru",20,46,56,70)+U("mandacaru",130,58,46,58)}</svg>`;}
+/* o que cada forma é, para a contracapa do folheto */
+function contraInfo(){
+  if(aberta())return {nome:"A escrita livre",oque:"Escrita sem regras fixas: os poetas escolhem o tamanho dos versos e das estrofes, e se vão rimar ou não.",regras:["Sem métrica fixa","Sem esquema de rima","Sem mote"]};
+  if(quadra())return {nome:"A quadra",oque:"A forma da trova e das cantigas populares: quatro versos curtos, fáceis de decorar e de cantar.",regras:["4 versos de 7 sílabas","Rimam os versos 2 e 4 (ABCB)","Os versos 1 e 3 ficam livres"]};
+  if(sext())return {nome:"A sextilha",oque:"A estrofe mais usada nos folhetos de cordel: seis versos de sete sílabas que contam a história em ritmo de conversa.",regras:["6 versos de 7 sílabas","Rimam os versos 2, 4 e 6 (ABCBDB)","Os versos 1, 3 e 5 ficam livres"]};
+  if(livre())return {nome:"A décima livre",oque:"A mesma décima dos cantadores, mas sem mote fixo: os poetas escrevem também o fecho de cada estrofe.",regras:["10 versos de 7 sílabas","Rimas ABBAACCDDC","O verso 1 rima com o 4 e o 5; o 2 com o 3; o 6 com o 7 e o 10; o 8 com o 9"]};
+  if(S.metrica===11)return {nome:"O galope à beira-mar",oque:"Décima de onze sílabas, no ritmo de um cavalo a galope. É uma das modalidades mais difíceis da cantoria, e o mote termina sempre na beira do mar.",regras:["10 versos de 11 sílabas","Rimas ABBAACCDDC, presas ao mote","O verso 8 rima com o 9, e os versos 6 e 7 rimam com o 10"],ritmo:true};
+  return {nome:"A décima",oque:"Estrofe de dez versos, a preferida dos cantadores para glosar um mote: os dois versos do mote fecham cada estrofe.",regras:["10 versos de 7 sílabas (redondilha maior)","Rimas ABBAACCDDC, presas ao mote","O verso 8 rima com o 9, e os versos 6 e 7 rimam com o 10"]};
+}
 function paginas(){
   const pl=planoPaginas(),E=estrofesUsadas(),m=mote(),cls="m"+S.metrica+(pl.spp===2?" s2":"")+(curta()?" curta":"")+(aberta()&&NLmax()>12?" longa":"");
   const out=[];
@@ -1158,7 +1180,9 @@ function paginas(){
   for(let p=0;p<pl.pad;p++){const i=out.length;out.push({rot:"vinheta",html:pagina(desenhar()?`<div class="miolo"><div class="vinh-vazia grande"><span>espaço para desenho</span></div></div>`:`<div class="miolo contra"><div class="vinh">${vinheta()}</div><span class="fim">✦ ◆ ✦</span></div>`,i+1,i)});}
   const i=out.length;
   const esqHTML=ESQf().map((L,k)=>`<b${k>=NE(0)||(curta()&&L==="B")?' class="m"':""}>${L}</b>`).join("");
-  out.push({rot:"contracapa",html:pagina(`<div class="miolo contra">${semMote()?"":`<span class="r">O mote</span><p class="mote-g">${mt(m[0])}<br>${mt(m[1])}</p>`}<span class="r">${aberta()?"A escrita livre":quadra()?"A quadra":sext()?"A sextilha":S.metrica===11?"O galope à beira-mar":"A décima"}</span>${aberta()?"":`<div class="esq">${esqHTML}</div>`}<p class="exp">${aberta()?"Versos livres: sem métrica fixa, sem esquema de rima e sem mote. Cada estrofe tem o tamanho que os poetas quiseram.":quadra()?"Quatro versos de 7 sílabas. Rimam entre si os versos 2 e 4; os versos 1 e 3 ficam livres.":sext()?"Seis versos de 7 sílabas. Rimam entre si os versos 2, 4 e 6; os versos 1, 3 e 5 ficam livres.":livre()?"Dez versos de 7 sílabas, todos da dupla, sem mote fixo. O verso 1 rima com o 4 e o 5; o 2 com o 3; o 6 com o 7 e o 10; o 8 com o 9.":`Dez versos de ${S.metrica} sílabas. Os dois últimos são o mote; o verso 8 rima com o 9, e os versos 6 e 7 rimam com o 10.`}</p>${desenhar()?`<div class="vinh-vazia"><span>vinheta</span></div>`:`<div class="vinh">${vinheta()}</div>`}</div>`,"",i)});
+  const ci=contraInfo();
+  const ritmo=ci.ritmo?`<div class="ritmo-bloco"><div class="ritmo">${[...Array(11)].map((_,k)=>`<b${[2,5,8,11].includes(k+1)?' class="t"':""}>${k+1}</b>`).join("")}</div><span class="r">sílabas fortes: 2ª, 5ª, 8ª e 11ª</span></div>`:"";
+  out.push({rot:"contracapa",html:pagina(`<div class="miolo contra${semMote()?"":" com-mote"}">${semMote()?"":`<span class="r">O mote</span><p class="mote-g">${mt(m[0])}<br>${mt(m[1])}</p>`}<h4 class="forma-t">${ci.nome}</h4><p class="oque">${ci.oque}</p>${aberta()?"":`<div class="esq">${esqHTML}</div>`}${ritmo}<div class="regras">${ci.regras.map(r=>`<p>${r}</p>`).join("")}</div>${desenhar()?`<div class="vinh-vazia"><span>vinheta</span></div>`:`<div class="vinh">${vinheta()}</div>`}</div>`,"",i)});
   return out;
 }
 function folheto(){
