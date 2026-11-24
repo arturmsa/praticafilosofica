@@ -99,6 +99,24 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-off
 .botoes button{font:700 .9rem var(--body);padding:12px 10px;border-radius:14px;border:2px solid var(--cor,var(--line));background:color-mix(in srgb,var(--cor,var(--c8)) 8%,var(--card));color:var(--ink);cursor:pointer;min-height:52px;line-height:1.25}
 .botoes button:hover{background:var(--cor);color:#fff}
 .noticia{min-height:1.5em;text-align:center;font-size:.85rem;color:var(--muted);margin:10px 0 0;font-style:italic}
+.noticia.ok,.noticia.perdeu,.noticia.sorte,.noticia.azar{font-style:normal;font-weight:800;border-radius:12px;padding:8px 12px}
+.noticia.ok,.noticia.sorte{background:color-mix(in srgb,var(--eq) 16%,#fff);color:#17694f}
+.noticia.perdeu,.noticia.azar{background:color-mix(in srgb,var(--danger) 12%,#fff);color:#9b2c20}
+.desafio{display:flex;gap:10px;align-items:center;background:#fff;border:2px solid var(--cx);border-radius:14px;padding:8px 12px;margin:8px 0 0;font-size:.82rem;line-height:1.3}
+.desafio .alvo{flex:none;width:30px;height:30px;border-radius:50%;background:var(--cx);color:#fff;display:flex;align-items:center;justify-content:center}
+.desafio .alvo svg{width:18px;height:18px}
+.desafio b{display:block;font-size:.88rem}
+.desafio .meta{flex:none;text-align:right;font-weight:800;color:#9a6a0c;font-size:.8rem}
+.desafio .prog{height:5px;border-radius:3px;background:var(--barbg);margin-top:4px;overflow:hidden}
+.desafio .prog span{display:block;height:100%;background:var(--cx);transition:width .4s}
+.desafio.vazio{border-style:dashed;border-color:var(--line);color:var(--muted)}
+.carta.risco{border:3px dashed var(--cx)}
+.selo-risco{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:var(--cx);color:#fff;font:800 .72rem var(--body);letter-spacing:.06em;text-transform:uppercase;padding:4px 12px;border-radius:999px;white-space:nowrap;display:none}
+.carta.risco .selo-risco,.carta.resultado .selo-risco{display:block}
+.carta.resultado.bom .selo-risco{background:var(--eq)}
+.carta.resultado.mau .selo-risco{background:var(--danger)}
+.carta.resultado .fala{font-weight:700}
+.relatorio .largo{grid-column:1/-1;border-top:4px solid var(--cx)!important}
 
 /* Fim */
 .fim{flex:1;display:flex;flex-direction:column;gap:14px;padding:18px 0;text-align:center;align-items:center;animation:entra .4s ease}
@@ -158,10 +176,12 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-off
   <section id="tela-jogo" hidden style="flex:1;display:flex;flex-direction:column">
     <div class="pilares" id="pilares"></div>
     <p class="tempo" id="tempo"></p>
+    <div class="desafio vazio" id="desafio"></div>
     <div class="mesa" id="mesa">
       <div class="carta-fundo"></div>
       <div class="carta" id="carta" tabindex="0" aria-live="polite">
         <div class="escolha" id="escolha"></div>
+        <span class="selo-risco" id="selo-risco"></span>
         <div class="quem">
           <div class="avatar" id="avatar"></div>
           <div><strong id="nome"></strong><small id="cargo"></small></div>
@@ -204,6 +224,9 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-off
     <h3>A filosofia por trás</h3>
     <p>A <b>teoria dos stakeholders</b> (R. Edward Freeman) diz que uma empresa responde a vários grupos ao mesmo tempo: quem trabalha, quem compra, quem investe e a sociedade. Milton Friedman defendia o contrário: a responsabilidade social da empresa é aumentar o lucro dentro das regras. O jogo coloca as duas visões à prova, e a <b>justa medida</b> de Aristóteles aparece em cada barra: tanto a falta quanto o excesso derrubam você.</p>
     <p>Algumas decisões voltam meses depois. O que parecia esperto pode virar escândalo.</p>
+    <h3>Desafios e apostas</h3>
+    <p><b>Desafios</b> aparecem acima da mesa, com prazo. Cumprir dá uma medalha e o conselho ajuda a equilibrar o pilar mais perigoso. Não cumprir não tira você do cargo: só faz perder o prêmio.</p>
+    <p><b>Oportunidades arriscadas</b> têm borda tracejada e mostram a chance de dar certo. Se apostar, a sorte decide se você ganha muito ou perde. Se deixar passar, nada acontece, mas a chance também não volta.</p>
     <h3>Para discutir em sala</h3>
     <ul>
       <li>Qual pilar você mais protegeu? Por quê?</li>
@@ -222,6 +245,7 @@ const ICON = {
   cl:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.4 11h11l2-8H6.3"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg>',
   cx:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg>',
   rp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4h3l6 4V6L6 10H3z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg>',
+  alvo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>',
   fim:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 3l18 18"/></svg>'
 };
 const PILARES = [
@@ -402,6 +426,65 @@ const CARTAS = [
    e:["Foi legal e declarada", {rp:-8}], d:["Sem comentários", {rp:-14}]}
 ];
 
+
+/* ===================== OPORTUNIDADES ARRISCADAS =====================
+   A opção da direita é uma aposta: "chance" de dar certo.
+   Recusar não custa nada, mas a oportunidade passa.
+   ==================================================================== */
+const RISCOS = [
+  {id:"r-cripto", n:"Leonardo Brandt", r:"Fundo de investimento", c:1, img:"moedas",
+   t:"Um fundo de criptomoedas promete triplicar o dinheiro em seis meses. Aplicamos parte do caixa?",
+   chance:.4, sim:"Aplicar", bom:[{cx:25},"As moedas dispararam! O caixa engordou como nunca."], mau:[{cx:-18},"As moedas derreteram. O dinheiro sumiu da noite para o dia."]},
+  {id:"r-licitacao", n:"Secretário Nunes", r:"Governo do Estado", c:8, img:"predio",
+   t:"Licitação para equipar todas as escolas do estado. Preparar a proposta custa caro.",
+   chance:.5, sim:"Disputar", bom:[{cl:18, rp:6},"Vocês venceram a licitação! Contrato gigante e marca nas escolas."], mau:[{cx:-12},"Outra empresa venceu. O dinheiro da proposta foi embora."]},
+  {id:"r-lancamento", n:"Eng. Paula Reis", r:"Controle de qualidade", c:7, img:"lampada",
+   t:"O produto novo está quase pronto. Lançamos antes dos testes finais e saímos na frente da concorrência?",
+   chance:.5, sim:"Lançar já", bom:[{cl:22},"Sucesso! Filas na porta das lojas."], mau:[{cl:-14, rp:-8},"O produto falhou nas mãos dos clientes. Que vergonha."]},
+  {id:"r-paris", n:"Bruna Alves", r:"Marketing", c:7, img:"globo",
+   t:"Feira internacional em Paris! O estande é caro, mas pode abrir o mercado europeu.",
+   chance:.5, sim:"Vamos a Paris", bom:[{cl:16, rp:8},"Três redes europeias fecharam contrato com vocês!"], mau:[{cx:-14},"Ninguém parou no estande. Só sobraram as fotos da Torre Eiffel."]},
+  {id:"r-terreno", n:"Dr. Marcos Lima", r:"Diretor financeiro", c:1, img:"casa",
+   t:"Um terreno perto do futuro porto está barato. Se o porto sair do papel, vale ouro.",
+   chance:.45, sim:"Comprar o terreno", bom:[{cx:22},"O porto foi aprovado! O terreno valorizou cinco vezes."], mau:[{cx:-14},"O porto foi cancelado. O terreno virou um matagal caro."]},
+  {id:"r-startup", n:"Rafael Tavares", r:"Tecnologia", c:5, img:"robo",
+   t:"Uma startup de inteligência artificial está à venda. Pode ser o futuro da empresa ou um buraco sem fundo.",
+   chance:.5, sim:"Comprar a startup", bom:[{cl:14, eq:6},"A tecnologia da startup virou o carro-chefe da empresa!"], mau:[{cx:-16, eq:-4},"A startup não tinha nada de pronto. Dinheiro perdido."]},
+  {id:"r-gerente", n:"Carla Souza", r:"Recursos Humanos", c:2, img:"aperto",
+   t:"Uma gerente brilhante da concorrente quer vir para cá. Mas o contrato dela pode gerar processo.",
+   chance:.6, sim:"Contratar mesmo assim", bom:[{eq:10, cl:8},"Ela chegou e transformou a equipe. Ninguém processou ninguém."], mau:[{cx:-12, rp:-6},"A concorrente processou vocês e ganhou na Justiça."]},
+  {id:"r-final", n:"Seu Lopes", r:"Presidente do time da cidade", c:6, img:"camisa",
+   t:"O time chegou à final! Patrocinar a transmissão custa muito, mas se ganharmos, a cidade nunca vai esquecer.",
+   chance:.5, sim:"Patrocinar a final", bom:[{rp:18, cl:6},"Campeões! A marca de vocês está em todas as fotos da festa."], mau:[{cx:-10},"O time perdeu nos pênaltis. Ninguém quer lembrar daquela camisa."]}
+];
+
+/* ===================== DESAFIOS =====================
+   Um desafio por vez. Cumprir dá uma medalha e o conselho
+   ajuda: o pilar mais desequilibrado volta 12 pontos para o meio.
+   Não cumprir no prazo só faz perder o prêmio.
+   ==================================================== */
+const ANTIETICAS = ["propina","cartel","escravo","enganosa","lobby","vazamento","defeito","negourio"];
+const COMUNIDADE = ["influencer","escola","palestra","time","enchente","aprendiz","creche"];
+const DESAFIOS = [
+  {id:"clima", titulo:"Clima de equipe", desc:"Equipe acima de 60 por 6 meses seguidos", meta:6, prazo:18,
+   passo:(S,d)=> S.v.eq > 60 ? d.n+1 : 0},
+  {id:"mercado", titulo:"Conquistar o mercado", desc:"Leve Clientes a 70 ou mais", meta:1, prazo:12,
+   passo:(S,d)=> S.v.cl >= 70 ? 1 : 0},
+  {id:"limpa", titulo:"Ficha limpa", desc:"12 meses sem nenhuma decisão antiética", meta:12, prazo:12,
+   passo:(S,d,op)=> op && ANTIETICAS.includes(op[2]) ? -1 : d.n+1},
+  {id:"cidade", titulo:"Amigo da cidade", desc:"Diga sim a 3 pedidos da comunidade", meta:3, prazo:16,
+   passo:(S,d,op,c,dir)=> c && COMUNIDADE.includes(c.id) && dir > 0 ? d.n+1 : d.n},
+  {id:"equilibrio", titulo:"Justa medida", desc:"Os 4 pilares entre 35 e 65 por 4 meses seguidos", meta:4, prazo:16,
+   passo:(S,d)=> PILARES.every(p => S.v[p.k] >= 35 && S.v[p.k] <= 65) ? d.n+1 : 0},
+  {id:"cofre", titulo:"Cofre forte", desc:"Caixa acima de 65 por 3 meses seguidos", meta:3, prazo:15,
+   passo:(S,d)=> S.v.cx > 65 ? d.n+1 : 0},
+  {id:"ousadia", titulo:"Ousadia", desc:"Aceite 2 oportunidades arriscadas", meta:2, prazo:20,
+   passo:(S,d,op,c,dir)=> c && c.risco && dir > 0 ? d.n+1 : d.n},
+  {id:"fama", titulo:"Boa fama", desc:"Leve Reputação a 70 ou mais", meta:1, prazo:12,
+   passo:(S,d)=> S.v.rp >= 70 ? 1 : 0}
+];
+RISCOS.forEach(r => { r.risco = true; r.e = ["Deixar passar", {}]; r.d = [`${r.sim} (${Math.round(r.chance*100)}% de chance)`, {}]; });
+
 /* ===================== FINAIS ===================== */
 const FINAIS = {
   "eq-0": {titulo:"Greve geral", texto:"A equipe cruzou os braços e ninguém voltou. Sem gente, não há empresa.",
@@ -554,7 +637,7 @@ function estilo(svg){
   });
 }
 function ilustra(c){
-  const d = DESENHOS[IMG_DE[c.id]] || DESENHOS.mesa;
+  const d = DESENHOS[c.img || IMG_DE[c.id]] || DESENHOS.mesa;
   const t = PESSOAS[c.n];
   if(!t) return `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">${FUNDO}${d}</svg>`;
   return `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">${FUNDO}<g transform="translate(6 0)">${retrato(t)}</g><g transform="translate(58 14) scale(.68)">${d}</g></svg>`;
@@ -574,7 +657,8 @@ const $ = id => document.getElementById(id);
 function novoCEO(){
   const n = carregaHist().length + 1;
   S = { nome: sorteia(NOMES)+" "+sorteia(SOBRENOMES), numero:n, mes:0,
-        v:{eq:50, cl:50, cx:50, rp:50}, marcas:{}, recentes:[], favor:{eq:0,cl:0,cx:0,rp:0}, decisoes:0 };
+        v:{eq:50, cl:50, cx:50, rp:50}, marcas:{}, recentes:[], favor:{eq:0,cl:0,cx:0,rp:0}, decisoes:0,
+        desafio:null, feitos:[], tentados:[], pausa:1, ultimoRisco:0, medalhas:0, pendente:null };
 }
 
 /* ===================== TELAS ===================== */
@@ -604,7 +688,7 @@ function montaInicio(){
 function montaGaleria(){
   const h = carregaHist();
   $("lista-ceos").innerHTML = h.length ? h.map(c =>
-    `<li><div><b>${esc(c.nome)}</b><br><small>CEO nº ${c.numero} · ${esc(c.fim)}</small></div><div style="text-align:right">${duracao(c.meses)}</div></li>`
+    `<li><div><b>${esc(c.nome)}</b><br><small>CEO nº ${c.numero} · ${esc(c.fim)}</small></div><div style="text-align:right">${duracao(c.meses)}${c.medalhas ? `<br><small>${c.medalhas} medalha${c.medalhas>1?"s":""}</small>` : ""}</div></li>`
   ).join("") : "<li>Ninguém sentou na cadeira ainda.</li>";
 }
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -638,6 +722,9 @@ function atualizaPilares(antes){
 
 function proximaCarta(){
   if(!S.introVista){ S.introVista = true; return INTRO; }
+  if(S.pendente){ const r = S.pendente; S.pendente = null; return r; }
+  const livres = RISCOS.filter(r => !S.recentes.includes(r.id));
+  if(livres.length && S.mes - S.ultimoRisco >= 5 && Math.random() < 0.4){ S.ultimoRisco = S.mes; return sorteia(livres); }
   const prontas = CARTAS.filter(c => c.req && S.marcas[c.req] !== undefined && S.mes - S.marcas[c.req] >= 3);
   if(prontas.length && Math.random() < 0.65) return sorteia(prontas);
   let pool = CARTAS.filter(c => !c.req && !S.recentes.includes(c.id));
@@ -662,6 +749,11 @@ function mostraCarta(c){
   $("nome").textContent = c.n;
   $("cargo").textContent = c.r;
   carta.classList.toggle("boasvindas", c.id === "intro");
+  carta.classList.toggle("risco", !!c.risco);
+  carta.classList.toggle("resultado", !!c.resultado);
+  carta.classList.toggle("bom", c.resultado === "bom");
+  carta.classList.toggle("mau", c.resultado === "mau");
+  $("selo-risco").textContent = c.risco ? `Oportunidade arriscada · ${Math.round(c.chance*100)}%` : c.resultado === "bom" ? "Deu certo!" : c.resultado === "mau" ? "Deu errado" : "";
   if(c.html) $("fala").innerHTML = c.html; else $("fala").textContent = c.t;
   $("bt-esq").textContent = "← " + c.e[0];
   $("bt-dir").textContent = c.d[0] + " →";
@@ -672,7 +764,8 @@ function mostraCarta(c){
 function previa(dir){
   PILARES.forEach(p => {
     const pt = $("pt-"+p.k);
-    const ef = dir === 0 ? 0 : ((dir < 0 ? atual.e[1] : atual.d[1])[p.k] || 0);
+    let ef = dir === 0 ? 0 : ((dir < 0 ? atual.e[1] : atual.d[1])[p.k] || 0);
+    if(dir > 0 && atual.risco) ef = Math.max(Math.abs(atual.bom[0][p.k] || 0), Math.abs(atual.mau[0][p.k] || 0));
     pt.classList.toggle("on", ef !== 0);
     pt.classList.toggle("grande", Math.abs(ef) > 10);
   });
@@ -688,16 +781,36 @@ function decide(dir){
   previa(0);
 
   const antes = {...S.v};
-  Object.entries(op[1]).forEach(([k,d]) => {
+  let efeitos = op[1], aviso = op[3] || "", classe = "";
+  if(c.risco){
+    S.recentes.push(c.id);
+    if(dir > 0){
+      const deu = Math.random() < c.chance;
+      const res = deu ? c.bom : c.mau;
+      efeitos = res[0];
+      S.pendente = {id:"res-"+c.id, img:c.img, n:c.n, r:c.r, c:c.c, t:res[1], resultado: deu ? "bom" : "mau",
+                    e:["Seguir em frente", {}], d:["Seguir em frente", {}]};
+      aviso = deu ? "A aposta deu certo!" : "A aposta não deu certo."; classe = deu ? "sorte" : "azar";
+    } else aviso = "Você deixou a oportunidade passar.";
+  }
+  Object.entries(efeitos).forEach(([k,d]) => {
     S.v[k] = Math.max(0, Math.min(100, S.v[k] + d));
     if(d > 0) S.favor[k] += d;
   });
-  if(c.id !== "intro"){ S.mes++; S.decisoes++; }
+  const conta = c.id !== "intro" && !c.resultado;
+  if(conta){ S.mes++; S.decisoes++; }
   if(op[2] && S.marcas[op[2]] === undefined) S.marcas[op[2]] = S.mes;
   if(c.req) delete S.marcas[c.req];
-  if(!c.req && c.id !== "intro"){ S.recentes.push(c.id); if(S.recentes.length > 14) S.recentes.shift(); }
-  $("noticia").textContent = op[3] || "";
+  if(!c.req && conta && !c.risco) S.recentes.push(c.id);
+  while(S.recentes.length > 16) S.recentes.shift();
+  if(conta){
+    const r = avancaDesafio(c, op, dir);
+    if(r){ aviso = r.txt; classe = r.classe; }
+  }
+  $("noticia").textContent = aviso;
+  $("noticia").className = "noticia " + classe;
   atualizaPilares(antes);
+  mostraDesafio();
 
   const queda = verificaQueda();
   setTimeout(() => {
@@ -705,6 +818,51 @@ function decide(dir){
     if(queda) fim(queda);
     else mostraCarta(proximaCarta());
   }, queda ? 900 : 360);
+}
+
+
+function novoDesafio(){
+  const opcoes = DESAFIOS.filter(d => !S.tentados.includes(d.id));
+  if(!opcoes.length) return null;
+  const d = sorteia(opcoes);
+  S.tentados.push(d.id);
+  return {id:d.id, n:0, inicio:S.mes};
+}
+function avancaDesafio(c, op, dir){
+  if(!S.desafio){
+    S.pausa--;
+    if(S.pausa <= 0) S.desafio = novoDesafio();
+    return S.desafio ? {txt:"Novo desafio: " + DESAFIOS.find(x => x.id === S.desafio.id).titulo, classe:"ok"} : null;
+  }
+  const d = S.desafio, def = DESAFIOS.find(x => x.id === d.id);
+  d.n = def.passo(S, d, op, c, dir);
+  if(d.n >= def.meta){
+    S.desafio = null; S.pausa = 2; S.medalhas++; S.feitos.push(def.titulo);
+    const pior = PILARES.reduce((a,b) => Math.abs(S.v[b.k]-50) > Math.abs(S.v[a.k]-50) ? b : a);
+    const passo = Math.min(12, Math.abs(S.v[pior.k]-50));
+    S.v[pior.k] += S.v[pior.k] > 50 ? -passo : passo;
+    return {txt:`Desafio cumprido: ${def.titulo}! Medalha ganha e ${pior.nome} volta para perto do meio.`, classe:"ok"};
+  }
+  if(d.n < 0 || S.mes - d.inicio >= def.prazo){
+    S.desafio = null; S.pausa = 2;
+    return {txt:`Desafio perdido: ${def.titulo}. O prêmio ficou para a próxima.`, classe:"perdeu"};
+  }
+  return null;
+}
+function mostraDesafio(){
+  const el = $("desafio");
+  if(!S.desafio){
+    el.className = "desafio vazio";
+    el.innerHTML = `<div class="alvo" style="background:var(--line)">${ICON.alvo}</div><div>Nenhum desafio agora. ${S.medalhas ? `Medalhas: <b style="display:inline">${S.medalhas}</b>` : "Um novo desafio vem em breve."}</div>`;
+    return;
+  }
+  const d = S.desafio, def = DESAFIOS.find(x => x.id === d.id);
+  const resta = def.prazo - (S.mes - d.inicio);
+  const pct = Math.max(0, Math.min(100, d.n / def.meta * 100));
+  el.className = "desafio";
+  el.innerHTML = `<div class="alvo">${ICON.alvo}</div>
+    <div style="flex:1"><b>Desafio: ${def.titulo}</b>${def.desc}<div class="prog"><span style="width:${pct}%"></span></div></div>
+    <div class="meta">${Math.max(0,d.n)}/${def.meta}<br><span style="font-weight:600;color:var(--muted)">${resta} ${resta === 1 ? "mês" : "meses"}</span></div>`;
 }
 
 function verificaQueda(){
@@ -719,7 +877,7 @@ function fim(chave){
   const f = FINAIS[chave];
   const fav = PILARES.reduce((a,b) => S.favor[b.k] > S.favor[a.k] ? b : a);
   const h = carregaHist();
-  h.unshift({nome:S.nome, numero:S.numero, meses:S.mes, fim:f.titulo});
+  h.unshift({nome:S.nome, numero:S.numero, meses:S.mes, fim:f.titulo, medalhas:S.medalhas});
   salvaHist(h);
   $("tela-fim").style.setProperty("--pc", `var(--${chave.split("-")[0]})`);
   $("tela-fim").style.setProperty("--fav", `var(--${fav.k})`);
@@ -730,6 +888,7 @@ function fim(chave){
     <div class="relatorio">
       <div><small>Tempo no cargo</small><b>${duracao(S.mes)}</b></div>
       <div><small>Pilar que você mais favoreceu</small><b>${fav.nome}</b></div>
+      <div class="largo"><small>Desafios cumpridos</small><b>${S.medalhas ? S.feitos.join(", ") : "Nenhum"}</b></div>
     </div>
     <div class="consultor">
       <small>O consultor filosófico comenta</small>
@@ -753,6 +912,8 @@ function comecar(){
   montaPilares();
   atualizaPilares();
   $("noticia").textContent = "";
+  $("noticia").className = "noticia";
+  mostraDesafio();
   mostraCarta(proximaCarta());
 }
 $("bt-comecar").onclick = comecar;
