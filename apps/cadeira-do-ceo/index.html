@@ -10,49 +10,55 @@
 *,*::before,*::after{box-sizing:border-box}
 [hidden]{display:none!important}
 :root{
-  --bg:#efe9dd; --bg2:#e2d9c7; --card:#fffdf8; --ink:#1d2433; --muted:#5d6475; --line:#d6ccb8;
-  --accent:#b5652b; --accent-ink:#fff; --danger:#c0392b; --ok:#2f7d5b;
+  --bg:#f6efe0; --bg2:#fde3c4; --card:#fffdf8; --ink:#1d2433; --muted:#5d6475; --line:#d6ccb8;
+  --accent:#d2553a; --accent-ink:#fff; --danger:#c0392b; --ok:#2f7d5b;
   --barbg:#d9cfbc; --shadow:0 10px 30px rgba(40,30,10,.16);
-  --c1:#2f5d8a; --c2:#3f7d6e; --c3:#8a4a6b; --c4:#a86a1c; --c5:#4f5d8c; --c6:#7a3b2e; --c7:#5b7a3a; --c8:#555;
+  --c1:#2f6db5; --c2:#2a9d78; --c3:#b1477c; --c4:#e0941f; --c5:#5b5fc7; --c6:#d2553a; --c7:#6a9a2b; --c8:#5d6475;
+  --eq:#2a9d78; --cl:#2f6db5; --cx:#e0a01f; --rp:#b1477c;
   --display:"Fraunces",Georgia,serif; --body:"Manrope",system-ui,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root{
   --bg:#141821; --bg2:#1c2230; --card:#202737; --ink:#ebe6da; --muted:#a3a9b8; --line:#2f374a;
-  --accent:#e08a4a; --accent-ink:#1a1006; --danger:#ef6b5b; --ok:#5cc39a; --barbg:#2c3446;
+  --accent:#f07a5c; --accent-ink:#1a1006; --danger:#ef6b5b; --ok:#5cc39a; --barbg:#2c3446;
+  --c1:#5c95dd; --c2:#45c29a; --c3:#d873a6; --c4:#f0b04a; --c5:#8a8df0; --c6:#f07a5c; --c7:#94c456; --c8:#8a90a0;
+  --eq:#45c29a; --cl:#5c95dd; --cx:#f0b04a; --rp:#d873a6;
   --shadow:0 10px 30px rgba(0,0,0,.45); color-scheme:dark}}
 html,body{margin:0;height:100%}
-body{background:radial-gradient(ellipse 80% 50% at 50% 0%,var(--bg2),transparent 70%),var(--bg);background-attachment:fixed;color:var(--ink);font-family:var(--body);line-height:1.5;-webkit-tap-highlight-color:transparent}
+body{background:radial-gradient(circle at 8% 12%,color-mix(in srgb,var(--eq) 22%,transparent),transparent 32%),radial-gradient(circle at 95% 22%,color-mix(in srgb,var(--rp) 20%,transparent),transparent 30%),radial-gradient(circle at 10% 92%,color-mix(in srgb,var(--cl) 20%,transparent),transparent 34%),radial-gradient(circle at 92% 88%,color-mix(in srgb,var(--cx) 24%,transparent),transparent 32%),var(--bg);background-attachment:fixed;color:var(--ink);font-family:var(--body);line-height:1.5;-webkit-tap-highlight-color:transparent}
+.faixa{height:6px;background:linear-gradient(90deg,var(--eq) 0 25%,var(--cl) 25% 50%,var(--cx) 50% 75%,var(--rp) 75%)}
 .app{max-width:460px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:12px 16px 20px}
 header{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.85rem}
 .voltar,.link{color:var(--muted);text-decoration:none;background:none;border:0;font:inherit;cursor:pointer;padding:4px 0}
 .voltar:hover,.link:hover{color:var(--accent)}
 h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;line-height:1.15}
 button.btn{font:600 1rem var(--body);border-radius:999px;padding:12px 22px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
-button.btn.primario{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+button.btn.primario{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);box-shadow:0 4px 0 color-mix(in srgb,var(--accent) 60%,#000)}
 button.btn:hover{filter:brightness(1.06)}
 button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 
 /* Tela inicial */
 .inicio{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:18px;padding:20px 4px}
 .inicio h1{font-size:clamp(2.2rem,8vw,3rem)}
+.inicio h1 span:nth-child(1){color:var(--eq)}.inicio h1 span:nth-child(2){color:var(--cl)}.inicio h1 span:nth-child(3){color:var(--cx)}.inicio h1 span:nth-child(4){color:var(--rp)}
 .inicio .sub{color:var(--muted);max-width:34ch;margin:0}
 .cadeira{width:110px;height:110px;color:var(--accent)}
 .pilares-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%;max-width:360px}
-.pilares-mini div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 4px;font-size:.78rem;color:var(--muted)}
-.pilares-mini svg{width:26px;height:26px;color:var(--ink);display:block;margin:0 auto 4px}
+.pilares-mini div{background:var(--pc);border-radius:14px;padding:10px 4px;font-size:.78rem;font-weight:800;color:#fff}
+.pilares-mini svg{width:26px;height:26px;color:#fff;display:block;margin:0 auto 4px}
 .recorde{font-size:.85rem;color:var(--muted)}
 
 /* Jogo */
 .pilares{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:22px 0 4px}
 .pilar{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:.72rem;color:var(--muted);position:relative}
-.pilar svg{width:28px;height:28px;color:var(--ink);transition:color .3s}
+.pilar svg{width:28px;height:28px;color:var(--pc);transition:color .3s}
+.pilar{font-weight:600}
 .barra{width:100%;height:8px;border-radius:5px;background:var(--barbg);overflow:hidden}
-.barra span{display:block;height:100%;width:50%;background:var(--ink);border-radius:5px;transition:width .45s ease,background .3s}
+.barra span{display:block;height:100%;width:50%;background:var(--pc);border-radius:5px;transition:width .45s ease,background .3s}
 .pilar.perigo svg{color:var(--danger)}
 .pilar.perigo .barra span{background:var(--danger)}
 .pilar.sobe .barra{box-shadow:0 0 0 2px var(--ok)}
 .pilar.desce .barra{box-shadow:0 0 0 2px var(--danger)}
-.ponto{position:absolute;top:-15px;left:50%;transform:translateX(-50%) scale(0);width:8px;height:8px;border-radius:50%;background:var(--ink);transition:transform .15s}
+.ponto{position:absolute;top:-15px;left:50%;transform:translateX(-50%) scale(0);width:8px;height:8px;border-radius:50%;background:var(--pc);transition:transform .15s}
 .ponto.on{transform:translateX(-50%) scale(1)}
 .ponto.grande{width:13px;height:13px;top:-18px}
 .tempo{text-align:center;font-size:.82rem;color:var(--muted);margin:6px 0 0}
@@ -61,20 +67,21 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-off
 .mesa{position:relative;flex:1;min-height:500px;display:flex;align-items:center;justify-content:center;margin:10px 0;touch-action:none}
 .carta-fundo,.carta{position:absolute;width:min(100%,360px);height:480px;border-radius:22px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
 .carta-fundo{transform:translateY(10px) scale(.95);opacity:.6}
-.carta{display:flex;flex-direction:column;padding:22px 22px 18px;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;will-change:transform}
+.carta{display:flex;flex-direction:column;padding:22px 22px 18px;background:linear-gradient(180deg,color-mix(in srgb,var(--cor,var(--c8)) 22%,var(--card)) 0 112px,var(--card) 112px);border:2px solid color-mix(in srgb,var(--cor,var(--c8)) 55%,transparent);cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;will-change:transform}
 .carta.arrastando{cursor:grabbing}
 .carta.entra{animation:entra .35s ease}
 @keyframes entra{from{transform:translateY(24px) scale(.94);opacity:0}to{transform:none;opacity:1}}
-.escolha{position:absolute;top:0;left:0;right:0;padding:14px 18px;border-radius:22px 22px 0 0;background:var(--ink);color:var(--card);font-weight:800;font-size:1rem;opacity:0;transition:opacity .1s;min-height:52px;display:flex;align-items:center}
+.escolha{position:absolute;top:0;left:0;right:0;padding:14px 18px;border-radius:20px 20px 0 0;background:var(--cor,var(--ink));color:#fff;font-weight:800;font-size:1rem;opacity:0;transition:opacity .1s;min-height:52px;display:flex;align-items:center}
 .escolha.dir{justify-content:flex-end;text-align:right}
 .quem{display:flex;align-items:center;gap:12px;margin-top:36px}
 .avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 1.3rem var(--display);flex:none}
 .quem strong{display:block;font-size:1.05rem}
-.quem small{color:var(--muted);font-size:.85rem}
+.quem small{color:var(--cor);font-weight:600;font-size:.85rem}
 .fala{font-family:var(--display);font-weight:500;font-size:1.13rem;line-height:1.4;margin:14px 0 0;flex:1}
-.ilu{height:150px;margin:14px 0 0;border-radius:16px;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.ilu{height:150px;margin:14px 0 0;border-radius:16px;background:color-mix(in srgb,var(--cor) 10%,var(--card));display:flex;align-items:center;justify-content:center;overflow:hidden}
 .ilu svg{height:100%;width:auto;max-width:100%}
 .ilu svg *{stroke:var(--ink);stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.ilu svg .pessoa *{stroke-width:2}
 .ilu svg .a{fill:var(--cor)}
 .ilu svg .s{fill:var(--card)}
 .ilu svg .bg{fill:var(--cor);opacity:.16;stroke:none}
@@ -86,21 +93,22 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-off
 .carta.consequencia .fala::before{content:"Consequência  ";display:block;font:800 .72rem var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--danger);margin-bottom:6px}
 
 .botoes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.botoes button{font:600 .9rem var(--body);padding:12px 10px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;min-height:52px;line-height:1.25}
-.botoes button:hover{border-color:var(--accent)}
+.botoes button{font:700 .9rem var(--body);padding:12px 10px;border-radius:14px;border:2px solid var(--cor,var(--line));background:color-mix(in srgb,var(--cor,var(--c8)) 14%,var(--card));color:var(--ink);cursor:pointer;min-height:52px;line-height:1.25}
+.botoes button:hover{background:var(--cor);color:#fff}
 .noticia{min-height:1.5em;text-align:center;font-size:.85rem;color:var(--muted);margin:10px 0 0;font-style:italic}
 
 /* Fim */
 .fim{flex:1;display:flex;flex-direction:column;gap:14px;padding:18px 0;text-align:center;align-items:center;animation:entra .4s ease}
-.fim .selo{width:74px;height:74px;border-radius:50%;background:var(--danger);color:#fff;display:flex;align-items:center;justify-content:center}
+.fim .selo{width:74px;height:74px;border-radius:50%;background:var(--pc);color:#fff;display:flex;align-items:center;justify-content:center}
 .fim .selo svg{width:38px;height:38px}
-.fim h2{font-size:2rem}
+.fim h2{font-size:2rem;color:var(--pc)}
+.relatorio div:nth-child(1){border-top:4px solid var(--cl)}.relatorio div:nth-child(2){border-top:4px solid var(--fav)}
 .fim p{margin:0;max-width:38ch}
 .relatorio{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
 .relatorio div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
 .relatorio small{display:block;color:var(--muted);font-size:.75rem}
 .relatorio b{font-size:1.1rem}
-.consultor{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:4px 14px 14px 4px;padding:16px 18px;text-align:left;width:100%}
+.consultor{background:color-mix(in srgb,var(--pc) 10%,var(--card));border:1px solid var(--line);border-left:5px solid var(--pc);border-radius:4px 14px 14px 4px;padding:16px 18px;text-align:left;width:100%}
 .consultor small{color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em}
 .consultor h3{font-size:1.15rem;margin:4px 0 8px}
 .consultor p{font-family:var(--display);font-weight:500;font-size:1.02rem;max-width:none}
@@ -114,7 +122,8 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-off
 .painel p,.painel li{font-size:.95rem}
 .painel h3{font-size:1.1rem;margin:18px 0 6px}
 .lista-ceos{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
-.lista-ceos li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;gap:10px}
+.lista-ceos li:nth-child(4n+2){border-left-color:var(--eq)}.lista-ceos li:nth-child(4n+3){border-left-color:var(--cx)}.lista-ceos li:nth-child(4n){border-left-color:var(--rp)}
+.lista-ceos li{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--cl);border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;gap:10px}
 .lista-ceos small{color:var(--muted)}
 .tabela{width:100%;border-collapse:collapse;font-size:.88rem}
 .tabela td,.tabela th{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left;vertical-align:top}
@@ -122,6 +131,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-off
 </style>
 </head>
 <body>
+<div class="faixa"></div>
 <div class="app">
   <header>
     <a class="voltar" href="../../">← Prática Filosófica</a>
@@ -134,7 +144,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-off
   <!-- INÍCIO -->
   <section class="inicio" id="tela-inicio">
     <svg class="cadeira" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 8h24a4 4 0 0 1 4 4v18H16V12a4 4 0 0 1 4-4z"/><path d="M12 30h40v8H12z"/><path d="M32 38v12M20 58l12-8 12 8M10 26v8M54 26v8"/></svg>
-    <h1>A Cadeira do CEO</h1>
+    <h1><span>A</span> <span>Cadeira</span> <span>do</span> <span>CEO</span></h1>
     <p class="sub">Você acaba de assumir a direção da <b>Maré Alta S.A.</b> Equilibre os quatro pilares. Se algum zerar ou estourar, o conselho tira você do cargo.</p>
     <div class="pilares-mini" id="pilares-mini"></div>
     <button class="btn primario" id="bt-comecar" type="button">Assumir a empresa</button>
@@ -472,9 +482,78 @@ const IMG_DE = {
   "f-escravo":"prancheta", "f-defeito":"alerta", "f-vazamento":"cadeado", "f-enganosa":"folha", "f-helena":"moedas",
   "f-fundo":"maleta", "f-solar":"solar", "f-ho":"casa", "f-lobby":"urna"
 };
+
+/* ===================== PESSOAS =====================
+   Retrato de quem fala. h = cabelo (curto, longo, coque, cacheado, careca)
+   ==================================================== */
+const PESSOAS = {
+  "Carla Souza":{pele:"#c68b59", h:"longo", cab:"#3a2418"},
+  "Dr. Marcos Lima":{pele:"#e0b28a", h:"careca", cab:"#6b5a4a", oculos:1, gravata:1},
+  "@vidaverde":{pele:"#8d5a3b", h:"cacheado", cab:"#2a1a10", flor:1},
+  "Seu Raimundo":{pele:"#a86f45", h:"careca", cab:"#cfcfcf", bigode:1},
+  "Fiscal Barros":{pele:"#e8c09a", h:"curto", cab:"#222", gravata:1},
+  "Helena Prado":{pele:"#f0cfae", h:"coque", cab:"#c9a25a", oculos:1},
+  "Pedro":{pele:"#f0cfae", h:"curto", cab:"#6b4423"},
+  "Lúcia Ferraz":{pele:"#b97a4e", h:"longo", cab:"#1d1410"},
+  "Otávio Rangel":{pele:"#e6b98f", h:"curto", cab:"#555", gravata:1, bigode:1},
+  "Zé Carlos":{pele:"#7a4a2c", h:"curto", cab:"#111", bone:1},
+  "Bruna Alves":{pele:"#d9a074", h:"longo", cab:"#a1401c"},
+  "Rafael Tavares":{pele:"#a66a3f", h:"cacheado", cab:"#1a1a1a", oculos:1},
+  "Secretário Nunes":{pele:"#d9a679", h:"careca", cab:"#4a3a2a", gravata:1},
+  "Professora Ana":{pele:"#8d5a3b", h:"coque", cab:"#1a1a1a", oculos:1},
+  "Gisele Matos":{pele:"#f2d0b0", h:"longo", cab:"#2b1d14"},
+  "Leonardo Brandt":{pele:"#f3d3b5", h:"curto", cab:"#d8b46a", gravata:1},
+  "Eng. Paula Reis":{pele:"#c68b59", h:"coque", cab:"#222", capacete:1},
+  "Joana Lins":{pele:"#6e4227", h:"cacheado", cab:"#120c08"},
+  "Seu Lopes":{pele:"#c08458", h:"careca", cab:"#9a9a9a", bigode:1},
+  "Dep. Vasconcelos":{pele:"#eac3a0", h:"curto", cab:"#8a8a8a", gravata:1},
+  "Gerente de produção":{pele:"#9c6644", h:"curto", cab:"#222", capacete:1},
+  "Delegada Moura":{pele:"#a0663f", h:"coque", cab:"#111"},
+  "Conselheira do CADE":{pele:"#e2b48a", h:"longo", cab:"#4a3020", oculos:1},
+  "Dr. Torres":{pele:"#d39a6a", h:"curto", cab:"#333", oculos:1, gravata:1},
+  "Auditora do Trabalho":{pele:"#7d4b2c", h:"cacheado", cab:"#111", oculos:1}
+};
+function retrato(t){
+  const P = `fill="${t.pele}" stroke="#1d2433"`, C = `fill="${t.cab}" stroke="#1d2433"`;
+  let atras = "", frente = "";
+  if(t.h === "longo") atras = `<path ${C} d="M25 44c0-14 8-22 19-22s19 8 19 22v24H25z"/>`;
+  if(t.h === "coque") atras = `<circle ${C} cx="44" cy="22" r="7"/>`;
+  if(t.h === "curto") frente = `<path ${C} d="M29 40c0-12 7-18 15-18s15 6 15 18c-3-6-9-9-15-9s-12 3-15 9z"/>`;
+  if(t.h === "longo" || t.h === "coque") frente = `<path ${C} d="M29 39c1-10 7-15 15-15s14 5 15 15c-5-6-11-7-15-7s-10 1-15 7z"/>`;
+  if(t.h === "cacheado") frente = [[32,34,7],[40,27,7],[50,27,7],[57,35,7],[30,44,5],[58,44,5]].map(([x,y,r]) => `<circle ${C} cx="${x}" cy="${y}" r="${r}"/>`).join("");
+  if(t.h === "careca") frente = `<path fill="none" stroke="${t.cab}" stroke-width="4" d="M30 46c0-4 1-7 2-9M58 46c0-4-1-7-2-9"/>`;
+  let extra = "";
+  if(t.oculos) extra += `<circle fill="none" stroke="#1d2433" cx="38.5" cy="43" r="4.5"/><circle fill="none" stroke="#1d2433" cx="49.5" cy="43" r="4.5"/><path fill="none" stroke="#1d2433" d="M43 43h2"/>`;
+  if(t.bigode) extra += `<path fill="${t.cab}" stroke="#1d2433" stroke-width="1.5" d="M37 49c3-2 5-2 7 0 2-2 4-2 7 0-2 3-12 3-14 0z"/>`;
+  if(t.capacete) extra += `<path fill="#f2c12e" stroke="#1d2433" d="M28 37a16 15 0 0 1 32 0h4v5H24v-5z"/>`;
+  if(t.bone) extra += `<path fill="#d2553a" stroke="#1d2433" d="M29 37a15 13 0 0 1 30 0zM57 35h11v4H57z"/>`;
+  if(t.flor) extra += `<circle fill="#f2c12e" stroke="#1d2433" stroke-width="1.5" cx="58" cy="30" r="4"/>`;
+  const gravata = t.gravata ? `<path fill="#1d2433" d="M44 70l-4 5 4 20 4-20z"/>` : "";
+  return estilo(`<g class="pessoa">
+    ${atras}
+    <path class="a" d="M12 100c0-22 14-34 32-34s32 12 32 34z"/>
+    <path fill="#fffdf8" stroke="#1d2433" d="M36 66l8 9 8-9"/>${gravata}
+    <rect ${P} x="39" y="52" width="10" height="14"/>
+    <circle ${P} cx="44" cy="43" r="15"/>
+    ${frente}
+    <circle fill="#1d2433" stroke="none" cx="39" cy="43" r="1.8"/><circle fill="#1d2433" stroke="none" cx="49" cy="43" r="1.8"/>
+    <path fill="none" stroke="#1d2433" stroke-width="2" d="M40 50q4 3 8 0"/>
+    ${extra}
+  </g>`);
+}
+/* passa fill/stroke para style, para vencer as regras gerais do CSS */
+function estilo(svg){
+  return svg.replace(/<(\w+)([^>]*?)(\/?)>/g, (m, tag, at, fecha) => {
+    const st = [];
+    at = at.replace(/\s(fill|stroke|stroke-width)="([^"]*)"/g, (x, k, v) => { st.push(k + ":" + v); return ""; });
+    return `<${tag}${at}${st.length ? ` style="${st.join(";")}"` : ""}${fecha}>`;
+  });
+}
 function ilustra(c){
   const d = DESENHOS[IMG_DE[c.id]] || DESENHOS.mesa;
-  return `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">${FUNDO}${d}</svg>`;
+  const t = PESSOAS[c.n];
+  if(!t) return `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">${FUNDO}${d}</svg>`;
+  return `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">${FUNDO}<g transform="translate(6 0)">${retrato(t)}</g><g transform="translate(58 14) scale(.68)">${d}</g></svg>`;
 }
 
 /* ===================== ESTADO ===================== */
@@ -510,7 +589,7 @@ $("bt-galeria").onclick = () => mostra("tela-galeria");
 $("bt-sobre").onclick = () => mostra("tela-sobre");
 
 function montaInicio(){
-  $("pilares-mini").innerHTML = PILARES.map(p => `<div>${ICON[p.k]}${p.nome}</div>`).join("");
+  $("pilares-mini").innerHTML = PILARES.map(p => `<div style="--pc:var(--${p.k})">${ICON[p.k]}${p.nome}</div>`).join("");
   const h = carregaHist();
   if(h.length){
     const melhor = h.reduce((a,b) => b.meses > a.meses ? b : a);
@@ -535,7 +614,7 @@ function duracao(m){
 /* ===================== JOGO ===================== */
 function montaPilares(){
   $("pilares").innerHTML = PILARES.map(p =>
-    `<div class="pilar" id="p-${p.k}" title="${p.nome}"><span class="ponto" id="pt-${p.k}"></span>${ICON[p.k]}<div class="barra"><span id="b-${p.k}"></span></div>${p.nome}</div>`
+    `<div class="pilar" id="p-${p.k}" title="${p.nome}" style="--pc:var(--${p.k})"><span class="ponto" id="pt-${p.k}"></span>${ICON[p.k]}<div class="barra"><span id="b-${p.k}"></span></div>${p.nome}</div>`
   ).join("");
 }
 function atualizaPilares(antes){
@@ -574,7 +653,7 @@ function mostraCarta(c){
   const ini = c.n.replace(/^(Dr\.|Dep\.|Eng\.|Seu|Fiscal|Secretário|Professora|Delegada|Conselheira|Auditora|@)\s*/,"").split(/\s+/).map(w => w[0]).join("").slice(0,2).toUpperCase();
   $("avatar").textContent = ini;
   $("avatar").style.background = `var(--c${c.c||8})`;
-  carta.style.setProperty("--cor", `var(--c${c.c||8})`);
+  document.querySelector("#tela-jogo").style.setProperty("--cor", `var(--c${c.c||8})`);
   $("ilu").innerHTML = ilustra(c);
   $("nome").textContent = c.n;
   $("cargo").textContent = c.r;
@@ -637,6 +716,8 @@ function fim(chave){
   const h = carregaHist();
   h.unshift({nome:S.nome, numero:S.numero, meses:S.mes, fim:f.titulo});
   salvaHist(h);
+  $("tela-fim").style.setProperty("--pc", `var(--${chave.split("-")[0]})`);
+  $("tela-fim").style.setProperty("--fav", `var(--${fav.k})`);
   $("tela-fim").innerHTML = `
     <div class="selo">${ICON.fim}</div>
     <h2>${f.titulo}</h2>
