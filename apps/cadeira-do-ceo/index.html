@@ -783,7 +783,7 @@ document.addEventListener("keydown", e => {
     const forte = Math.min(1, Math.abs(dx)/90);
     if(Math.abs(dx) > 12){
       esc.textContent = dx < 0 ? atual.e[0] : atual.d[0];
-      esc.classList.toggle("dir", dx > 0);
+      esc.classList.toggle("dir", dx < 0);
       esc.style.opacity = forte;
     } else esc.style.opacity = 0;
     previa(Math.abs(dx) > 40 ? Math.sign(dx) : 0);
