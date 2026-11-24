@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>A Cadeira do CEO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;600;800&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+:root{
+  --bg:#efe9dd; --bg2:#e2d9c7; --card:#fffdf8; --ink:#1d2433; --muted:#5d6475; --line:#d6ccb8;
+  --accent:#b5652b; --accent-ink:#fff; --danger:#c0392b; --ok:#2f7d5b;
+  --barbg:#d9cfbc; --shadow:0 10px 30px rgba(40,30,10,.16);
+  --c1:#2f5d8a; --c2:#3f7d6e; --c3:#8a4a6b; --c4:#a86a1c; --c5:#4f5d8c; --c6:#7a3b2e; --c7:#5b7a3a; --c8:#555;
+  --display:"Fraunces",Georgia,serif; --body:"Manrope",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#141821; --bg2:#1c2230; --card:#202737; --ink:#ebe6da; --muted:#a3a9b8; --line:#2f374a;
+  --accent:#e08a4a; --accent-ink:#1a1006; --danger:#ef6b5b; --ok:#5cc39a; --barbg:#2c3446;
+  --shadow:0 10px 30px rgba(0,0,0,.45); color-scheme:dark}}
+html,body{margin:0;height:100%}
+body{background:radial-gradient(ellipse 80% 50% at 50% 0%,var(--bg2),transparent 70%),var(--bg);background-attachment:fixed;color:var(--ink);font-family:var(--body);line-height:1.5;-webkit-tap-highlight-color:transparent}
+.app{max-width:460px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;padding:12px 16px 20px}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:.85rem}
+.voltar,.link{color:var(--muted);text-decoration:none;background:none;border:0;font:inherit;cursor:pointer;padding:4px 0}
+.voltar:hover,.link:hover{color:var(--accent)}
+h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;line-height:1.15}
+button.btn{font:600 1rem var(--body);border-radius:999px;padding:12px 22px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
+button.btn.primario{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+button.btn:hover{filter:brightness(1.06)}
+button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* Tela inicial */
+.inicio{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:18px;padding:20px 4px}
+.inicio h1{font-size:clamp(2.2rem,8vw,3rem)}
+.inicio .sub{color:var(--muted);max-width:34ch;margin:0}
+.cadeira{width:110px;height:110px;color:var(--accent)}
+.pilares-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;width:100%;max-width:360px}
+.pilares-mini div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 4px;font-size:.78rem;color:var(--muted)}
+.pilares-mini svg{width:26px;height:26px;color:var(--ink);display:block;margin:0 auto 4px}
+.recorde{font-size:.85rem;color:var(--muted)}
+
+/* Jogo */
+.pilares{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:22px 0 4px}
+.pilar{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:.72rem;color:var(--muted);position:relative}
+.pilar svg{width:28px;height:28px;color:var(--ink);transition:color .3s}
+.barra{width:100%;height:8px;border-radius:5px;background:var(--barbg);overflow:hidden}
+.barra span{display:block;height:100%;width:50%;background:var(--ink);border-radius:5px;transition:width .45s ease,background .3s}
+.pilar.perigo svg{color:var(--danger)}
+.pilar.perigo .barra span{background:var(--danger)}
+.pilar.sobe .barra{box-shadow:0 0 0 2px var(--ok)}
+.pilar.desce .barra{box-shadow:0 0 0 2px var(--danger)}
+.ponto{position:absolute;top:-15px;left:50%;transform:translateX(-50%) scale(0);width:8px;height:8px;border-radius:50%;background:var(--ink);transition:transform .15s}
+.ponto.on{transform:translateX(-50%) scale(1)}
+.ponto.grande{width:13px;height:13px;top:-18px}
+.tempo{text-align:center;font-size:.82rem;color:var(--muted);margin:6px 0 0}
+.tempo b{color:var(--ink)}
+
+.mesa{position:relative;flex:1;min-height:420px;display:flex;align-items:center;justify-content:center;margin:10px 0;touch-action:none}
+.carta-fundo,.carta{position:absolute;width:min(100%,360px);height:400px;border-radius:22px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+.carta-fundo{transform:translateY(10px) scale(.95);opacity:.6}
+.carta{display:flex;flex-direction:column;padding:22px 22px 18px;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;will-change:transform}
+.carta.arrastando{cursor:grabbing}
+.carta.entra{animation:entra .35s ease}
+@keyframes entra{from{transform:translateY(24px) scale(.94);opacity:0}to{transform:none;opacity:1}}
+.escolha{position:absolute;top:0;left:0;right:0;padding:14px 18px;border-radius:22px 22px 0 0;background:var(--ink);color:var(--card);font-weight:800;font-size:1rem;opacity:0;transition:opacity .1s;min-height:52px;display:flex;align-items:center}
+.escolha.dir{justify-content:flex-end;text-align:right}
+.quem{display:flex;align-items:center;gap:12px;margin-top:40px}
+.avatar{width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 1.3rem var(--display);flex:none}
+.quem strong{display:block;font-size:1.05rem}
+.quem small{color:var(--muted);font-size:.85rem}
+.fala{font-family:var(--display);font-weight:500;font-size:1.25rem;line-height:1.4;margin:22px 0 0;flex:1}
+.dica{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);gap:10px}
+.carta.consequencia .fala::before{content:"Consequência  ";display:block;font:800 .72rem var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--danger);margin-bottom:6px}
+
+.botoes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.botoes button{font:600 .9rem var(--body);padding:12px 10px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;min-height:52px;line-height:1.25}
+.botoes button:hover{border-color:var(--accent)}
+.noticia{min-height:1.5em;text-align:center;font-size:.85rem;color:var(--muted);margin:10px 0 0;font-style:italic}
+
+/* Fim */
+.fim{flex:1;display:flex;flex-direction:column;gap:14px;padding:18px 0;text-align:center;align-items:center;animation:entra .4s ease}
+.fim .selo{width:74px;height:74px;border-radius:50%;background:var(--danger);color:#fff;display:flex;align-items:center;justify-content:center}
+.fim .selo svg{width:38px;height:38px}
+.fim h2{font-size:2rem}
+.fim p{margin:0;max-width:38ch}
+.relatorio{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.relatorio div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.relatorio small{display:block;color:var(--muted);font-size:.75rem}
+.relatorio b{font-size:1.1rem}
+.consultor{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:4px 14px 14px 4px;padding:16px 18px;text-align:left;width:100%}
+.consultor small{color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em}
+.consultor h3{font-size:1.15rem;margin:4px 0 8px}
+.consultor p{font-family:var(--display);font-weight:500;font-size:1.02rem;max-width:none}
+.pergunta{font-size:.92rem;color:var(--muted)}
+.pergunta b{color:var(--ink)}
+.acoes{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+
+/* Painéis */
+.painel{flex:1;padding:16px 0;animation:entra .3s ease}
+.painel h2{font-size:1.7rem;margin-bottom:12px}
+.painel p,.painel li{font-size:.95rem}
+.painel h3{font-size:1.1rem;margin:18px 0 6px}
+.lista-ceos{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.lista-ceos li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;display:flex;justify-content:space-between;gap:10px}
+.lista-ceos small{color:var(--muted)}
+.tabela{width:100%;border-collapse:collapse;font-size:.88rem}
+.tabela td,.tabela th{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left;vertical-align:top}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <a class="voltar" href="../../">← Prática Filosófica</a>
+    <div>
+      <button class="link" id="bt-galeria" type="button">Ex-CEOs</button> ·
+      <button class="link" id="bt-sobre" type="button">Sobre</button>
+    </div>
+  </header>
+
+  <!-- INÍCIO -->
+  <section class="inicio" id="tela-inicio">
+    <svg class="cadeira" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 8h24a4 4 0 0 1 4 4v18H16V12a4 4 0 0 1 4-4z"/><path d="M12 30h40v8H12z"/><path d="M32 38v12M20 58l12-8 12 8M10 26v8M54 26v8"/></svg>
+    <h1>A Cadeira do CEO</h1>
+    <p class="sub">Você acaba de assumir a direção da <b>Maré Alta S.A.</b> Equilibre os quatro pilares. Se algum zerar ou estourar, o conselho tira você do cargo.</p>
+    <div class="pilares-mini" id="pilares-mini"></div>
+    <button class="btn primario" id="bt-comecar" type="button">Assumir a empresa</button>
+    <p class="recorde" id="recorde"></p>
+  </section>
+
+  <!-- JOGO -->
+  <section id="tela-jogo" hidden style="flex:1;display:flex;flex-direction:column">
+    <div class="pilares" id="pilares"></div>
+    <p class="tempo" id="tempo"></p>
+    <div class="mesa" id="mesa">
+      <div class="carta-fundo"></div>
+      <div class="carta" id="carta" tabindex="0" aria-live="polite">
+        <div class="escolha" id="escolha"></div>
+        <div class="quem">
+          <div class="avatar" id="avatar"></div>
+          <div><strong id="nome"></strong><small id="cargo"></small></div>
+        </div>
+        <p class="fala" id="fala"></p>
+        <div class="dica"><span>← arraste</span><span>arraste →</span></div>
+      </div>
+    </div>
+    <div class="botoes">
+      <button type="button" id="bt-esq"></button>
+      <button type="button" id="bt-dir"></button>
+    </div>
+    <p class="noticia" id="noticia"></p>
+  </section>
+
+  <!-- FIM -->
+  <section class="fim" id="tela-fim" hidden></section>
+
+  <!-- GALERIA -->
+  <section class="painel" id="tela-galeria" hidden>
+    <h2>Galeria de ex-CEOs</h2>
+    <ul class="lista-ceos" id="lista-ceos"></ul>
+    <p style="margin-top:16px"><button class="btn" type="button" data-voltar>Voltar</button></p>
+  </section>
+
+  <!-- SOBRE -->
+  <section class="painel" id="tela-sobre" hidden>
+    <h2>Sobre o jogo</h2>
+    <p>Inspirado em <i>Reigns</i>. Você é a pessoa que comanda uma empresa e cada carta traz alguém com um pedido. Arraste a carta (ou use os botões e as setas do teclado) para decidir.</p>
+    <h3>Os quatro pilares</h3>
+    <table class="tabela">
+      <tr><th>Pilar</th><th>Se zerar</th><th>Se estourar</th></tr>
+      <tr><td>Equipe</td><td>Greve geral</td><td>O sindicato manda na empresa</td></tr>
+      <tr><td>Clientes</td><td>Ninguém compra</td><td>Monopólio investigado</td></tr>
+      <tr><td>Caixa</td><td>Falência</td><td>A empresa é vendida e você sai</td></tr>
+      <tr><td>Reputação</td><td>Escândalo e boicote</td><td>Você larga tudo pela política</td></tr>
+    </table>
+    <p>Os pontos que aparecem sobre os pilares enquanto você arrasta mostram o que vai mudar. Ponto grande, mudança grande. O jogo não diz se sobe ou desce: isso é com você.</p>
+    <h3>A filosofia por trás</h3>
+    <p>A <b>teoria dos stakeholders</b> (R. Edward Freeman) diz que uma empresa responde a vários grupos ao mesmo tempo: quem trabalha, quem compra, quem investe e a sociedade. Milton Friedman defendia o contrário: a responsabilidade social da empresa é aumentar o lucro dentro das regras. O jogo coloca as duas visões à prova, e a <b>justa medida</b> de Aristóteles aparece em cada barra: tanto a falta quanto o excesso derrubam você.</p>
+    <p>Algumas decisões voltam meses depois. O que parecia esperto pode virar escândalo.</p>
+    <h3>Para discutir em sala</h3>
+    <ul>
+      <li>Qual pilar você mais protegeu? Por quê?</li>
+      <li>Existe decisão que é errada mesmo quando ninguém descobre?</li>
+      <li>Lucro e ética são inimigos ou podem andar juntos?</li>
+      <li>Kant diria que algumas decisões tratam pessoas apenas como meio. Quais?</li>
+    </ul>
+    <p style="margin-top:16px"><button class="btn" type="button" data-voltar>Voltar</button></p>
+  </section>
+</div>
+
+<script>
+/* ===================== ÍCONES ===================== */
+const ICON = {
+  eq:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2c2.8.3 5 2.6 5 5.8"/></svg>',
+  cl:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.4 11h11l2-8H6.3"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg>',
+  cx:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg>',
+  rp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4h3l6 4V6L6 10H3z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg>',
+  fim:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 3l18 18"/></svg>'
+};
+const PILARES = [
+  {k:"eq", nome:"Equipe"},
+  {k:"cl", nome:"Clientes"},
+  {k:"cx", nome:"Caixa"},
+  {k:"rp", nome:"Reputação"}
+];
+
+/* ===================== CARTAS =====================
+   n: nome · r: cargo · c: cor (1 a 8)
+   e / d: [texto da opção, efeitos, marca (opcional), notícia (opcional)]
+   req: só aparece depois que a marca foi feita (consequência)
+   ================================================== */
+const INTRO = {id:"intro", n:"Conselho", r:"Conselho de administração", c:8,
+  t:"Bem-vindo à Maré Alta S.A. A cadeira é sua. Cada pessoa que entrar nesta sala vai pedir alguma coisa. Pronto?",
+  e:["Pronto", {}], d:["Mais que pronto", {}]};
+
+const CARTAS = [
+  {id:"homeoffice", n:"Carla Souza", r:"Recursos Humanos", c:2,
+   t:"A equipe pede home office dois dias por semana. Dizem que rende mais e gasta menos com transporte.",
+   e:["Todo mundo no escritório", {eq:-12, cl:3}], d:["Pode ser", {eq:12, cl:-5}, "ho"]},
+  {id:"corte", n:"Dr. Marcos Lima", r:"Diretor financeiro", c:1,
+   t:"Se cortarmos 20% do pessoal, o trimestre fecha no azul. É só uma planilha.",
+   e:["Não vamos demitir", {cx:-12, eq:5}], d:["Corte", {cx:20, eq:-20, rp:-8}, "demissao", "Cem pessoas saíram com uma caixa de papelão na mão."]},
+  {id:"influencer", n:"@vidaverde", r:"Influenciadora", c:7,
+   t:"Patrocina minha campanha pela recuperação do mangue? Meu público é enorme.",
+   e:["Não temos verba", {rp:-5}], d:["Patrocino", {rp:14, cx:-10}]},
+  {id:"reembolso", n:"Seu Raimundo", r:"Cliente", c:4,
+   t:"Comprei o produto de vocês e quebrou em dois meses. Quero meu dinheiro de volta.",
+   e:["A garantia não cobre", {cx:5, cl:-12}], d:["Devolvam o dinheiro", {cl:10, cx:-6}]},
+  {id:"fiscal", n:"Fiscal Barros", r:"Prefeitura", c:6,
+   t:"Achei uma irregularidade no alvará. Um agradinho resolve hoje mesmo, sem papelada.",
+   e:["Vou regularizar", {cx:-12, rp:6}], d:["Faça o agrado", {cx:4}, "propina", "O fiscal sorriu e guardou o envelope."]},
+  {id:"dividendos", n:"Helena Prado", r:"Acionista", c:3,
+   t:"Quero dividendos maiores este ano. O dinheiro é dos acionistas, não da empresa.",
+   e:["Vamos reinvestir", {cx:10, rp:-3}, "helena"], d:["Pague", {cx:-15, rp:5}]},
+  {id:"estagiario", n:"Pedro", r:"Estagiário", c:5,
+   t:"Tive uma ideia de aplicativo que pode mudar a empresa. Me dá uma chance?",
+   e:["Volte ao trabalho", {eq:-5}], d:["Invista na ideia", {cx:-12, eq:8}, "app"]},
+  {id:"rio", n:"Lúcia Ferraz", r:"Jornalista", c:3,
+   t:"Moradores dizem que a fábrica de vocês está poluindo o rio. Vai comentar?",
+   e:["Isso é mentira", {rp:-12}, "negourio"], d:["Vamos investigar e consertar", {rp:6, cx:-14}]},
+  {id:"cartel", n:"Otávio Rangel", r:"Dono da concorrente", c:6,
+   t:"Vamos combinar preços? Ninguém perde e todo mundo lucra mais.",
+   e:["Concorrência é concorrência", {cl:6, cx:-6}], d:["Fechado", {cx:16, cl:-6}, "cartel"]},
+  {id:"sindicato", n:"Zé Carlos", r:"Sindicato", c:4,
+   t:"Reajuste de 10% ou a fábrica para na segunda-feira.",
+   e:["Não há dinheiro", {eq:-18, cx:4}], d:["Concedido", {eq:15, cx:-15}]},
+  {id:"promocao", n:"Bruna Alves", r:"Marketing", c:7,
+   t:"Promoção relâmpago: 40% de desconto em tudo no fim de semana!",
+   e:["Margem é sagrada", {cl:-6, cx:4}], d:["Liga a promoção", {cl:15, cx:-12}]},
+  {id:"preco", n:"Dr. Marcos Lima", r:"Diretor financeiro", c:1,
+   t:"A inflação subiu. Repassamos 15% para o preço?",
+   e:["Seguramos o preço", {cx:-10, cl:6}], d:["Repassa", {cx:12, cl:-12}]},
+  {id:"creche", n:"Carla Souza", r:"Recursos Humanos", c:2,
+   t:"As mães e os pais da fábrica pedem uma creche aqui dentro.",
+   e:["Não é nosso papel", {eq:-10}], d:["Construa", {eq:14, cx:-12, rp:6}]},
+  {id:"ia", n:"Rafael Tavares", r:"Tecnologia", c:5,
+   t:"Uma inteligência artificial pode substituir o atendimento. Economia de 30%.",
+   e:["Mantemos pessoas", {cx:-6, eq:6}], d:["Implante a IA", {cx:14, eq:-12, cl:-6}]},
+  {id:"escola", n:"Secretário Nunes", r:"Governo do Estado", c:8,
+   t:"Queremos vocês na reforma de uma escola estadual. A margem é pequena, mas é pela educação.",
+   e:["Não compensa", {rp:-8, cx:3}], d:["Aceito", {rp:12, cx:-8}]},
+  {id:"palestra", n:"Professora Ana", r:"Escola pública", c:2,
+   t:"Seus gerentes podem dar palestras sobre carreira para meus alunos do EJA?",
+   e:["Estamos sem tempo", {rp:-6}], d:["Com prazer", {rp:10, eq:4, cx:-3}]},
+  {id:"fornecedor", n:"Gisele Matos", r:"Compras", c:4,
+   t:"Achei um fornecedor 30% mais barato. Dizem que usa trabalho análogo à escravidão, mas é boato.",
+   e:["Mantemos o atual", {cx:-8, rp:4}], d:["Fecha com ele", {cx:15}, "escravo"]},
+  {id:"fundo", n:"Leonardo Brandt", r:"Fundo de investimento", c:1,
+   t:"Coloco R$ 10 milhões na empresa. Em troca, quero dois assentos no conselho.",
+   e:["Prefiro independência", {cx:-4}], d:["Negócio fechado", {cx:20, eq:-6}, "fundo"]},
+  {id:"recall", n:"Eng. Paula Reis", r:"Controle de qualidade", c:7,
+   t:"Há um defeito num lote que já foi vendido. Fazemos recall?",
+   e:["Ninguém vai notar", {cx:6}, "defeito"], d:["Recall já", {cx:-15, cl:8, rp:8}]},
+  {id:"festa", n:"Carla Souza", r:"Recursos Humanos", c:2,
+   t:"Festa de fim de ano com banda e churrasco?",
+   e:["Um bolo basta", {eq:-8, cx:4}], d:["Festa completa", {eq:12, cx:-8}]},
+  {id:"bonus", n:"Conselho", r:"Conselho de administração", c:8,
+   t:"O conselho oferece a você um bônus milionário pelo ano.",
+   e:["Divida com a equipe", {eq:12, cx:-6, rp:6}], d:["Aceito, eu mereço", {cx:-10, eq:-10, rp:-5}]},
+  {id:"post", n:"Bruna Alves", r:"Marketing", c:7,
+   t:"Um post nosso viralizou pelo motivo errado. Muita gente achou ofensivo. Pedimos desculpas?",
+   e:["Finge que não viu", {rp:-12}], d:["Desculpas públicas", {rp:6, cl:-4}]},
+  {id:"exportar", n:"Dr. Marcos Lima", r:"Diretor financeiro", c:1,
+   t:"Podemos exportar para a Argentina. O risco do câmbio é alto.",
+   e:["Ficamos no Brasil", {cl:-4}], d:["Vamos exportar", {cl:14, cx:-10}]},
+  {id:"time", n:"Seu Lopes", r:"Presidente do time da cidade", c:6,
+   t:"Patrocina a camisa do nosso time? A cidade inteira vai ver a marca de vocês.",
+   e:["Futebol não é prioridade", {rp:-5, cl:-3}], d:["Patrocino", {rp:8, cl:6, cx:-10}]},
+  {id:"quatrodias", n:"Carla Souza", r:"Recursos Humanos", c:2,
+   t:"Uma pesquisa sugere semana de quatro dias de trabalho. Testamos?",
+   e:["Nem pensar", {eq:-8}], d:["Vamos testar", {eq:16, cl:-8, cx:-4}]},
+  {id:"lobby", n:"Dep. Vasconcelos", r:"Câmara dos Deputados", c:3,
+   t:"Faça uma doação para minha campanha e eu travo aquele imposto novo.",
+   e:["Não misturo as coisas", {cx:-8, rp:5}], d:["Doe", {cx:10, rp:-6}, "lobby"]},
+  {id:"exclusiva", n:"Grupo Atlântico", r:"Maior cliente", c:5,
+   t:"Queremos exclusividade: vocês só vendem para nós e pagamos bem.",
+   e:["Vendemos para todos", {cl:4, cx:-8}], d:["Exclusividade", {cx:14, cl:-14}]},
+  {id:"solar", n:"Eng. Paula Reis", r:"Controle de qualidade", c:7,
+   t:"Painéis solares na fábrica: caro agora, barato em cinco anos.",
+   e:["Depois a gente vê", {rp:-4}], d:["Instala", {cx:-14, rp:10}, "solar"]},
+  {id:"assedio", n:"Joana Lins", r:"Analista", c:3,
+   t:"Meu gerente me humilha nas reuniões na frente de todos. Ninguém faz nada.",
+   e:["Resolvam entre vocês", {eq:-14, rp:-6}], d:["Abra uma investigação", {eq:10, cx:-4}]},
+  {id:"hacker", n:"Rafael Tavares", r:"Tecnologia", c:5,
+   t:"Fomos invadidos. Dados dos clientes vazaram. Avisamos todo mundo?",
+   e:["Abafa o caso", {cl:2}, "vazamento"], d:["Avise os clientes", {cl:-10, rp:4}]},
+  {id:"faliu", n:"Dr. Marcos Lima", r:"Diretor financeiro", c:1,
+   t:"Uma concorrente faliu. Compramos a carteira de clientes dela?",
+   e:["Não precisamos", {cx:3}], d:["Compre", {cl:16, cx:-14}]},
+  {id:"enchente", n:"Defesa Civil", r:"Governo municipal", c:8,
+   t:"Enchente na região. Pedimos doação de produtos para as famílias.",
+   e:["Não podemos agora", {rp:-10}], d:["Doe", {rp:12, cx:-8}]},
+  {id:"aprendiz", n:"Carla Souza", r:"Recursos Humanos", c:2,
+   t:"Programa Jovem Aprendiz: contratamos 20 jovens da cidade?",
+   e:["Dá muito trabalho", {rp:-4}], d:["Contrate", {rp:8, eq:4, cx:-6}]},
+  {id:"natural", n:"Bruna Alves", r:"Marketing", c:7,
+   t:"E se escrevermos \"100% natural\" na embalagem? Ninguém confere mesmo.",
+   e:["Só a verdade", {cl:-4}], d:["Coloca", {cl:10}, "enganosa"]},
+  {id:"terceiriza", n:"Dr. Marcos Lima", r:"Diretor financeiro", c:1,
+   t:"Terceirizar limpeza e segurança economiza bastante.",
+   e:["Mantém a equipe", {cx:-6, eq:4}], d:["Terceiriza", {cx:10, eq:-10}]},
+  {id:"capa", n:"Revista Negócios", r:"Imprensa", c:4,
+   t:"Queremos você na capa como CEO do ano. A entrevista é hoje.",
+   e:["Prefiro discrição", {rp:-2, eq:3}], d:["Vou à capa", {rp:14, eq:-4}]},
+  {id:"treinamento", n:"Carla Souza", r:"Recursos Humanos", c:2,
+   t:"Um curso de qualificação para todos os funcionários. Caro, mas eles crescem.",
+   e:["Aprendam no trabalho", {eq:-6, cx:4}], d:["Pague o curso", {eq:10, cl:4, cx:-10}]},
+  {id:"horaextra", n:"Gerente de produção", r:"Fábrica", c:6,
+   t:"Um pedido gigante chegou. Só dá para entregar com muita hora extra.",
+   e:["Recusamos o pedido", {cl:-10, eq:4}], d:["Hora extra para todos", {cl:8, cx:10, eq:-12}]},
+
+  /* ===== CONSEQUÊNCIAS (voltam meses depois) ===== */
+  {id:"f-propina", req:"propina", n:"Delegada Moura", r:"Polícia Federal", c:8,
+   t:"A Operação Envelope achou seu nome na lista de pagamentos do fiscal.",
+   e:["Nego tudo", {rp:-22}], d:["Colaboro e pago a multa", {rp:-6, cx:-15}]},
+  {id:"f-cartel", req:"cartel", n:"Conselheira do CADE", r:"Defesa da concorrência", c:8,
+   t:"Descobrimos o acordo de preços entre vocês e a concorrente.",
+   e:["Recorro na Justiça", {cx:-10, rp:-10}], d:["Acordo e multa", {cx:-18, cl:4}]},
+  {id:"f-app", req:"app", n:"Pedro", r:"Estagiário", c:5,
+   t:"O aplicativo ficou pronto e os testes foram ótimos! Lançamos?",
+   e:["Vende a ideia para outra empresa", {cx:18, eq:-6}], d:["Lança com nossa marca", {cl:18, eq:6}]},
+  {id:"f-demissao", req:"demissao", n:"Dr. Torres", r:"Jurídico", c:1,
+   t:"Os demitidos entraram com uma ação coletiva na Justiça do Trabalho.",
+   e:["Briga até o fim", {cx:-6, rp:-12}], d:["Faz acordo", {cx:-14, rp:4}]},
+  {id:"f-rio", req:"negourio", n:"Lúcia Ferraz", r:"Jornalista", c:3,
+   t:"A perícia confirmou a poluição. Sai amanhã na capa do jornal.",
+   e:["Sem comentários", {rp:-20, cl:-6}], d:["Assumo e reparo o dano", {rp:-5, cx:-15}]},
+  {id:"f-escravo", req:"escravo", n:"Auditora do Trabalho", r:"Ministério do Trabalho", c:8,
+   t:"Seu fornecedor entrou na lista suja do trabalho escravo. A marca de vocês está nas fotos.",
+   e:["Não sabíamos de nada", {rp:-18, cl:-8}], d:["Rompo e indenizo", {rp:-4, cx:-12}]},
+  {id:"f-defeito", req:"defeito", n:"Eng. Paula Reis", r:"Controle de qualidade", c:7,
+   t:"Clientes se machucaram com o lote defeituoso. Eu avisei.",
+   e:["Culpa do mau uso", {cl:-18, rp:-12}], d:["Indenizar todos", {cx:-20, cl:4}]},
+  {id:"f-vazamento", req:"vazamento", n:"Procon", r:"Defesa do consumidor", c:8,
+   t:"Os clientes souberam do vazamento pelos jornais, não por vocês.",
+   e:["Minimiza o caso", {cl:-16, rp:-8}], d:["Pede perdão e compensa", {cl:-6, cx:-10}]},
+  {id:"f-enganosa", req:"enganosa", n:"Procon", r:"Defesa do consumidor", c:8,
+   t:"Abrimos processo por propaganda enganosa. O produto não é natural.",
+   e:["Recorre", {cl:-10, cx:-4}], d:["Corrige e paga a multa", {cx:-10, cl:2}]},
+  {id:"f-helena", req:"helena", n:"Helena Prado", r:"Acionista", c:3,
+   t:"Estou reunindo os acionistas para tirar você do cargo.",
+   e:["Enfrento", {cx:-6, eq:4}], d:["Pago um dividendo extra", {cx:-14}]},
+  {id:"f-fundo", req:"fundo", n:"Leonardo Brandt", r:"Fundo de investimento", c:1,
+   t:"Meus conselheiros querem cortar o plano de saúde dos funcionários.",
+   e:["Não deixo", {cx:-10, eq:5}], d:["Corta", {cx:10, eq:-14}]},
+  {id:"f-solar", req:"solar", n:"Eng. Paula Reis", r:"Controle de qualidade", c:7,
+   t:"Os painéis já pagam metade da conta de luz!",
+   e:["Ótimo, guardamos", {cx:12}], d:["Divulgue a conquista", {rp:10, cx:6}]},
+  {id:"f-ho", req:"ho", n:"Carla Souza", r:"Recursos Humanos", c:2,
+   t:"Com o home office, a rotatividade caiu pela metade. Ampliamos?",
+   e:["Volta tudo ao presencial", {eq:-14}], d:["Três dias em casa", {eq:10, cl:-6}]},
+  {id:"f-lobby", req:"lobby", n:"Lúcia Ferraz", r:"Jornalista", c:3,
+   t:"Descobri sua doação ao deputado, logo antes de ele travar o imposto. Vai explicar?",
+   e:["Foi legal e declarada", {rp:-8}], d:["Sem comentários", {rp:-14}]}
+];
+
+/* ===================== FINAIS ===================== */
+const FINAIS = {
+  "eq-0": {titulo:"Greve geral", texto:"A equipe cruzou os braços e ninguém voltou. Sem gente, não há empresa.",
+    filosofo:"Immanuel Kant", ideia:"Kant diria que você tratou as pessoas apenas como meio para os números. Para ele, cada ser humano é um fim em si mesmo, e quem esquece isso perde o respeito de todos.",
+    pergunta:"Dá para tratar um funcionário como fim em si mesmo e ainda assim cobrar resultado?"},
+  "eq-100": {titulo:"O sindicato assumiu", texto:"Você cedeu a todos os pedidos. A folha engoliu a empresa e as decisões já não eram suas.",
+    filosofo:"Nicolau Maquiavel", ideia:"Maquiavel lembraria que quem só procura ser amado fica refém de quem ama. Para ele, quem governa precisa saber dizer não, ou perde o próprio poder.",
+    pergunta:"Ser querido pela equipe e liderar a equipe são a mesma coisa?"},
+  "cl-0": {titulo:"Prateleiras cheias", texto:"Os clientes foram embora. O produto continua no estoque e ninguém mais lembra da marca.",
+    filosofo:"Adam Smith", ideia:"Adam Smith mostrou que no mercado cada um busca o próprio interesse, e o comprador também. Quem não serve bem o cliente é trocado sem cerimônia.",
+    pergunta:"O cliente tem sempre razão, ou só tem sempre a escolha?"},
+  "cl-100": {titulo:"Monopólio", texto:"Você engoliu o mercado inteiro. O CADE abriu processo e o conselho afastou você para salvar a empresa.",
+    filosofo:"Montesquieu", ideia:"Montesquieu ensinou que todo poder sem limite tende ao abuso, por isso só o poder freia o poder. Um mercado sem concorrência é um poder sem freio.",
+    pergunta:"Por que o Estado impede uma empresa de ficar grande demais?"},
+  "cx-0": {titulo:"Falência", texto:"O caixa zerou. Os credores trancaram as portas e os bancos não atendem mais.",
+    filosofo:"Aristóteles", ideia:"Aristóteles chamaria isso de prodigalidade, o excesso da generosidade. A virtude está na justa medida: dar sem esgotar a casa que sustenta todos.",
+    pergunta:"Onde termina a generosidade e começa o desperdício?"},
+  "cx-100": {titulo:"Vendida", texto:"Com tanto dinheiro parado, um grupo estrangeiro comprou a empresa. O primeiro ato do novo dono foi trocar o CEO.",
+    filosofo:"Karl Marx", ideia:"Marx descreveu o capital como uma força que só quer crescer, e que passa por cima de quem estiver no caminho. Nem o gestor que o acumulou escapa dessa lógica.",
+    pergunta:"Quem manda de verdade numa empresa: as pessoas ou o dinheiro?"},
+  "rp-0": {titulo:"Escândalo", texto:"Seu rosto está em todos os jornais. Boicote nas redes, protestos na porta. O conselho não teve escolha.",
+    filosofo:"Platão", ideia:"No mito do Anel de Giges, Platão pergunta se alguém seria justo se pudesse agir invisível. Você apostou que ninguém veria. Viram.",
+    pergunta:"Você seria honesto se tivesse certeza de que ninguém descobriria?"},
+  "rp-100": {titulo:"Rumo à política", texto:"Você ficou tão famoso que largou a empresa para disputar uma eleição. A Maré Alta precisa de outra pessoa.",
+    filosofo:"Max Weber", ideia:"Weber separava a ética da convicção da ética da responsabilidade. Na política, dizia ele, não basta ter boas intenções: é preciso responder pelas consequências.",
+    pergunta:"A imagem de um líder importa mais que os resultados dele?"}
+};
+
+/* ===================== ESTADO ===================== */
+const NOMES = ["Ana","Bruno","Camila","Diego","Elisa","Fábio","Gabriela","Heitor","Isabela","João","Larissa","Mateus","Natália","Otávio","Priscila","Rodrigo","Sofia","Tiago","Vanessa","Wesley","Yasmin","Lucas","Marina","Caio"];
+const SOBRENOMES = ["Albuquerque","Bezerra","Cavalcanti","Dantas","Fernandes","Galvão","Medeiros","Nóbrega","Oliveira","Queiroz","Rocha","Saraiva","Teixeira","Vieira"];
+const CHAVE = "cadeira-do-ceo-historico";
+let S; let atual; let lado = 0;
+
+function carregaHist(){ try{ return JSON.parse(localStorage.getItem(CHAVE)) || []; }catch(e){ return []; } }
+function salvaHist(h){ try{ localStorage.setItem(CHAVE, JSON.stringify(h.slice(0,50))); }catch(e){} }
+const sorteia = a => a[Math.floor(Math.random()*a.length)];
+const $ = id => document.getElementById(id);
+
+function novoCEO(){
+  const n = carregaHist().length + 1;
+  S = { nome: sorteia(NOMES)+" "+sorteia(SOBRENOMES), numero:n, mes:0,
+        v:{eq:50, cl:50, cx:50, rp:50}, marcas:{}, recentes:[], favor:{eq:0,cl:0,cx:0,rp:0}, decisoes:0 };
+}
+
+/* ===================== TELAS ===================== */
+const TELAS = ["tela-inicio","tela-jogo","tela-fim","tela-galeria","tela-sobre"];
+let telaAnterior = "tela-inicio";
+function mostra(id){
+  const visivel = TELAS.find(t => !$(t).hidden);
+  if(id === "tela-galeria" || id === "tela-sobre"){ if(visivel !== "tela-galeria" && visivel !== "tela-sobre") telaAnterior = visivel; }
+  TELAS.forEach(t => $(t).hidden = (t !== id));
+  if(id === "tela-galeria") montaGaleria();
+  if(id === "tela-inicio") montaInicio();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll("[data-voltar]").forEach(b => b.onclick = () => mostra(telaAnterior));
+$("bt-galeria").onclick = () => mostra("tela-galeria");
+$("bt-sobre").onclick = () => mostra("tela-sobre");
+
+function montaInicio(){
+  $("pilares-mini").innerHTML = PILARES.map(p => `<div>${ICON[p.k]}${p.nome}</div>`).join("");
+  const h = carregaHist();
+  if(h.length){
+    const melhor = h.reduce((a,b) => b.meses > a.meses ? b : a);
+    $("recorde").textContent = `${h.length} CEO${h.length>1?"s":""} já passaram por aqui. Recorde: ${duracao(melhor.meses)} (${melhor.nome}).`;
+  } else $("recorde").textContent = "";
+}
+
+function montaGaleria(){
+  const h = carregaHist();
+  $("lista-ceos").innerHTML = h.length ? h.map(c =>
+    `<li><div><b>${esc(c.nome)}</b><br><small>CEO nº ${c.numero} · ${esc(c.fim)}</small></div><div style="text-align:right">${duracao(c.meses)}</div></li>`
+  ).join("") : "<li>Ninguém sentou na cadeira ainda.</li>";
+}
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function duracao(m){
+  const a = Math.floor(m/12), r = m%12;
+  const pa = a ? `${a} ano${a>1?"s":""}` : "";
+  const pm = r ? `${r} ${r>1?"meses":"mês"}` : "";
+  return [pa,pm].filter(Boolean).join(" e ") || "menos de um mês";
+}
+
+/* ===================== JOGO ===================== */
+function montaPilares(){
+  $("pilares").innerHTML = PILARES.map(p =>
+    `<div class="pilar" id="p-${p.k}" title="${p.nome}"><span class="ponto" id="pt-${p.k}"></span>${ICON[p.k]}<div class="barra"><span id="b-${p.k}"></span></div>${p.nome}</div>`
+  ).join("");
+}
+function atualizaPilares(antes){
+  PILARES.forEach(p => {
+    const v = S.v[p.k], el = $("p-"+p.k);
+    $("b-"+p.k).style.width = v + "%";
+    el.classList.toggle("perigo", v <= 20 || v >= 80);
+    el.classList.remove("sobe","desce");
+    if(antes && antes[p.k] !== v){
+      void el.offsetWidth;
+      el.classList.add(v > antes[p.k] ? "sobe" : "desce");
+      setTimeout(() => el.classList.remove("sobe","desce"), 700);
+    }
+  });
+  $("tempo").innerHTML = `<b>${esc(S.nome)}</b> · CEO nº ${S.numero} · ${duracao(S.mes)} no cargo`;
+}
+
+function proximaCarta(){
+  if(!S.introVista){ S.introVista = true; return INTRO; }
+  const prontas = CARTAS.filter(c => c.req && S.marcas[c.req] !== undefined && S.mes - S.marcas[c.req] >= 3);
+  if(prontas.length && Math.random() < 0.65) return sorteia(prontas);
+  let pool = CARTAS.filter(c => !c.req && !S.recentes.includes(c.id));
+  if(!pool.length){ S.recentes = []; pool = CARTAS.filter(c => !c.req); }
+  return sorteia(pool);
+}
+
+function mostraCarta(c){
+  atual = c;
+  const carta = $("carta");
+  carta.style.transition = "none";
+  carta.style.transform = "";
+  carta.classList.remove("entra");
+  carta.classList.toggle("consequencia", !!c.req);
+  void carta.offsetWidth;
+  carta.classList.add("entra");
+  const ini = c.n.replace(/^(Dr\.|Dep\.|Eng\.|Seu|Fiscal|Secretário|Professora|Delegada|Conselheira|Auditora|@)\s*/,"").split(/\s+/).map(w => w[0]).join("").slice(0,2).toUpperCase();
+  $("avatar").textContent = ini;
+  $("avatar").style.background = `var(--c${c.c||8})`;
+  $("nome").textContent = c.n;
+  $("cargo").textContent = c.r;
+  $("fala").textContent = c.t;
+  $("bt-esq").textContent = "← " + c.e[0];
+  $("bt-dir").textContent = c.d[0] + " →";
+  $("escolha").style.opacity = 0;
+  previa(0);
+}
+
+function previa(dir){
+  PILARES.forEach(p => {
+    const pt = $("pt-"+p.k);
+    const ef = dir === 0 ? 0 : ((dir < 0 ? atual.e[1] : atual.d[1])[p.k] || 0);
+    pt.classList.toggle("on", ef !== 0);
+    pt.classList.toggle("grande", Math.abs(ef) > 10);
+  });
+}
+
+function decide(dir){
+  if(!atual) return;
+  const op = dir < 0 ? atual.e : atual.d;
+  const c = atual; atual = null;
+  const carta = $("carta");
+  carta.style.transition = "transform .35s ease, opacity .35s";
+  carta.style.transform = `translateX(${dir*130}%) rotate(${dir*22}deg)`;
+  previa(0);
+
+  const antes = {...S.v};
+  Object.entries(op[1]).forEach(([k,d]) => {
+    S.v[k] = Math.max(0, Math.min(100, S.v[k] + d));
+    if(d > 0) S.favor[k] += d;
+  });
+  if(c.id !== "intro"){ S.mes++; S.decisoes++; }
+  if(op[2] && S.marcas[op[2]] === undefined) S.marcas[op[2]] = S.mes;
+  if(c.req) delete S.marcas[c.req];
+  if(!c.req && c.id !== "intro"){ S.recentes.push(c.id); if(S.recentes.length > 14) S.recentes.shift(); }
+  $("noticia").textContent = op[3] || "";
+  atualizaPilares(antes);
+
+  const queda = verificaQueda();
+  setTimeout(() => {
+    carta.style.opacity = 1;
+    if(queda) fim(queda);
+    else mostraCarta(proximaCarta());
+  }, queda ? 900 : 360);
+}
+
+function verificaQueda(){
+  for(const p of PILARES){
+    if(S.v[p.k] <= 0) return p.k + "-0";
+    if(S.v[p.k] >= 100) return p.k + "-100";
+  }
+  return null;
+}
+
+function fim(chave){
+  const f = FINAIS[chave];
+  const fav = PILARES.reduce((a,b) => S.favor[b.k] > S.favor[a.k] ? b : a);
+  const h = carregaHist();
+  h.unshift({nome:S.nome, numero:S.numero, meses:S.mes, fim:f.titulo});
+  salvaHist(h);
+  $("tela-fim").innerHTML = `
+    <div class="selo">${ICON.fim}</div>
+    <h2>${f.titulo}</h2>
+    <p>${f.texto}</p>
+    <div class="relatorio">
+      <div><small>Tempo no cargo</small><b>${duracao(S.mes)}</b></div>
+      <div><small>Pilar que você mais favoreceu</small><b>${fav.nome}</b></div>
+    </div>
+    <div class="consultor">
+      <small>O consultor filosófico comenta</small>
+      <h3>${f.filosofo}</h3>
+      <p>${f.ideia}</p>
+    </div>
+    <p class="pergunta"><b>Para pensar:</b> ${f.pergunta}</p>
+    <div class="acoes">
+      <button class="btn primario" type="button" id="bt-proximo">Próximo CEO</button>
+      <button class="btn" type="button" id="bt-ver-galeria">Ver ex-CEOs</button>
+    </div>`;
+  mostra("tela-fim");
+  $("bt-proximo").onclick = comecar;
+  $("bt-ver-galeria").onclick = () => mostra("tela-galeria");
+  $("bt-proximo").focus();
+}
+
+function comecar(){
+  novoCEO();
+  mostra("tela-jogo");
+  montaPilares();
+  atualizaPilares();
+  $("noticia").textContent = "";
+  mostraCarta(proximaCarta());
+}
+$("bt-comecar").onclick = comecar;
+$("bt-esq").onclick = () => decide(-1);
+$("bt-dir").onclick = () => decide(1);
+document.addEventListener("keydown", e => {
+  if($("tela-jogo").hidden || !atual) return;
+  if(e.key === "ArrowLeft"){ e.preventDefault(); decide(-1); }
+  if(e.key === "ArrowRight"){ e.preventDefault(); decide(1); }
+});
+
+/* ===================== ARRASTAR ===================== */
+(function(){
+  const carta = $("carta");
+  let x0 = null, dx = 0, id = null;
+  carta.addEventListener("pointerdown", e => {
+    if(!atual) return;
+    x0 = e.clientX; dx = 0; id = e.pointerId;
+    carta.setPointerCapture(id);
+    carta.style.transition = "none";
+    carta.classList.add("arrastando");
+  });
+  carta.addEventListener("pointermove", e => {
+    if(x0 === null || e.pointerId !== id) return;
+    dx = e.clientX - x0;
+    carta.style.transform = `translateX(${dx}px) rotate(${dx/18}deg)`;
+    const esc = $("escolha");
+    const forte = Math.min(1, Math.abs(dx)/90);
+    if(Math.abs(dx) > 12){
+      esc.textContent = dx < 0 ? atual.e[0] : atual.d[0];
+      esc.classList.toggle("dir", dx > 0);
+      esc.style.opacity = forte;
+    } else esc.style.opacity = 0;
+    previa(Math.abs(dx) > 40 ? Math.sign(dx) : 0);
+  });
+  const solta = e => {
+    if(x0 === null) return;
+    carta.classList.remove("arrastando");
+    x0 = null;
+    if(Math.abs(dx) > 90) decide(Math.sign(dx));
+    else {
+      carta.style.transition = "transform .25s ease";
+      carta.style.transform = "";
+      $("escolha").style.opacity = 0;
+      previa(0);
+    }
+    dx = 0;
+  };
+  carta.addEventListener("pointerup", solta);
+  carta.addEventListener("pointercancel", solta);
+})();
+
+montaInicio();
+</script>
+</body>
+</html>
