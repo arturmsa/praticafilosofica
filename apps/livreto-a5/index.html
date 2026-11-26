@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Livreto A5 · Prática Filosófica</title>
+<meta name="description" content="Monte um PDF para imprimir livros em meia folha A4: imprima, corte ao meio, empilhe e encaderne.">
+<script>try{ document.documentElement.dataset.tema = localStorage.getItem("tema")==="escuro" ? "escuro" : "claro"; }catch(e){ document.documentElement.dataset.tema="claro"; }</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,600&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root{--fundo:#faf8f5;--fundo2:#f0ece6;--cartao:#ffffff;--tinta:#121212;--apagado:#5d5751;--borda:#e2ddd5;--destaque:#c1272d;--destaque-suave:#f7e2e2;--serif:"Fraunces",Georgia,serif;--sans:"Inter",system-ui,sans-serif;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-tema="claro"]){--fundo:#111111;--fundo2:#1b1b1b;--cartao:#171717;--tinta:#f3f0eb;--apagado:#aaa39b;--borda:#2f2c29;--destaque:#e8484e;--destaque-suave:#3b1a1c;color-scheme:dark}}
+:root[data-tema="escuro"]{--fundo:#111111;--fundo2:#1b1b1b;--cartao:#171717;--tinta:#f3f0eb;--apagado:#aaa39b;--borda:#2f2c29;--destaque:#e8484e;--destaque-suave:#3b1a1c;color-scheme:dark}
+.topo{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));border-bottom:1px solid var(--tinta);background:var(--fundo);flex-wrap:wrap}
+.voltar{font-size:.82rem;color:var(--apagado);text-decoration:none;white-space:nowrap}
+.voltar:hover{color:var(--destaque)}
+.marca{font-family:var(--serif);font-weight:800;font-size:1.45rem;letter-spacing:-.02em;text-transform:lowercase;white-space:nowrap}
+.marca i{color:var(--destaque)}
+.espaco{flex:1}
+.tema{border:1.5px solid var(--borda);background:var(--cartao);color:var(--tinta);border-radius:999px;padding:6px 12px;cursor:pointer;font:inherit;font-size:.85rem;min-height:0;font-weight:500}
+.tema:hover{border-color:var(--destaque)}
+.selo{display:inline-block;font-size:.72rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--destaque);padding-bottom:4px;border-bottom:2px solid var(--destaque);margin-bottom:12px}
+
+/* Mesma família visual do site Prática Filosófica: barra no topo, folha A4 ilustrada, ferramenta ao lado. */
+*{box-sizing:border-box;min-width:0}
+a{color:var(--destaque)}
+body{margin:0;background:var(--fundo);color:var(--tinta);font:16px/1.55 var(--sans);overflow-x:clip;min-height:100vh}
+
+h1,h2{font-family:var(--serif)}h1{font-size:clamp(30px,4.6vw,44px);line-height:1.08;margin:0 0 12px;text-wrap:balance;font-weight:800;letter-spacing:-.02em}
+h2{font-size:26px;font-weight:600;margin:0 0 14px}
+.band{padding:clamp(24px,4vw,56px) max(5vw,16px)}
+.wrap{max-width:1180px;margin:0 auto}
+.top{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(20px,4vw,48px);align-items:center}
+.lead{color:var(--apagado);max-width:56ch;margin:0}
+.card{background:var(--cartao);border:1px solid var(--borda);border-radius:4px;padding:clamp(16px,3vw,28px);box-shadow:0 10px 30px -18px rgb(0 0 0/.35)}
+.drop{display:grid;place-items:center;text-align:center;border:2px dashed var(--borda);border-radius:12px;padding:26px 14px;cursor:pointer;transition:border-color .2s,background .2s}
+.drop.on,.drop:hover{border-color:var(--destaque);background:color-mix(in srgb,var(--destaque) 7%,transparent)}
+.drop b{font-family:var(--sans);font-size:18px}.drop small{color:var(--apagado)}
+input[type=file]{position:absolute;opacity:0;pointer-events:none}
+.opts{display:grid;gap:14px;margin:18px 0}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.row>label:first-child{width:100%;font-weight:700;font-size:14px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg input{position:absolute;opacity:0}
+.seg label{border:1px solid var(--borda);border-radius:999px;padding:10px 14px;font-size:14px;cursor:pointer;min-height:44px;display:flex;align-items:center}
+.seg input:checked+label{background:var(--tinta);color:var(--fundo);border-color:var(--tinta)}
+.seg input:focus-visible+label,button:focus-visible,.num:focus-visible{outline:3px solid var(--destaque);outline-offset:2px}
+.num{font:16px var(--sans);width:90px;min-height:44px;padding:8px 10px;border:1px solid var(--borda);border-radius:10px;background:var(--cartao);color:var(--tinta)}
+.chk{display:flex;gap:8px;align-items:center;font-size:15px;min-height:44px}
+.chk input{width:20px;height:20px;accent-color:var(--destaque)}
+button{font-size:16px;font-weight:700;min-height:48px;padding:0 20px;border-radius:10px;border:0;cursor:pointer}
+.go{background:var(--destaque);color:#fff;width:100%;border-radius:999px}
+.go:disabled{opacity:.45;cursor:not-allowed}
+.ghost{border-radius:999px;background:transparent;color:var(--tinta);border:1px solid var(--borda)}
+.msg{font-size:15px;margin-top:12px;min-height:1.5em}
+.msg.err{color:var(--destaque)}
+.fig svg{width:100%;height:auto;display:block}
+.sheets{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.sh{background:var(--cartao);border:1px solid var(--borda);border-radius:12px;padding:14px}
+.sh h3{font-size:15px;margin:0 0 8px}
+.face{display:grid;grid-template-columns:60px 1fr 1fr;gap:0;align-items:stretch;margin-bottom:6px}
+.face span{font:600 13px var(--sans);color:var(--apagado);align-self:center}
+.pg{border:1px solid var(--borda);text-align:center;padding:10px 0;font:800 22px var(--sans)}
+.pg+.pg{border-left:2px dashed var(--destaque)}
+.pg.b{color:var(--apagado);font-weight:500;font-size:14px;padding-top:14px}
+.pg.r{transform:rotate(180deg)}
+.steps{counter-reset:s;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;padding:0;list-style:none;margin:0}
+.steps li{counter-increment:s;background:var(--cartao);border:1px solid var(--borda);border-radius:12px;padding:16px 18px}
+.steps li::before{content:counter(s);display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--destaque);color:#fff;font:800 15px var(--sans);margin-bottom:8px}
+.steps b{font-family:var(--sans)}
+.sum{font:600 15px var(--sans);margin:0 0 14px;color:var(--apagado)}
+.note{font-size:14px;color:var(--apagado)}
+@media(max-width:820px){.top{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:no-preference){.cut{animation:dash 3s linear infinite}@keyframes dash{to{stroke-dashoffset:-40}}}
+</style></head><body>
+<header class="topo">
+  <a class="voltar" href="../../">← Prática Filosófica</a>
+  <div class="marca">livreto <i>A5</i></div>
+  <span class="espaco"></span>
+  <button type="button" class="tema" id="tema">◐ Tema</button>
+</header>
+
+<section class="band"><div class="wrap top">
+<div>
+<span class="selo">Ferramenta de impressão</span>
+<h1>Livreto em meia A4: imprima, corte ao meio, empilhe e encaderne</h1>
+<p class="lead">Envie um PDF. A ferramenta coloca duas páginas por face de uma A4 deitada, na ordem certa para que, depois do corte, a pilha da esquerda sobre a da direita já forme o livro em sequência, com frente e verso corretos.</p>
+<div class="fig" style="margin-top:22px"><svg viewBox="0 0 520 230" role="img" aria-label="Folha A4 deitada com as páginas 1 e 7, cortada ao meio, formando duas pilhas que se juntam">
+<defs><linearGradient id="pp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--cartao)"/><stop offset="1" stop-color="var(--fundo)"/></linearGradient></defs>
+<rect x="14" y="30" width="260" height="184" rx="4" fill="#000" opacity=".12"/>
+<rect x="8" y="22" width="260" height="184" rx="4" fill="url(#pp)" stroke="var(--borda)"/>
+<text x="73" y="135" font-family="Inter, sans-serif" font-weight="800" font-size="56" fill="var(--tinta)" text-anchor="middle">1</text>
+<text x="203" y="135" font-family="Inter, sans-serif" font-weight="800" font-size="56" fill="var(--tinta)" text-anchor="middle">7</text>
+<text x="73" y="190" font-family="Inter, sans-serif" font-size="12" fill="var(--apagado)" text-anchor="middle">pilha esquerda</text>
+<text x="203" y="190" font-family="Inter, sans-serif" font-size="12" fill="var(--apagado)" text-anchor="middle">pilha direita</text>
+<line class="cut" x1="138" y1="8" x2="138" y2="222" stroke="var(--destaque)" stroke-width="2.5" stroke-dasharray="8 6"/>
+<g transform="translate(138 10)" stroke="var(--destaque)" stroke-width="2.5" fill="none"><circle cx="-7" cy="-2" r="5"/><circle cx="7" cy="-2" r="5"/></g>
+<path d="M290 114h46" stroke="var(--apagado)" stroke-width="2.5" marker-end="url(#ar)"/>
+<defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="var(--apagado)"/></marker></defs>
+<g font-family="Inter, sans-serif" font-weight="800" text-anchor="middle">
+<rect x="404" y="128" width="96" height="92" rx="3" fill="var(--cartao)" stroke="var(--borda)"/><rect x="400" y="124" width="96" height="92" rx="3" fill="var(--cartao)" stroke="var(--borda)"/>
+<text x="448" y="185" font-size="34" fill="var(--apagado)">7…</text>
+<rect x="364" y="34" width="96" height="92" rx="3" fill="var(--cartao)" stroke="var(--borda)"/><rect x="360" y="30" width="96" height="92" rx="3" fill="var(--cartao)" stroke="var(--destaque)" stroke-width="2"/>
+<text x="408" y="91" font-size="34" fill="var(--tinta)">1…</text></g>
+<path d="M470 76c34 6 40 34 26 46" stroke="var(--destaque)" stroke-width="2" fill="none" marker-end="url(#ar)" opacity=".8"/>
+</svg></div>
+</div>
+<div class="card">
+<label class="drop" id="drop" for="file"><div><b>Escolha ou arraste o PDF</b><br><small id="fname">Melhor se já estiver em tamanho A5 (meia A4)</small></div></label>
+<input type="file" id="file" accept="application/pdf,.pdf">
+<div class="opts">
+<div class="row"><label>Como sua impressora vira o papel no frente e verso</label>
+<div class="seg"><input type="radio" name="flip" id="f1" value="short" checked><label for="f1">Borda curta (recomendado)</label><input type="radio" name="flip" id="f2" value="long"><label for="f2">Borda longa</label></div></div>
+<div class="row"><label for="gut">Margem extra para encadernação (mm)</label><input class="num" id="gut" type="number" min="0" max="20" step="1" value="5"><span class="note">Afasta o texto do lado da espiral ou cola.</span></div>
+<label class="chk"><input type="checkbox" id="marks" checked> Marcas de corte no meio da folha</label>
+</div>
+<button class="go" id="go" disabled>Gerar PDF para imprimir</button>
+<div class="msg" id="msg" role="status"></div>
+<div class="row" style="margin-top:6px"><button class="ghost" id="test">Baixar PDF de teste (8 páginas numeradas)</button></div>
+</div>
+</div></section>
+
+<section class="band" style="padding-top:0"><div class="wrap">
+<h2>Como as folhas vão sair</h2>
+<p class="sum" id="sum">Exemplo com 12 páginas. Envie seu PDF para ver o esquema real.</p>
+<div class="sheets" id="sheets"></div>
+</div></section>
+
+<section class="band" style="padding-top:0"><div class="wrap">
+<h2>Passo a passo</h2>
+<ol class="steps">
+<li><b>Teste uma vez.</b> Imprima o PDF de teste pela ferramenta. Se o verso sair de cabeça para baixo, troque a opção para "Borda longa" e guarde essa escolha para sua impressora.</li>
+<li><b>Imprima em tamanho real.</b> A4, orientação paisagem, escala 100% (sem "ajustar à página"), frente e verso virando pela borda curta.</li>
+<li><b>Sem duplex?</b> Imprima só as páginas ímpares do PDF (frentes), devolva a pilha na bandeja virada e imprima as pares (versos). Teste com 2 folhas antes.</li>
+<li><b>Corte a pilha inteira.</b> Mantenha as folhas na ordem, com a folha 1 por cima, e corte no meio (148,5 mm), guiado pelas marcas.</li>
+<li><b>Empilhe.</b> Coloque a pilha da esquerda (que começa na página 1) por cima da pilha da direita. Pronto: o livro está em ordem.</li>
+<li><b>Encaderne pela esquerda.</b> Espiral, grampo lateral ou cola no lado da margem de encadernação.</li>
+</ol>
+<p class="note" style="margin-top:16px">Se o total de páginas não for múltiplo de 4, a ferramenta completa com páginas em branco no fim. Páginas em outro tamanho são reduzidas proporcionalmente para caber na meia folha.</p>
+</div></section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script><script>{
+function planSheets(n){
+  const total=Math.max(4,Math.ceil(n/4)*4), S=total/4, sheets=[];
+  for(let i=1;i<=S;i++){
+    sheets.push({front:[2*i-1,2*S+2*i-1],back:[2*S+2*i,2*i]});
+  }
+  return {total,S,sheets};
+}
+async function impose(L,bytes,o){
+  const MM=72/25.4, W=297*MM, H=210*MM, cw=W/2, g=(o.gutter||0)*MM;
+  const src=await L.PDFDocument.load(bytes,{ignoreEncryption:true});
+  const n=src.getPageCount(), plan=planSheets(n);
+  const out=await L.PDFDocument.create();
+  const emb=await out.embedPages(src.getPages());
+  const put=(pg,num,slot,isBack)=>{
+    if(num>n) return;
+    const e=emb[num-1];
+    const ax=isBack?0:g, aw=cw-g;
+    const s=Math.min(aw/e.width,H/e.height);
+    const w=e.width*s,h=e.height*s;
+    let x=slot*cw+ax+(aw-w)/2, y=(H-h)/2;
+    if(isBack&&o.flip==='long'){
+      pg.drawPage(e,{x:W-x,y:H-y,xScale:s,yScale:s,rotate:L.degrees(180)});
+    }else pg.drawPage(e,{x,y,xScale:s,yScale:s});
+  };
+  const marks=(pg)=>{
+    if(!o.marks) return;
+    const c=L.rgb(.45,.45,.45);
+    for(const [a,b] of [[5,12],[198,205]])
+      pg.drawLine({start:{x:W/2,y:a*MM},end:{x:W/2,y:b*MM},thickness:.4,color:c});
+  };
+  for(const sh of plan.sheets){
+    const f=out.addPage([W,H]); sh.front.forEach((p,k)=>put(f,p,k,false)); marks(f);
+    const b=out.addPage([W,H]); sh.back.forEach((p,k)=>put(b,p,k,true)); marks(b);
+  }
+  return {bytes:await out.save(),plan,n};
+}
+async function makeTest(L,n){
+  const MM=72/25.4, doc=await L.PDFDocument.create();
+  const font=await doc.embedFont(L.StandardFonts.HelveticaBold);
+  for(let i=1;i<=n;i++){
+    const p=doc.addPage([148*MM,210*MM]);
+    p.drawRectangle({x:6*MM,y:6*MM,width:136*MM,height:198*MM,borderWidth:1,borderColor:L.rgb(.6,.6,.6)});
+    const t=String(i), sz=150, tw=font.widthOfTextAtSize(t,sz);
+    p.drawText(t,{x:(148*MM-tw)/2,y:80*MM,size:sz,font});
+    p.drawText('TOPO',{x:(148*MM-font.widthOfTextAtSize('TOPO',14))/2,y:195*MM,size:14,font});
+    const side=i%2?'frente da folha (impar)':'verso da folha (par)';
+    p.drawText(side,{x:(148*MM-font.widthOfTextAtSize(side,12))/2,y:40*MM,size:12,font});
+  }
+  return await doc.save();
+}
+const $=id=>document.getElementById(id);
+let bytes=null,fname='livro';
+const flip=()=>document.querySelector('input[name=flip]:checked').value;
+const msg=(t,err)=>{$('msg').textContent=t;$('msg').className='msg'+(err?' err':'')};
+function draw(n){
+  const p=planSheets(n),rot=flip()==='long';
+  const cell=(x,back)=>x>n?'<div class="pg b">branco</div>':`<div class="pg${back&&rot?' r':''}">${x}</div>`;
+  const pair=(a,back)=>back&&rot?[a[1],a[0]]:a;
+  $('sheets').innerHTML=p.sheets.map((s,i)=>`<div class="sh"><h3>Folha ${i+1}</h3>
+  <div class="face"><span>Frente</span>${s.front.map(x=>cell(x,0)).join('')}</div>
+  <div class="face"><span>Verso</span>${pair(s.back,1).map(x=>cell(x,1)).join('')}</div></div>`).join('');
+  $('sum').textContent=(bytes?`Seu PDF: ${n} páginas`:`Exemplo com ${n} páginas`)+` · ${p.S} folha${p.S>1?'s':''} A4`+(p.total>n?` · ${p.total-n} em branco no fim`:'')+`. A linha vermelha é o corte.`;
+}
+let curN=12;draw(curN);
+document.querySelectorAll('input[name=flip]').forEach(r=>r.addEventListener('change',()=>draw(curN)));
+async function take(f){
+  if(!f)return;
+  if(!/pdf$/i.test(f.name)&&f.type!=='application/pdf'){msg('Escolha um arquivo PDF.',1);return}
+  try{
+    bytes=new Uint8Array(await f.arrayBuffer());
+    const d=await PDFLib.PDFDocument.load(bytes,{ignoreEncryption:true});
+    curN=d.getPageCount();fname=f.name.replace(/\.pdf$/i,'');
+    $('fname').textContent=`${f.name} · ${curN} páginas`;$('go').disabled=false;msg('');draw(curN);
+  }catch(e){bytes=null;$('go').disabled=true;msg('Não consegui ler esse PDF. Ele pode estar protegido ou corrompido.',1)}
+}
+$('file').addEventListener('change',e=>take(e.target.files[0]));
+const dz=$('drop');
+['dragenter','dragover'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.add('on')}));
+['dragleave','drop'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.remove('on')}));
+dz.addEventListener('drop',e=>take(e.dataTransfer.files[0]));
+async function save(name,data){
+  try{
+    const url=URL.createObjectURL(new Blob([data],{type:'application/pdf'}));
+    const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);msg('Arquivo baixado: '+name);
+  }catch(e){msg('Não foi possível baixar o arquivo.',1)}
+}
+const hd=document.documentElement;
+$('tema').onclick=()=>{
+  const escuro=hd.dataset.tema?hd.dataset.tema==='escuro':matchMedia('(prefers-color-scheme: dark)').matches;
+  hd.dataset.tema=escuro?'claro':'escuro';
+  try{localStorage.setItem('tema',hd.dataset.tema)}catch(e){}
+};
+$('go').addEventListener('click',async()=>{
+  if(!bytes)return;$('go').disabled=true;msg('Montando as folhas...');
+  try{
+    const g=Math.max(0,Math.min(20,+$('gut').value||0));
+    const r=await impose(PDFLib,bytes,{flip:flip(),gutter:g,marks:$('marks').checked});
+    await save(`${fname}_A5_corta-e-empilha.pdf`,r.bytes);
+  }catch(e){msg('Erro ao montar o PDF: '+(e&&e.message||e),1)}
+  $('go').disabled=false;
+});
+$('test').addEventListener('click',async()=>{
+  try{const t=await makeTest(PDFLib,8);const r=await impose(PDFLib,t,{flip:flip(),gutter:5,marks:true});await save('teste_livreto_A5.pdf',r.bytes)}
+  catch(e){msg('Erro ao gerar o teste.',1)}
+});
+}</script></body></html>
