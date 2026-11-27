@@ -111,6 +111,22 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-off
 .desafio .prog span{display:block;height:100%;background:var(--cx);transition:width .4s}
 .desafio.vazio{border-style:dashed;border-color:var(--line);color:var(--muted)}
 .carta.risco{border:3px dashed var(--cx)}
+.carta.ofertarel{border:3px dashed var(--c5)}
+.carta.ofertarel .selo-risco{display:block;background:var(--c5)}
+.desafio.relampago{border-color:var(--c5)}
+.desafio.relampago .alvo{background:var(--c5)}
+.desafio.relampago .meta{color:var(--c5)}
+.desafio.relampago .meta span{font-weight:600;color:var(--muted)}
+.escudos{display:inline-flex;align-items:center;gap:2px;font-weight:800;color:var(--eq)}
+.escudos svg{width:15px;height:15px}
+.ponte{background:#fff;border-radius:16px;padding:16px;width:100%;box-shadow:0 8px 24px rgba(60,40,10,.10);position:relative;overflow:hidden;text-align:center}
+.ponte::before{content:"";position:absolute;top:0;left:0;right:0;height:7px;background:linear-gradient(90deg,var(--eq) 0 25%,var(--cl) 25% 50%,var(--cx) 50% 75%,var(--rp) 75%)}
+.ponte small,.trajetoria small{display:block;color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;margin-top:4px}
+.ponte p{max-width:none;margin:6px 0 10px}
+.ponte h3{font-size:1.25rem;margin:0 0 12px;color:var(--accent)}
+.ponte .pilares-mini{margin:0 auto}
+.ponte .bonus{color:var(--ok);font-weight:800;margin:12px 0 0}
+.trajetoria{background:#fff;border:2px dashed var(--line);border-radius:14px;padding:12px;width:100%}
 .selo-risco{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:var(--cx);color:#fff;font:800 .72rem var(--body);letter-spacing:.06em;text-transform:uppercase;padding:4px 12px;border-radius:999px;white-space:nowrap;display:none}
 .carta.risco .selo-risco,.carta.resultado .selo-risco{display:block}
 .carta.resultado.bom .selo-risco{background:var(--eq)}
@@ -166,7 +182,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-off
   <section class="inicio" id="tela-inicio">
     <svg class="cadeira" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 8h24a4 4 0 0 1 4 4v18H16V12a4 4 0 0 1 4-4z"/><path d="M12 30h40v8H12z"/><path d="M32 38v12M20 58l12-8 12 8M10 26v8M54 26v8"/></svg>
     <h1><span>A</span> <span>Cadeira</span> <span>do</span> <span>CEO</span></h1>
-    <p class="sub">Você acaba de assumir a direção da <b>Maré Alta S.A.</b> Equilibre os quatro pilares da empresa.<span class="alerta">Se algum zerar ou estourar, o conselho tira você do cargo.</span></p>
+    <p class="sub">Você acaba de assumir a direção da <b>Maré Alta S.A.</b> Equilibre os quatro pilares da empresa.<span class="alerta">Se algum zerar ou estourar, você perde a cadeira. Mas a vida continua em outra carreira!</span></p>
     <div class="pilares-mini" id="pilares-mini"></div>
     <button class="btn primario" id="bt-comecar" type="button">Assumir a empresa</button>
     <p class="recorde" id="recorde"></p>
@@ -177,6 +193,7 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-off
     <div class="pilares" id="pilares"></div>
     <p class="tempo" id="tempo"></p>
     <div class="desafio vazio" id="desafio"></div>
+    <div class="desafio relampago" id="relampago" hidden></div>
     <div class="mesa" id="mesa">
       <div class="carta-fundo"></div>
       <div class="carta" id="carta" tabindex="0" aria-live="polite">
@@ -224,8 +241,19 @@ button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-off
     <h3>A filosofia por trás</h3>
     <p>A <b>teoria dos stakeholders</b> (R. Edward Freeman) diz que uma empresa responde a vários grupos ao mesmo tempo: quem trabalha, quem compra, quem investe e a sociedade. Milton Friedman defendia o contrário: a responsabilidade social da empresa é aumentar o lucro dentro das regras. O jogo coloca as duas visões à prova, e a <b>justa medida</b> de Aristóteles aparece em cada barra: tanto a falta quanto o excesso derrubam você.</p>
     <p>Algumas decisões voltam meses depois. O que parecia esperto pode virar escândalo.</p>
+    <h3>Outras vidas</h3>
+    <p>Quando um pilar do CEO zera ou estoura, você perde a cadeira, mas a vida continua em outra carreira, cada uma com seus próprios pilares e cartas:</p>
+    <table class="tabela">
+      <tr><th>Pilar</th><th>Se zerar</th><th>Se estourar</th></tr>
+      <tr><td>Equipe</td><td>Professor(a) do EJA</td><td>Presidente do sindicato</td></tr>
+      <tr><td>Clientes</td><td>Consultor(a)</td><td>Conselheiro(a) do CADE</td></tr>
+      <tr><td>Caixa</td><td>Dono(a) de lanchonete</td><td>Diretor(a) da filial em Lisboa</td></tr>
+      <tr><td>Reputação</td><td>Influenciador(a) digital</td><td>Deputado(a)</td></tr>
+    </table>
+    <p>Na segunda carreira, zerar ou estourar um pilar encerra a partida, e a tela final mostra sua trajetória completa.</p>
     <h3>Desafios e apostas</h3>
     <p><b>Desafios</b> aparecem acima da mesa, com prazo. Cumprir dá uma medalha e o conselho ajuda a equilibrar o pilar mais perigoso. Não cumprir não tira você do cargo: só faz perder o prêmio.</p>
+    <p><b>Desafios relâmpago</b> são propostas curtas, de 3 a 6 rodadas, como levar um pilar ao máximo. Você aceita ou recusa. Quem cumpre ganha um <b>escudo</b>, que salva uma vez quando um pilar zerar. Se a missão for levar um pilar do CEO ao máximo, você chega à nova carreira com vantagem.</p>
     <p><b>Oportunidades arriscadas</b> têm borda tracejada e mostram a chance de dar certo. Se apostar, a sorte decide se você ganha muito ou perde. Se deixar passar, nada acontece, mas a chance também não volta.</p>
     <h3>Para discutir em sala</h3>
     <ul>
@@ -245,10 +273,24 @@ const ICON = {
   cl:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h2l2.4 11h11l2-8H6.3"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg>',
   cx:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v6c0 1.7 3.1 3 7 3s7-1.3 7-3V6"/><path d="M5 12v6c0 1.7 3.1 3 7 3s7-1.3 7-3v-6"/></svg>',
   rp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4h3l6 4V6L6 10H3z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/></svg>',
+
+  globo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-3 3-3 15 0 18M12 3c3 3 3 15 0 18"/></svg>',
+  predio:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-5 9 5z"/><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8M3 20h18"/></svg>',
+  bandeira:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4"/><path d="M5 5c4-2 6 2 10 0s4 0 4 0v9s-2-1-4 0-6-2-10 0"/></svg>',
+  jornal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="15" height="16" rx="2"/><path d="M18 8h3v10a2 2 0 0 1-2 2h-1M7 8h7M7 12h7M7 16h4"/></svg>',
+  balanca:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M7 21h10M5 7h14M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/></svg>',
+  fabrica:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21V11l6 4v-4l6 4V5h4v16z"/><path d="M3 21h18"/></svg>',
+  casa:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10M10 20v-6h4v6"/></svg>',
+  raio:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>',
+  coracao:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11z"/></svg>',
+  escudo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg>',
+  livro:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5c3-1 6-1 9 1v14c-3-2-6-2-9-1zM21 5c-3-1-6-1-9 1v14c3-2 6-2 9-1z"/></svg>',
+  relogio:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>',
+  estrela:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l2.8 5.8 6.2.9-4.5 4.4 1 6.3L12 17.5 6.5 20.4l1-6.3L3 9.7l6.2-.9z"/></svg>',
   alvo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></svg>',
   fim:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 3l18 18"/></svg>'
 };
-const PILARES = [
+const PILARES_CEO = [
   {k:"eq", nome:"Equipe"},
   {k:"cl", nome:"Clientes"},
   {k:"cx", nome:"Caixa"},
@@ -262,7 +304,7 @@ const PILARES = [
    ================================================== */
 const INTRO = {id:"intro", n:"Conselho", r:"Conselho de administração", c:8,
   t:"Bem-vindo à Maré Alta S.A. A cadeira é sua. Cada pessoa que entrar nesta sala vai pedir alguma coisa. Pronto?",
-  html:'Bem-vindo à <b>Maré Alta S.A.</b> A cadeira é sua. Cada pessoa que entrar nesta sala vai pedir alguma coisa.<span class="alerta">Arraste a carta para a esquerda ou para a direita para decidir.</span>',
+  html:'Bem-vindo à <b>Maré Alta S.A.</b> A cadeira é sua. Cada pessoa que entrar nesta sala vai pedir alguma coisa.',
   e:["Pronto", {}], d:["Mais que pronto", {}]};
 
 const CARTAS = [
@@ -520,6 +562,13 @@ const FINAIS = {
    ======================================================= */
 const FUNDO = '<ellipse class="bg" cx="80" cy="54" rx="72" ry="44"/>';
 const DESENHOS = {
+
+  hamburguer:'<path class="a" d="M38 50c0-16 18-24 42-24s42 8 42 24z"/><path d="M60 36h2M78 32h2M96 36h2"/><path class="agua" d="M36 58c8-4 14 4 22 0s14 4 22 0 14 4 22 0 14 4 22 0"/><rect class="s" x="36" y="62" width="88" height="10" rx="4"/><path class="a" d="M38 76h84c0 8-6 12-14 12H52c-8 0-14-4-14-12z"/>',
+  livro:'<path class="s" d="M28 28c14-6 30-6 52 4v56c-22-10-38-10-52-4z"/><path class="a" d="M132 28c-14-6-30-6-52 4v56c22-10 38-10 52-4z"/><path d="M40 42c10-3 20-2 30 2M40 54c10-3 20-2 30 2M40 66c10-3 20-2 30 2"/>',
+  microfone:'<rect class="a" x="66" y="12" width="28" height="46" rx="14"/><path d="M56 44c0 14 10 24 24 24s24-10 24-24M80 68v14M64 86h32"/><path d="M112 28l10-4M114 44h12M48 28l-10-4M46 44H34"/>',
+  camera:'<rect class="a" x="32" y="34" width="96" height="54" rx="8"/><path class="s" d="M60 34l8-12h24l8 12z"/><circle class="s" cx="80" cy="61" r="17"/><circle cx="80" cy="61" r="8"/><circle class="p" cx="114" cy="46" r="3"/>',
+  aviao:'<path class="a" d="M22 62l104-34c10-3 14 7 5 11L44 80z"/><path class="s" d="M72 46L56 22h12l26 18M74 66l-8 20h12l18-26"/><path d="M24 92h30M100 90h36"/>',
+  coracao:'<path class="a" d="M80 88c-26-16-38-30-38-44a18 18 0 0 1 38-8 18 18 0 0 1 38 8c0 14-12 28-38 44z"/><path d="M30 30l-8-6M130 30l8-6M26 56H14M134 56h12"/>',
   mesa:'<path class="a" d="M26 58h108l-8 10H34z"/><path d="M42 68v20M118 68v20"/><rect class="s" x="44" y="32" width="16" height="22" rx="4"/><rect class="s" x="72" y="26" width="16" height="28" rx="4"/><rect class="s" x="100" y="32" width="16" height="22" rx="4"/>',
   casa:'<path class="s" d="M44 88V54l36-26 36 26v34z"/><path d="M36 60l44-34 44 34"/><path class="a" d="M66 88V70h28v18z"/><rect class="s" x="58" y="50" width="44" height="14" rx="2"/><path d="M54 66h52"/>',
   grafico:'<rect class="s" x="34" y="18" width="92" height="64" rx="5"/><path d="M46 70l18-16 14 9 30-26"/><path d="M96 37h12v12"/><circle class="a" cx="122" cy="80" r="12"/><path d="M122 74v12M118 77h6a2 2 0 0 1 0 4h-4a2 2 0 0 0 0 4h6"/>',
@@ -598,7 +647,23 @@ const PESSOAS = {
   "Delegada Moura":{pele:"#a0663f", h:"coque", cab:"#111"},
   "Conselheira do CADE":{pele:"#e2b48a", h:"longo", cab:"#4a3020", oculos:1},
   "Dr. Torres":{pele:"#d39a6a", h:"curto", cab:"#333", oculos:1, gravata:1},
-  "Auditora do Trabalho":{pele:"#7d4b2c", h:"cacheado", cab:"#111", oculos:1}
+  "Auditora do Trabalho":{pele:"#7d4b2c", h:"cacheado", cab:"#111", oculos:1},
+  "Dona Neide":{pele:"#c08458", h:"coque", cab:"#d6d6d6", oculos:1},
+  "Dona Socorro":{pele:"#8d5a3b", h:"coque", cab:"#9a9a9a"},
+  "Clara Nogueira":{pele:"#e6b98f", h:"longo", cab:"#2b1d14", oculos:1},
+  "Moacir Leal":{pele:"#d9a679", h:"careca", cab:"#7a6a5a", gravata:1, bigode:1},
+  "Antônia Reis":{pele:"#7a4a2c", h:"cacheado", cab:"#111", capacete:1},
+  "Valdir":{pele:"#c68b59", h:"curto", cab:"#555", oculos:1},
+  "Kaio":{pele:"#a66a3f", h:"curto", cab:"#1a1a1a", bone:1},
+  "Bia":{pele:"#f2d0b0", h:"longo", cab:"#a1401c", oculos:1},
+  "Diretora Rita":{pele:"#d39a6a", h:"coque", cab:"#3a2418", oculos:1},
+  "Lucas":{pele:"#d9a074", h:"curto", cab:"#3a2418"},
+  "Cris":{pele:"#b97a4e", h:"cacheado", cab:"#2a1a10"},
+  "Ana Clara":{pele:"#f0cfae", h:"longo", cab:"#6b4423"},
+  "Joaquim Pereira":{pele:"#eac3a0", h:"careca", cab:"#888", bigode:1, gravata:1},
+  "Marta Dias":{pele:"#6e4227", h:"coque", cab:"#111"},
+  "Dra. Beatriz Lemos":{pele:"#f2d0b0", h:"longo", cab:"#1a1a1a", oculos:1},
+  "Dra. Lívia":{pele:"#c68b59", h:"coque", cab:"#2b1d14", oculos:1}
 };
 function retrato(t){
   const P = `fill="${t.pele}" stroke="#1d2433"`, C = `fill="${t.cab}" stroke="#1d2433"`;
@@ -636,18 +701,456 @@ function estilo(svg){
     return `<${tag}${at}${st.length ? ` style="${st.join(";")}"` : ""}${fecha}>`;
   });
 }
+function retratoAuto(nome){
+  let h = 0; for(const ch of nome) h = (h*31 + ch.charCodeAt(0)) >>> 0;
+  const peles = ["#f2d0b0","#e6b98f","#d39a6a","#c68b59","#a86f45","#8d5a3b","#6e4227","#e0b28a"];
+  const cabs = ["#1a1a1a","#3a2418","#6b4423","#a1401c","#c9a25a","#555","#2b1d14"];
+  const primeiro = nome.replace(/^(Dr\.|Dra\.|Dep\.|Eng\.|Prof\.|Sr\.|Seu|Dona|@)\s*/,"").split(/\s+/)[0];
+  const ela = /^(Dona|Dra\.|Professora|Diretora|Delegada|Conselheira|Auditora)/.test(nome) || /a$/.test(primeiro);
+  const hs = ela ? ["longo","coque","cacheado","longo"] : ["curto","careca","cacheado","curto"];
+  return {pele:peles[h%8], h:hs[(h>>3)%4], cab:cabs[(h>>6)%7], oculos:(h>>9)%4===0, gravata:!ela && (h>>11)%3===0, bigode:!ela && (h>>13)%6===0};
+}
 function ilustra(c){
   const d = DESENHOS[c.img || IMG_DE[c.id]] || DESENHOS.mesa;
-  const t = PESSOAS[c.n];
+  const t = (c.o || INST.has(c.n)) ? null : (PESSOAS[c.n] || retratoAuto(c.n));
   if(!t) return `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">${FUNDO}${d}</svg>`;
   return `<svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">${FUNDO}<g transform="translate(6 0)">${retrato(t)}</g><g transform="translate(58 14) scale(.68)">${d}</g></svg>`;
+}
+
+
+/* ===================== OUTROS UNIVERSOS =====================
+   Quando um pilar do CEO zera ou estoura, a vida segue em outra carreira.
+   Cartas: e / d = [texto, [efeito no pilar 1, 2, 3, 4], marca, notícia]
+   o:1 = instituição (sem retrato)
+   ============================================================ */
+const MUNDOS_NOVOS = {
+filial: {
+  cargo:"Diretor(a) da filial em Lisboa", curto:"Filial em Lisboa",
+  pilares:[["Equipe local","eq"],["Cultura","globo"],["Caixa","cx"],["Matriz","predio"]],
+  mentor:{n:"Matriz no Brasil", r:"Sede da Maré Alta", c:8, o:1},
+  intro:'Bem-vindo a <b>Lisboa</b>! A Maré Alta abriu sua primeira filial na Europa e você está no comando. Aqui os costumes são outros.',
+  cartas:[
+    {n:"Joaquim Pereira", r:"Gerente português", c:1, img:"calendario", t:"Aqui ninguém trabalha em agosto. É o mês de férias de todos.", e:["No Brasil a gente trabalha",[-14,-8,6,4]], d:["Respeitamos o costume",[12,10,-8,-6]]},
+    {n:"Matriz no Brasil", r:"Sede da Maré Alta", c:8, o:1, img:"grafico", t:"Queremos o relatório em português do Brasil, com as metas do trimestre.", e:["Mando em inglês",[0,0,0,-10]], d:["Mando como pediram",[-4,0,0,8]]},
+    {n:"Inês Carvalho", r:"Fornecedora", c:3, img:"caminhao", t:"Sardinha fresca para o refeitório ou marmita congelada mais barata?", e:["Marmita",[-8,-6,8,0]], d:["Sardinha",[10,8,-8,0]]},
+    {n:"Rui Almeida", r:"Vereador de Lisboa", c:6, img:"predio", t:"A câmara municipal pede que vocês restaurem os azulejos históricos da fachada.", e:["Não é prioridade",[0,-12,4,0]], d:["Restauramos",[4,14,-10,0]]},
+    {n:"Matriz no Brasil", r:"Sede da Maré Alta", c:8, o:1, img:"festa", t:"O presidente vem visitar. Quer ser recebido com festa brasileira.", e:["Recepção simples",[2,4,4,-10]], d:["Festa com samba",[8,-4,-8,12]]},
+    {n:"Beatriz Sousa", r:"Analista", c:2, img:"balao", t:"Os brasileiros só falam entre si. Os portugueses da equipe se sentem de fora.", e:["Cada um no seu canto",[-12,-6,0,0]], d:["Misturar as equipes",[10,8,-2,0]]},
+    {n:"Mariana Costa", r:"Cliente", c:4, img:"celular", t:"Seu anúncio chamou o pequeno-almoço de café da manhã. Os clientes riram.", e:["Deixa, é a nossa marca",[0,-10,0,4]], d:["Refazer o anúncio",[0,10,-6,0]]},
+    {n:"Tiago Ferreira", r:"Sindicato português", c:5, img:"megafone", t:"Aqui a lei exige 14 salários por ano. Vocês só previram 12.", e:["Pagar só 12",[-16,0,8,4],"lei"], d:["Cumprir a lei",[8,4,-14,-4]]},
+    {n:"Matriz no Brasil", r:"Sede da Maré Alta", c:8, o:1, img:"grafico", t:"Vamos cortar a verba de Lisboa e mandar para São Paulo.", e:["Brigar pela verba",[4,0,6,-12]], d:["Aceitar o corte",[-8,0,-12,10]]},
+    {n:"Catarina Lopes", r:"Chef", c:7, img:"hamburguer", t:"Que tal um café brasileiro na loja? Pão de queijo com pastel de nata!", e:["Nada de misturas",[0,-6,0,4]], d:["Abre o café",[6,12,-6,0]]},
+    {n:"João Mendes", r:"Imigrante brasileiro", c:2, img:"aperto", t:"Cheguei agora de Natal e preciso de emprego. Me dá uma chance?", e:["Não temos vaga",[0,-4,4,0]], d:["Contrata",[8,6,-6,0]]},
+    {n:"Sofia Ribeiro", r:"Jornalista portuguesa", c:3, img:"revista", t:"Os leitores querem saber: a empresa brasileira veio para ficar ou só para lucrar?", e:["Sem entrevista",[0,-10,0,2]], d:["Dou entrevista",[0,10,0,-4]]},
+    {n:"Matriz no Brasil", r:"Sede da Maré Alta", c:8, o:1, img:"aviao", t:"Precisamos de você no Brasil por um mês para uma reunião.", e:["Fico em Lisboa",[6,4,0,-10]], d:["Viajo",[-8,-4,-4,10]]},
+    {n:"Duarte Silva", r:"Contador", c:1, img:"moedas", t:"Dá para pagar menos imposto mandando o lucro para uma ilha fiscal.", e:["Pagamos aqui",[0,6,-8,0]], d:["Manda para a ilha",[0,-4,14,4],"ilha"]},
+    {n:"Luísa Martins", r:"Estagiária", c:5, img:"livro", t:"Posso fazer um guia de expressões portuguesas para os brasileiros da equipe?", e:["Não precisa",[-4,-4,0,0]], d:["Ótima ideia",[8,8,-2,0]]},
+    {n:"Pedro Nunes", r:"Fadista", c:6, img:"microfone", t:"Patrocinam uma noite de fado? A cidade inteira vai.", e:["Não é nosso público",[0,-8,4,0]], d:["Patrocinamos",[4,12,-8,0]]},
+    {req:"lei", n:"Autoridade do Trabalho", r:"Fiscalização portuguesa", c:8, o:1, img:"martelo", t:"Descobrimos os salários pagos a menos. A multa é pesada.", e:["Recorrer",[-10,-6,-8,0]], d:["Pagar tudo",[6,0,-16,-6]]},
+    {req:"ilha", n:"Sofia Ribeiro", r:"Jornalista portuguesa", c:3, img:"revista", t:"Descobri o dinheiro escondido na ilha fiscal. Sai amanhã na capa.", e:["Sem comentários",[0,-14,0,-12]], d:["Trazer o dinheiro de volta",[0,-4,-12,4]]}
+  ],
+  riscos:[
+    {n:"Joaquim Pereira", r:"Gerente português", c:1, img:"casa", t:"Abrimos uma segunda loja no Porto? Se der certo, dominamos o país.", chance:.5, sim:"Abrir no Porto", bom:[[6,8,14,6],"A loja do Porto lotou na inauguração!"], mau:[[0,0,-16,-6],"Ninguém apareceu. O Porto preferiu a concorrência."]},
+    {n:"Duarte Silva", r:"Contador", c:1, img:"globo", t:"Exportar para a Espanha agora, antes da concorrência.", chance:.45, sim:"Exportar", bom:[[0,4,18,6],"Os espanhóis adoraram! Vendas recordes."], mau:[[0,-4,-14,-4],"O produto encalhou na fronteira."]}
+  ],
+  finais:{
+    "p0-0":["A equipe debandou","Ninguém aguentou seu jeito. A equipe pediu demissão em bloco."],
+    "p0-100":["A equipe manda","A equipe local passou a decidir tudo. A matriz preferiu trazer você de volta."],
+    "p1-0":["Choque cultural","A empresa virou piada nos jornais de Lisboa. Ninguém compra de quem despreza a cultura local."],
+    "p1-100":["Virou português","Você se adaptou tanto que largou tudo para abrir uma tasca em Alfama."],
+    "p2-0":["Filial fechada","O dinheiro acabou e a filial fechou as portas."],
+    "p2-100":["Mais rica que a matriz","A filial ficou mais rica que a matriz e foi vendida separada. Você sai com o cheque."],
+    "p3-0":["Esquecido pela matriz","A matriz cortou o contato e fechou a filial por e-mail."],
+    "p3-100":["Chamado de volta","A matriz gostou tanto que te promoveu e te levou de volta ao Brasil."]
+  },
+  falta:["Michel de Montaigne","Montaigne observou que cada um chama de barbárie aquilo que não é do seu costume. Viver entre outro povo exige estranhar a si mesmo antes de estranhar os outros.","O que você estranha nos costumes dos outros que eles também estranhariam nos seus?"],
+  excesso:["Sêneca","Sêneca lembrava que quem está em toda parte não está em lugar nenhum. Quem tenta agradar a tudo perde o próprio centro.","Dá para se adaptar a um lugar novo sem deixar de ser quem você é?"]
+},
+
+deputado: {
+  cargo:"Deputado(a) federal", curto:"Deputado(a)",
+  pilares:[["Povo","eq"],["Partido","bandeira"],["Imprensa","jornal"],["Justiça","balanca"]],
+  mentor:{n:"Clara Nogueira", r:"Chefe de gabinete", c:2},
+  intro:'Parabéns, <b>deputado(a)</b>! A fama de CEO te levou à Câmara. Agora cada voto conta, e o país inteiro está olhando.',
+  cartas:[
+    {n:"Moacir Leal", r:"Líder do partido", c:3, img:"urna", t:"Vote a favor do projeto e eu libero uma emenda para sua cidade.", e:["Voto contra",[10,-12,0,0]], d:["Voto a favor",[-4,12,-6,0]]},
+    {n:"Clara Nogueira", r:"Chefe de gabinete", c:2, img:"celular", t:"Seu assessor usou o carro oficial nas férias. Já tem foto na internet.", e:["Abafa",[-6,0,-14,-6],"carro"], d:["Demite o assessor",[6,-6,8,6]]},
+    {n:"Dona Socorro", r:"Moradora", c:4, img:"enchente", t:"O bairro alaga toda vez que chove. O senhor prometeu resolver.", e:["Não tem verba agora",[-14,0,-4,0]], d:["Cobro a prefeitura",[12,-4,4,0]]},
+    {n:"Raul Freitas", r:"Lobista", c:6, img:"maleta", t:"Uma mineradora quer aprovar uma lei. Em troca, financia sua próxima campanha.", e:["Não aceito",[4,-8,4,6]], d:["Aceito o apoio",[-6,10,-4,-10],"mineradora"]},
+    {n:"Lúcia Ferraz", r:"Jornalista", c:3, img:"microfone", t:"Ao vivo: o senhor é a favor ou contra o aumento do próprio salário?", e:["Contra",[12,-10,8,0]], d:["A favor",[-14,8,-8,0]]},
+    {n:"Professora Ana", r:"Escola pública", c:2, img:"quadro", t:"Destina uma emenda para reformar a escola do bairro?", e:["Asfalto dá mais voto",[-4,4,-4,0]], d:["Escola primeiro",[10,-2,6,0]]},
+    {n:"Marta Dias", r:"Líder comunitária", c:7, img:"megafone", t:"Queremos audiência pública sobre o novo porto. Ninguém foi ouvido.", e:["Não é hora",[-10,4,-6,0]], d:["Convoco a audiência",[10,-6,6,4]]},
+    {n:"Dr. Paiva", r:"Ministro", c:8, img:"predio", t:"O governo oferece um ministério se você mudar de partido.", e:["Fico no partido",[4,10,0,0]], d:["Aceito o ministério",[-4,-18,-6,4]]},
+    {n:"@vidaverde", r:"Influenciadora", c:7, img:"celular", t:"Grava um vídeo dançando comigo? Vai viralizar!", e:["Não é meu estilo",[-4,0,-4,0]], d:["Danço",[10,0,-6,0]]},
+    {n:"Ministério Público", r:"Fiscal da lei", c:8, o:1, img:"balanca", t:"Pedimos acesso às contas do seu gabinete. É rotina.", e:["Recuso, é perseguição",[-4,6,-10,-14]], d:["Abro tudo",[4,-4,8,12]]},
+    {n:"Dep. Vasconcelos", r:"Colega de Câmara", c:3, img:"aperto", t:"Vota no meu projeto que eu voto no seu. Toma lá, dá cá.", e:["Voto pelo mérito",[4,-8,0,4]], d:["Combinado",[-2,10,-4,-6]]},
+    {n:"Clara Nogueira", r:"Chefe de gabinete", c:2, img:"celular", t:"Tem uma notícia falsa contra um adversário circulando. Compartilhamos?", e:["Não espalho mentira",[2,-6,6,6]], d:["Compartilha",[6,6,-10,-12],"fake"]},
+    {n:"Zé Carlos", r:"Sindicato", c:4, img:"megafone", t:"Os servidores querem reajuste. Apoie a greve!", e:["Fico neutro",[-8,4,0,0]], d:["Apoio a greve",[12,-8,-4,0]]},
+    {n:"Lúcia Ferraz", r:"Jornalista", c:3, img:"revista", t:"Recebi um dossiê contra o presidente do seu partido. Vai comentar?", e:["Defendo o partido",[-6,12,-8,-6]], d:["Peço investigação",[8,-14,10,8]]},
+    {n:"Pedro", r:"Estudante", c:5, img:"capelo", t:"Os estudantes querem meia-passagem no ônibus intermunicipal.", e:["Não há orçamento",[-10,0,0,0]], d:["Apresento o projeto",[12,-4,4,0]]},
+    {n:"Helena Prado", r:"Empresária", c:3, img:"moedas", t:"Corte os impostos das empresas e eu gero mil empregos.", e:["Imposto justo",[6,-6,0,0]], d:["Corto",[-6,8,-6,0]]},
+    {req:"carro", n:"Lúcia Ferraz", r:"Jornalista", c:3, img:"revista", t:"O caso do carro oficial virou CPI.", e:["Nego tudo",[-10,0,-14,-10]], d:["Devolvo o dinheiro",[-4,-4,4,6]]},
+    {req:"mineradora", n:"Ministério Público", r:"Fiscal da lei", c:8, o:1, img:"fabrica", t:"A mineradora poluiu o rio e seu nome aparece nos repasses.", e:["Fui enganado",[-12,-4,-10,-10]], d:["Rompo e colaboro",[-4,-10,4,8]]},
+    {req:"fake", n:"Tribunal Eleitoral", r:"Justiça Eleitoral", c:8, o:1, img:"martelo", t:"A notícia falsa foi rastreada até o seu gabinete.", e:["Culpa do assessor",[-6,0,-12,-12]], d:["Peço desculpas",[-4,-4,4,4]]}
+  ],
+  riscos:[
+    {n:"Moacir Leal", r:"Líder do partido", c:3, img:"urna", t:"O partido quer você candidato(a) a governador. Se perder, volta enfraquecido(a).", chance:.4, sim:"Concorrer", bom:[[14,14,10,0],"Vitória histórica nas urnas! Seu nome cresceu no país inteiro."], mau:[[-10,-12,-8,0],"Derrota feia. Você voltou à Câmara enfraquecido(a)."]},
+    {n:"Clara Nogueira", r:"Chefe de gabinete", c:2, img:"balanca", t:"Liderar uma CPI contra a corrupção pode te consagrar ou te destruir.", chance:.5, sim:"Liderar a CPI", bom:[[10,-6,16,12],"A CPI revelou um esquema enorme. Você virou referência!"], mau:[[-6,-14,-10,0],"A CPI terminou em pizza e você ficou com a fama de exibido(a)."]}
+  ],
+  finais:{
+    "p0-0":["Não reeleito(a)","O povo te esqueceu. Na eleição seguinte, você teve menos votos que o vereador do bairro."],
+    "p0-100":["Ídolo do povo","Você ficou tão popular que largou a Câmara para disputar a Presidência. Essa história fica para outra vida."],
+    "p1-0":["Expulso(a) do partido","O partido te expulsou. Sem legenda, sem futuro político."],
+    "p1-100":["Soldado do partido","Você votava sem ler, só seguindo o partido. O povo percebeu e não te reelegeu."],
+    "p2-0":["Massacrado(a) na mídia","Todo dia uma manchete contra você. Renunciou para escapar do desgaste."],
+    "p2-100":["Celebridade","Você vive na TV e esqueceu de trabalhar. O mandato acabou sem nenhuma lei aprovada."],
+    "p3-0":["Cassado(a)","A Justiça cassou seu mandato. Fim da carreira política."],
+    "p3-100":["Isolado(a)","Você denunciou tanta gente que ninguém mais quis votar com você. Desistiu da política."]
+  },
+  falta:["Thomas Hobbes","Hobbes via o poder como algo que nasce do consentimento dos outros. Quem perde a base de apoio descobre que o poder nunca foi só seu.","O poder de um político pertence a ele ou a quem votou nele?"],
+  excesso:["Jean-Jacques Rousseau","Rousseau separava a vontade de todos, soma de interesses particulares, da vontade geral, que mira o bem comum. Servir demais a um grupo é esquecer o bem de todos.","Um bom político faz o que o povo quer ou o que o povo precisa?"]
+},
+
+sindicato: {
+  cargo:"Presidente do sindicato", curto:"Presidente do sindicato",
+  pilares:[["Trabalhadores","eq"],["Patrões","fabrica"],["Fundo","cx"],["Governo","predio"]],
+  mentor:{n:"Valdir", r:"Tesoureiro do sindicato", c:1},
+  intro:'A equipe te ama tanto que te elegeu <b>presidente do Sindicato dos Trabalhadores da Indústria</b>. Agora você está do outro lado da mesa.',
+  cartas:[
+    {n:"Antônia Reis", r:"Metalúrgica", c:4, img:"relogio", t:"A fábrica quer turnos de 12 horas. A gente só topa com aumento.", e:["Aceitar sem aumento",[-14,10,0,0]], d:["Exigir aumento",[12,-10,0,0]]},
+    {n:"Otávio Rangel", r:"Dono de fábrica", c:6, img:"aperto", t:"Dou 5% de aumento se o sindicato não fizer greve por dois anos.", e:["Recuso",[6,-10,0,0]], d:["Fecho o acordo",[-4,12,4,0]]},
+    {n:"Valdir", r:"Tesoureiro do sindicato", c:1, img:"casa", t:"Dá para usar o fundo de greve para reformar a sede.", e:["O fundo é sagrado",[4,0,4,0]], d:["Reforma a sede",[4,0,-14,0]]},
+    {n:"Ministério do Trabalho", r:"Governo federal", c:8, o:1, img:"predio", t:"O governo propõe uma reforma trabalhista e quer o apoio do sindicato.", e:["Contra a reforma",[10,-6,0,-12]], d:["Negociar mudanças",[-6,6,0,10]]},
+    {n:"Joana Lins", r:"Operária", c:3, img:"balao", t:"Mulheres ganham menos na mesma função. O sindicato vai fazer algo?", e:["Não é prioridade",[-12,4,0,0]], d:["Campanha por igualdade",[12,-8,-4,4]]},
+    {n:"Gerente de produção", r:"Fábrica", c:6, img:"robo", t:"Vamos instalar ponto com reconhecimento facial.", e:["Exigir regras de privacidade",[8,-6,0,0]], d:["Aceitar",[-8,8,0,0]]},
+    {n:"Rafael Tavares", r:"Tecnologia", c:5, img:"robo", t:"Robôs vão substituir 200 vagas. Dá para pedir cursos de requalificação.", e:["Lutar contra os robôs",[6,-12,-4,0]], d:["Negociar cursos",[6,6,-6,4]]},
+    {n:"Dr. Torres", r:"Advogado", c:1, img:"martelo", t:"Processar a fábrica por horas extras não pagas? Pode levar anos.", e:["Melhor negociar",[-4,6,0,0]], d:["Processar",[10,-12,-8,0]]},
+    {n:"Antônia Reis", r:"Metalúrgica", c:4, img:"festa", t:"Festa do Dia do Trabalhador com show? Custa caro.", e:["Ato simples",[-6,0,6,0]], d:["Show com banda",[10,0,-12,4]]},
+    {n:"Dep. Vasconcelos", r:"Deputado", c:3, img:"urna", t:"Apoie minha candidatura e eu defendo vocês em Brasília.", e:["Sindicato não tem partido",[4,0,0,-6]], d:["Apoio",[-6,-4,6,10]]},
+    {n:"Lúcia Ferraz", r:"Jornalista", c:3, img:"revista", t:"Dizem que o sindicato só defende quem paga mensalidade. É verdade?", e:["Sem comentário",[-6,0,0,-4]], d:["Abro as contas",[8,0,-4,4]]},
+    {n:"Pedro", r:"Jovem operário", c:5, img:"celular", t:"Os jovens não se filiam. Acham sindicato coisa de velho.", e:["Eles que se virem",[-10,4,-4,0]], d:["Campanha nas redes",[10,0,-6,0]]},
+    {n:"Otávio Rangel", r:"Dono de fábrica", c:6, img:"caminhao", t:"Ofereço um carro para o presidente do sindicato. Sem compromisso.", e:["Recuso",[6,-6,0,4]], d:["Aceito",[-4,10,0,-4],"presente"]},
+    {n:"Otávio Rangel", r:"Dono de fábrica", c:6, img:"etiqueta", t:"Proposta final: 7% de aumento ou nada. Decida agora.", e:["Greve!",[10,-14,-10,0]], d:["Aceitar 7%",[4,8,0,0]]},
+    {n:"Valdir", r:"Tesoureiro do sindicato", c:1, img:"grafico", t:"Investimos o fundo na bolsa para ele crescer?", e:["Poupança segura",[0,0,2,0]], d:["Bolsa",[0,0,10,0],"bolsa"]},
+    {n:"Antônia Reis", r:"Metalúrgica", c:4, img:"megafone", t:"A assembleia quer greve geral. Você acha cedo demais.", e:["Segurar a greve",[-12,8,4,0]], d:["Greve geral",[14,-14,-10,-6]]},
+    {req:"presente", n:"Lúcia Ferraz", r:"Jornalista", c:3, img:"revista", t:"Fotografaram você no carro dado pelo patrão.", e:["Foi presente",[-16,0,0,-6]], d:["Devolvo e peço desculpas",[-6,-4,0,0]]},
+    {req:"bolsa", n:"Valdir", r:"Tesoureiro do sindicato", c:1, img:"grafico", t:"A bolsa caiu. O fundo perdeu um terço do valor.", e:["Esperar recuperar",[-6,0,-12,0]], d:["Vender tudo",[-2,0,-16,0]]}
+  ],
+  riscos:[
+    {n:"Antônia Reis", r:"Metalúrgica", c:4, img:"megafone", t:"Greve por tempo indeterminado até a fábrica ceder.", chance:.5, sim:"Parar tudo", bom:[[16,-6,0,6],"A fábrica cedeu! Aumento de 12% para todos."], mau:[[-12,-8,-14,0],"A greve fracassou e muitos foram demitidos."]},
+    {n:"Valdir", r:"Tesoureiro do sindicato", c:1, img:"fabrica", t:"Uma fábrica faliu. Os trabalhadores podem assumir como cooperativa usando o fundo.", chance:.45, sim:"Criar a cooperativa", bom:[[14,0,10,8],"A cooperativa deu lucro já no primeiro ano!"], mau:[[-6,0,-18,0],"A cooperativa não aguentou as dívidas antigas."]}
+  ],
+  finais:{
+    "p0-0":["Deposto(a) pela base","Os trabalhadores fizeram nova eleição e te tiraram do cargo."],
+    "p0-100":["Greve sem fim","A base não quis mais parar. A fábrica fechou e todos perderam o emprego."],
+    "p1-0":["Fábricas fecharam","Os patrões levaram a produção para outro estado."],
+    "p1-100":["Amigo dos patrões","Você ficou próximo demais dos patrões. Os trabalhadores te expulsaram do sindicato."],
+    "p2-0":["Sindicato quebrado","O fundo acabou. Sem dinheiro, o sindicato fechou a sede."],
+    "p2-100":["Sindicato banco","O sindicato ficou rico e a base desconfiou. Pediram sua saída."],
+    "p3-0":["Perseguido(a)","O governo cortou o diálogo e abriu investigação contra o sindicato."],
+    "p3-100":["Virou ministro(a)","Você foi convidado(a) para o Ministério do Trabalho e deixou o sindicato."]
+  },
+  falta:["Simone Weil","Simone Weil trabalhou em fábricas para entender os operários. Para ela, a pior opressão é tirar das pessoas a atenção e a dignidade no trabalho, e quem lidera precisa estar enraizado na vida de quem representa.","É possível representar alguém sem conhecer a vida dele?"],
+  excesso:["Robert Michels","Robert Michels observou que toda organização tende a virar oligarquia: os líderes se afastam da base e passam a defender o próprio lugar. Ele chamou isso de lei de ferro.","Como impedir que quem lidera esqueça de onde veio?"]
+},
+
+cade: {
+  cargo:"Conselheiro(a) do CADE", curto:"Conselheiro(a) do CADE",
+  pilares:[["Consumidores","cl"],["Empresas","fabrica"],["Governo","predio"],["Imprensa","jornal"]],
+  mentor:{n:"Presidente do CADE", r:"Conselho de defesa da concorrência", c:8},
+  intro:'Ninguém entende tanto de dominar um mercado quanto você. O governo te nomeou <b>conselheiro(a) do CADE</b>: agora seu trabalho é impedir monopólios.',
+  cartas:[
+    {n:"Grupo Atlântico", r:"Conglomerado", c:5, o:1, img:"aperto", t:"Queremos comprar nossa maior concorrente. Aprova a fusão?", e:["Barrar a fusão",[10,-12,0,4]], d:["Aprovar",[-10,12,0,-4]]},
+    {n:"Procon", r:"Defesa do consumidor", c:8, o:1, img:"etiqueta", t:"Todos os postos da cidade têm o mesmo preço. Parece combinado.", e:["Coincidência",[-12,4,0,-6]], d:["Investigar",[10,-8,0,6]]},
+    {n:"Dr. Paiva", r:"Ministro", c:8, img:"predio", t:"O governo quer a empresa estatal fora da investigação.", e:["Ninguém está acima da lei",[6,0,-14,8]], d:["Deixo de fora",[-6,4,10,-8],"estatal"]},
+    {n:"Rafael Tavares", r:"Dono de startup", c:5, img:"robo", t:"Uma big tech compra toda startup que aparece. Ninguém consegue competir.", e:["É o mercado",[-8,6,0,-4]], d:["Abrir investigação",[8,-10,0,6]]},
+    {n:"Lúcia Ferraz", r:"Jornalista", c:3, img:"microfone", t:"Você vai julgar a Maré Alta, sua antiga empresa. Não é conflito de interesses?", e:["Julgo mesmo assim",[0,4,0,-14]], d:["Me declaro impedido(a)",[4,-2,0,10]]},
+    {n:"Seu Raimundo", r:"Consumidor", c:4, img:"celular", t:"Só tem uma empresa de internet na minha cidade. Cobram o que querem.", e:["Não é nossa área",[-12,0,0,0]], d:["Abrir caso",[12,-8,0,4]]},
+    {n:"Dra. Beatriz Lemos", r:"Advogada de empresa", c:1, img:"maleta", t:"Meu cliente paga a multa, mas não admite culpa. Aceita o acordo?", e:["Exijo confissão",[6,-10,0,4]], d:["Aceito o acordo",[-4,8,4,-4]]},
+    {n:"Helena Prado", r:"Empresária", c:3, img:"festa", t:"Que tal um jantar para conversarmos sobre o processo da minha empresa?", e:["Recuso",[4,-6,0,6]], d:["Aceito o jantar",[-4,10,0,-8],"jantar"]},
+    {n:"Prof. Ricardo", r:"Economista", c:5, img:"grafico", t:"Multa alta demais pode quebrar a empresa e gerar desemprego.", e:["A lei é a lei",[4,-10,-6,4]], d:["Reduzo a multa",[-4,8,6,-2]]},
+    {n:"Gisele Matos", r:"Rede de supermercados", c:4, img:"caminhao", t:"Queremos exclusividade de todos os fornecedores de leite do estado.", e:["Proibido",[10,-8,0,0]], d:["Liberar",[-12,10,0,0]]},
+    {n:"Secretário Nunes", r:"Governo do Estado", c:8, img:"aperto", t:"Precisamos de uma fusão aprovada rápido para salvar empregos.", e:["Analiso com calma",[0,0,-10,4]], d:["Aprovo rápido",[-6,6,12,-6]]},
+    {n:"Revista Negócios", r:"Imprensa", c:4, o:1, img:"revista", t:"Queremos uma entrevista sobre o caso das companhias aéreas.", e:["Silêncio",[0,0,2,-10]], d:["Dou entrevista",[4,-4,-2,10]]},
+    {n:"Denúncia anônima", r:"Funcionário de farmacêutica", c:8, o:1, img:"envelope", t:"Tenho provas de um cartel de remédios. Mas quero proteção.", e:["Sem garantias",[-6,4,0,0]], d:["Garantir proteção",[10,-10,-4,6]]},
+    {n:"Dona Socorro", r:"Consumidora", c:4, img:"etiqueta", t:"O remédio do meu marido subiu 300%. Ninguém fiscaliza isso?", e:["Lamento",[-12,0,0,-4]], d:["Investigar o preço",[12,-8,0,4]]},
+    {n:"Presidente do CADE", r:"Conselho de defesa da concorrência", c:8, img:"prancheta", t:"Temos 200 processos parados. Priorizamos as grandes empresas ou os casos pequenos?", e:["Grandes empresas",[-4,-8,6,6]], d:["Casos pequenos",[8,4,-4,-2]]},
+    {n:"Raul Freitas", r:"Lobista", c:6, img:"maleta", t:"Um cargo bem pago te espera numa empresa quando você sair do CADE. É só ser compreensivo(a).", e:["Recuso",[4,-8,0,6]], d:["Vou pensar",[-6,10,0,-6],"cargo"]},
+    {req:"estatal", n:"Lúcia Ferraz", r:"Jornalista", c:3, img:"revista", t:"A imprensa descobriu que a estatal ficou de fora por pressão do governo.", e:["Nego",[-6,0,-4,-14]], d:["Reabro o caso",[6,0,-12,6]]},
+    {req:"jantar", n:"Ministério Público", r:"Fiscal da lei", c:8, o:1, img:"balanca", t:"O jantar com a empresária foi filmado. Explique-se.", e:["Foi só social",[-8,0,-6,-14]], d:["Saio do caso",[0,-6,0,4]]},
+    {req:"cargo", n:"Revista Negócios", r:"Imprensa", c:4, o:1, img:"revista", t:"Publicamos sua conversa sobre o cargo na empresa privada.", e:["Desminto",[-6,0,-4,-12]], d:["Recuso o cargo publicamente",[4,-8,0,4]]}
+  ],
+  riscos:[
+    {n:"Presidente do CADE", r:"Conselho de defesa da concorrência", c:8, img:"balanca", t:"Aplicar uma multa recorde contra a maior big tech do país.", chance:.5, sim:"Aplicar a multa", bom:[[14,-10,6,12],"A Justiça confirmou a multa. Você virou referência!"], mau:[[-4,-6,-10,-10],"A Justiça anulou a multa. Vexame nacional."]},
+    {n:"Prof. Ricardo", r:"Economista", c:5, img:"distintivo", t:"Busca e apreensão surpresa no cartel do cimento. Se não achar nada, vira escândalo.", chance:.55, sim:"Fazer a operação", bom:[[12,-8,4,10],"Acharam as planilhas do cartel! Preços caíram."], mau:[[-4,-6,-8,-12],"Não acharam nada. As empresas processaram o CADE."]}
+  ],
+  finais:{
+    "p0-0":["Inimigo(a) do consumidor","Os preços dispararam e todos culpam você. Foi afastado(a)."],
+    "p0-100":["Justiceiro(a)","Você puniu tanto as empresas que faltou produto nas prateleiras. O governo te tirou."],
+    "p1-0":["Mercado em fuga","As empresas deixaram o país. O governo culpou o CADE e trocou o conselho."],
+    "p1-100":["Capturado(a)","Você virou amigo(a) das grandes empresas. O CADE deixou de proteger alguém."],
+    "p2-0":["Exonerado(a)","O governo não te suportou mais e publicou sua exoneração."],
+    "p2-100":["Braço do governo","Você só fazia o que o governo mandava. Perdeu a independência e o cargo."],
+    "p3-0":["Escândalo","A imprensa revelou seus segredos. Você renunciou."],
+    "p3-100":["Estrela da TV","Você vivia dando entrevista e largou o CADE para virar comentarista."]
+  },
+  falta:["John Rawls","Rawls propôs escolher as regras da sociedade sem saber que lugar você vai ocupar nela: o véu da ignorância. Regras justas são as que você aceitaria até sendo o mais fraco.","Se você não soubesse se seria consumidor ou dono da empresa, que regras escolheria?"],
+  excesso:["Friedrich Hayek","Hayek alertava que ninguém tem na cabeça todo o conhecimento espalhado pelo mercado. Quem tenta controlar tudo de cima costuma errar feio.","Até onde o Estado deve controlar o mercado?"]
+},
+
+lanchonete: {
+  cargo:"Dono(a) de lanchonete", curto:"Dono(a) da lanchonete",
+  pilares:[["Fregueses","cl"],["Família","casa"],["Dinheiro","cx"],["Energia","raio"]],
+  mentor:{n:"Dona Neide", r:"Sua mãe", c:4},
+  intro:'A empresa faliu, mas você não desistiu. Com o pouco que sobrou, abriu uma <b>lanchonete na praça</b>. Agora o chefe, o caixa e o cozinheiro são você.',
+  cartas:[
+    {n:"Dona Neide", r:"Sua mãe", c:4, img:"hamburguer", t:"Você não almoça direito há uma semana. Fecha uma hora mais cedo hoje?", e:["Não posso",[4,-8,4,-12]], d:["Fecho cedo",[-6,8,-4,12]]},
+    {n:"Seu Raimundo", r:"Freguês", c:4, img:"envelope", t:"Me vende fiado? Pago no fim do mês, palavra de honra.", e:["Fiado não",[-8,0,4,0]], d:["Anota aí",[8,0,-6,0],"fiado"]},
+    {n:"Seu Tonho", r:"Padeiro", c:7, img:"caminhao", t:"O pão subiu. Vou ter que repassar o aumento.", e:["Aumento o preço do lanche",[-10,0,8,0]], d:["Seguro o preço",[8,0,-10,-4]]},
+    {n:"Lucas", r:"Seu filho", c:5, img:"calendario", t:"Você vem na minha apresentação da escola na sexta?", e:["Tenho que trabalhar",[0,-14,6,0]], d:["Vou sim",[-6,14,-4,6]]},
+    {n:"Vigilância Sanitária", r:"Prefeitura", c:8, o:1, img:"prancheta", t:"A cozinha precisa de reforma para seguir as normas.", e:["Peço prazo",[0,0,0,-6],"sanitaria"], d:["Reformo agora",[0,0,-14,-6]]},
+    {n:"AppComida", r:"Aplicativo de entrega", c:6, o:1, img:"celular", t:"Entre no nosso aplicativo! Cobramos 27% de cada pedido.", e:["Fico fora",[-8,0,0,4]], d:["Entro",[12,0,-8,-6]]},
+    {n:"@vidaverde", r:"Influenciadora", c:7, img:"celular", t:"Faço um vídeo da lanchonete em troca de lanche grátis por um mês.", e:["Não troco lanche por vídeo",[-4,0,2,0]], d:["Fechado",[14,0,-6,0]]},
+    {n:"Dona Neide", r:"Sua mãe", c:4, img:"aperto", t:"Sua irmã está desempregada. Contrata ela?", e:["Não misturo família e negócio",[0,-12,4,0]], d:["Contrato",[0,10,-8,6]]},
+    {n:"Beto", r:"Dono do food truck", c:6, img:"caminhao", t:"Abri meu food truck bem na frente da sua lanchonete. Boa sorte!", e:["Ignoro",[-10,0,0,0]], d:["Promoção do dia",[10,0,-8,-4]]},
+    {n:"Dra. Lívia", r:"Clínica do bairro", c:2, img:"relogio", t:"Você está esgotado(a). Tira uns dias de folga?", e:["Não dá",[4,-4,6,-16]], d:["Tiro folga",[-8,6,-6,16]]},
+    {n:"Sr. Almeida", r:"Gerente do banco", c:1, img:"moedas", t:"Empréstimo para comprar uma chapa nova. Juros de 4% ao mês.", e:["Recuso",[-4,0,0,-4]], d:["Pego o empréstimo",[10,0,8,0],"emprestimo"]},
+    {n:"Pedro", r:"Estudante", c:5, img:"capelo", t:"Faz um combo estudante mais barato?", e:["Não compensa",[-6,0,4,0]], d:["Combo estudante",[10,0,-4,0]]},
+    {n:"Cris", r:"Seu par", c:3, img:"casa", t:"Faz meses que a gente não sai junto. Domingo é nosso?", e:["Domingo é dia de movimento",[0,-14,8,-4]], d:["Domingo é nosso",[-6,12,-6,8]]},
+    {n:"Seu Lopes", r:"Time de várzea", c:6, img:"camisa", t:"Patrocina o time? Em troca, o time lancha aqui depois do jogo.", e:["Não dá",[-4,0,2,0]], d:["Patrocino",[10,0,-6,0]]},
+    {n:"Dona Neide", r:"Sua mãe", c:4, img:"livro", t:"A receita secreta da sua avó pode virar o lanche da casa. Mas dá trabalho.", e:["Mantém o cardápio",[-2,0,0,2]], d:["Lança a receita",[10,6,-2,-8]]},
+    {n:"Lucas", r:"Seu filho", c:5, img:"relogio", t:"Abrir de madrugada para quem sai da festa dá dinheiro.", e:["À noite eu durmo",[-4,4,0,6]], d:["Abro de madrugada",[8,-8,10,-14]]},
+    {req:"fiado", n:"Seu Raimundo", r:"Freguês", c:4, img:"envelope", t:"Não vou conseguir pagar este mês. Nem o outro.", e:["Cobro na frente de todos",[-10,0,4,0]], d:["Perdoo a dívida",[6,0,-8,0]]},
+    {req:"sanitaria", n:"Vigilância Sanitária", r:"Prefeitura", c:8, o:1, img:"alerta", t:"O prazo acabou. A cozinha vai ser interditada.", e:["Discutir",[-10,0,-6,-8]], d:["Fecho e reformo",[-6,0,-14,0]]},
+    {req:"emprestimo", n:"Sr. Almeida", r:"Gerente do banco", c:1, img:"grafico", t:"A parcela venceu e os juros dobraram.", e:["Atraso a parcela",[0,-6,-8,-8]], d:["Pago tudo",[0,0,-16,-4]]}
+  ],
+  riscos:[
+    {n:"Dona Neide", r:"Sua mãe", c:4, img:"festa", t:"Montar uma barraca grande no festival da cidade. Se chover, perde tudo.", chance:.55, sim:"Montar a barraca", bom:[[14,4,16,-6],"Fila a noite inteira! Faturou o mês em três dias."], mau:[[-4,0,-14,-10],"Choveu o festival inteiro. Lanche estragado."]},
+    {n:"Sr. Almeida", r:"Gerente do banco", c:1, img:"casa", t:"Abrir uma segunda lanchonete na praia, com financiamento.", chance:.45, sim:"Abrir na praia", bom:[[10,0,18,-4],"A lanchonete da praia virou ponto turístico!"], mau:[[0,-6,-16,-8],"A praia ficou vazia o verão inteiro."]}
+  ],
+  finais:{
+    "p0-0":["Portas fechadas","Os fregueses sumiram. A lanchonete fechou."],
+    "p0-100":["Engolido(a) pelo sucesso","Fila virando a esquina todo dia. Você não deu conta e vendeu o ponto para uma rede."],
+    "p1-0":["Casa vazia","A família cansou de esperar. Você tem uma lanchonete cheia e uma casa vazia."],
+    "p1-100":["Só família","Você largou tudo para cuidar da família. A lanchonete fechou, mas a casa está feliz."],
+    "p2-0":["Dívidas","O dinheiro acabou e as dívidas venceram. Fechou as portas."],
+    "p2-100":["Virou franquia","Você vendeu a marca para uma rede e se aposentou cedo."],
+    "p3-0":["Sem forças","O corpo pediu socorro. Você precisou parar de vez."],
+    "p3-100":["Pé na estrada","Descansou tanto que perdeu o ritmo. Passou o ponto adiante e foi viajar."]
+  },
+  falta:["Byung-Chul Han","Byung-Chul Han diz que vivemos na sociedade do cansaço: ninguém precisa de chefe, nós mesmos nos exploramos achando que somos livres.","Ser seu próprio chefe é liberdade ou outra forma de cobrança?"],
+  excesso:["Epicuro","Epicuro ensinava que a felicidade está em coisas simples: amigos, conversa, pouco medo e poucos desejos. Querer sempre mais é o caminho mais curto para não aproveitar nada.","Para que serve o dinheiro, se não sobra tempo para viver?"]
+},
+
+influencer: {
+  cargo:"Influenciador(a) digital", curto:"Influenciador(a)",
+  pilares:[["Seguidores","coracao"],["Patrocínio","cx"],["Energia","raio"],["Credibilidade","escudo"]],
+  mentor:{n:"Kaio", r:"Seu empresário", c:5},
+  intro:'Depois do escândalo, todo mundo sabe seu nome. Um empresário te convenceu: transforme a fama em carreira. Agora você é <b>influenciador(a) digital</b>.',
+  cartas:[
+    {n:"Kaio", r:"Seu empresário", c:5, img:"celular", t:"Uma casa de apostas online paga muito por um vídeo seu.", e:["Não divulgo aposta",[-4,-6,0,10]], d:["Gravo o vídeo",[6,14,0,-12],"bet"]},
+    {n:"Ana Clara", r:"Seguidora", c:3, img:"balao", t:"Você parece triste nos vídeos. Está tudo bem?", e:["Finjo que está ótimo",[4,0,-10,-4]], d:["Falo a verdade",[6,-4,8,8]]},
+    {n:"Kaio", r:"Seu empresário", c:5, img:"alerta", t:"Um desafio perigoso está viralizando. Faz também?", e:["Não incentivo perigo",[-6,0,0,10]], d:["Faço o desafio",[14,4,-6,-12]]},
+    {n:"Lumi Cosméticos", r:"Marca", c:3, o:1, img:"folha", t:"Anuncie nosso creme e diga que usa todo dia.", e:["Só falo do que uso",[0,-8,0,10]], d:["Digo que uso",[0,12,0,-10],"mentira"]},
+    {n:"Lúcia Ferraz", r:"Jornalista", c:3, img:"microfone", t:"Querem saber do escândalo antigo. Topa uma entrevista?", e:["Fujo do assunto",[-4,0,0,-8]], d:["Conto tudo",[10,-4,-6,12]]},
+    {n:"Pedro", r:"Fã", c:5, img:"camera", t:"Faz uma live para ajudar a vaquinha do hospital da cidade?", e:["Não tenho tempo",[-6,0,4,-6]], d:["Faço a live",[10,-2,-6,10]]},
+    {n:"Kaio", r:"Seu empresário", c:5, img:"coracao", t:"Compra seguidores falsos? Todo mundo faz.", e:["Não",[-4,0,0,6]], d:["Compra 100 mil",[14,8,0,-8],"falsos"]},
+    {n:"Dona Neide", r:"Sua mãe", c:4, img:"casa", t:"Você não larga o celular nem no almoço de domingo.", e:["É meu trabalho",[4,0,-10,0]], d:["Desligo o celular",[-6,0,12,4]]},
+    {n:"@odiador99", r:"Hater", c:6, img:"balao", t:"Seu conteúdo é lixo. Vou expor você para todo mundo.", e:["Rebato com ironia",[8,0,-8,-6]], d:["Ignoro",[-2,0,4,4]]},
+    {n:"Lumi Cosméticos", r:"Marca", c:3, o:1, img:"maleta", t:"Contrato de exclusividade: você só posta nossos produtos por um ano.", e:["Prefiro liberdade",[0,-10,4,6]], d:["Assino",[-8,18,0,-6]]},
+    {n:"@vidaverde", r:"Influenciadora", c:7, img:"folha", t:"Collab comigo sobre o mangue? Rende menos, mas é importante.", e:["Não dá engajamento",[2,0,0,-6]], d:["Topo",[4,-4,0,10]]},
+    {n:"Plataforma Fotogram", r:"Rede social", c:1, o:1, img:"celular", t:"O algoritmo mudou: vídeos curtos e diários ou você some.", e:["Mantenho meu ritmo",[-12,0,8,4]], d:["Posto todo dia",[12,6,-14,0]]},
+    {n:"Kaio", r:"Seu empresário", c:5, img:"quadro", t:"Vamos vender um curso: Fique rico em 30 dias.", e:["Não prometo o que não sei",[-2,-6,0,10]], d:["Lança o curso",[4,16,-4,-14],"curso"]},
+    {n:"Professora Ana", r:"Escola pública", c:2, img:"quadro", t:"Vem falar com meus alunos sobre uso consciente das redes?", e:["Não paga nada",[0,2,2,-6]], d:["Vou com prazer",[6,-4,-4,12]]},
+    {n:"Kaio", r:"Seu empresário", c:5, img:"aviao", t:"Uma marca te leva a Fernando de Noronha para fotos. Três dias sem parar.", e:["Recuso",[-4,-6,6,0]], d:["Vou",[10,10,-10,0]]},
+    {n:"Kaio", r:"Seu empresário", c:5, img:"megafone", t:"Briga em público com outro influenciador. Dá audiência.", e:["Não crio briga",[-6,0,0,8]], d:["Brigo",[14,0,-6,-10]]},
+    {req:"bet", n:"Ministério Público", r:"Fiscal da lei", c:8, o:1, img:"balanca", t:"Investigamos influenciadores que divulgaram apostas ilegais.", e:["Nego",[-8,-10,-6,-14]], d:["Colaboro",[-6,-8,0,4]]},
+    {req:"mentira", n:"Ana Clara", r:"Seguidora", c:3, img:"celular", t:"Descobriram que você nunca usou o creme. O print está rodando.", e:["Apago tudo",[-10,-4,0,-12]], d:["Peço desculpas",[-4,-6,0,4]]},
+    {req:"falsos", n:"Plataforma Fotogram", r:"Rede social", c:1, o:1, img:"cadeado", t:"Detectamos seguidores falsos. Sua conta vai perder alcance.", e:["Recorrer",[-12,-6,-4,-4]], d:["Aceitar",[-14,-4,0,4]]},
+    {req:"curso", n:"Procon", r:"Defesa do consumidor", c:8, o:1, img:"martelo", t:"Alunos do curso pedem reembolso. Ninguém ficou rico.", e:["Não devolvo",[-8,0,0,-16]], d:["Devolvo tudo",[0,-14,0,4]]}
+  ],
+  riscos:[
+    {n:"Kaio", r:"Seu empresário", c:5, img:"camera", t:"Convite para um reality show. Pode te consagrar ou te humilhar.", chance:.5, sim:"Entrar no reality", bom:[[18,10,-6,0],"Você foi a sensação do reality!"], mau:[[-8,-4,-10,-10],"Eliminado(a) na primeira semana, com vaias."]},
+    {n:"Kaio", r:"Seu empresário", c:5, img:"camisa", t:"Lançar sua própria marca de roupas com todo o dinheiro guardado.", chance:.45, sim:"Lançar a marca", bom:[[6,18,-4,6],"Esgotou em uma hora!"], mau:[[-4,-16,-6,-4],"Ninguém comprou. O estoque encheu a sala."]}
+  ],
+  finais:{
+    "p0-0":["Perfil deserto","Os seguidores foram embora. Seu perfil virou um deserto."],
+    "p0-100":["Refém dos likes","Milhões de seguidores e nenhum minuto de paz. Você apagou a conta para respirar."],
+    "p1-0":["Sem patrocínio","As marcas sumiram. Sem dinheiro, voltou a procurar emprego."],
+    "p1-100":["Outdoor ambulante","Você só fazia propaganda. Os seguidores perceberam e debandaram."],
+    "p2-0":["Sem forças","Você parou de postar de um dia para o outro. Precisava se desligar."],
+    "p2-100":["Desconectado(a)","Você descansou tanto que perdeu o ritmo da internet. Saiu das redes e foi feliz."],
+    "p3-0":["Ninguém acredita","Depois de tanta propaganda enganosa, ninguém acredita em nada que você diz."],
+    "p3-100":["Voz da razão","Você virou referência séria e foi chamado(a) para um programa de TV. Adeus, redes."]
+  },
+  falta:["Guy Debord","Guy Debord descreveu a sociedade do espetáculo: as relações entre as pessoas passam a ser mediadas por imagens. Quem vive para a imagem esquece de viver.","Você mostra a vida que vive ou vive a vida que mostra?"],
+  excesso:["Zygmunt Bauman","Bauman falava da modernidade líquida: tudo é rápido, descartável e sem raízes, inclusive a fama e os laços entre as pessoas.","Seguidores são amigos?"]
+},
+
+professor: {
+  cargo:"Professor(a) do EJA", curto:"Professor(a)",
+  pilares:[["Alunos","livro"],["Direção","predio"],["Salário","cx"],["Energia","raio"]],
+  mentor:{n:"Diretora Rita", r:"Direção da escola", c:2},
+  intro:'Depois da greve, você percebeu que gosta mesmo é de ensinar o que aprendeu. Agora você é <b>professor(a) de Administração no EJA</b>, à noite, numa escola estadual.',
+  cartas:[
+    {n:"Seu Raimundo", r:"Aluno do EJA", c:4, img:"relogio", t:"Professor, trabalho o dia todo na obra. Posso chegar meia hora atrasado?", e:["Regra é regra",[-10,6,0,0]], d:["Pode sim",[10,-4,0,0]]},
+    {n:"Diretora Rita", r:"Direção da escola", c:2, img:"prancheta", t:"Precisamos de alguém para organizar a feira de ciências. Topa?", e:["Já estou sobrecarregado(a)",[0,-8,0,6]], d:["Topo",[6,10,0,-10]]},
+    {n:"Secretaria de Educação", r:"Governo do Estado", c:8, o:1, img:"grafico", t:"Bônus para quem bater a meta da prova estadual. Treine os alunos para a prova.", e:["Ensino para a vida",[8,-6,-6,0]], d:["Treino para a prova",[-6,8,10,-4]]},
+    {n:"Dona Socorro", r:"Aluna do EJA", c:3, img:"hamburguer", t:"Quero aprender a abrir meu próprio negócio de bolos.", e:["Siga o conteúdo",[-6,4,0,0]], d:["Projeto de plano de negócios",[12,0,0,-6]]},
+    {n:"Pedro", r:"Aluno", c:5, img:"celular", t:"Posso usar o celular na aula? É para pesquisar.", e:["Celular guardado",[-6,6,0,0]], d:["Pode, com regras",[8,-4,0,0]]},
+    {n:"Professora Ana", r:"Colega", c:2, img:"livro", t:"Vamos fazer um projeto juntos entre Filosofia e Administração?", e:["Prefiro trabalhar só",[-2,0,0,4]], d:["Vamos!",[10,6,0,-6]]},
+    {n:"Zé Carlos", r:"Sindicato dos professores", c:4, img:"megafone", t:"Greve dos professores por reajuste. Você adere?", e:["Não adiro",[4,6,-6,0]], d:["Adiro",[-8,-10,8,4]]},
+    {n:"Colégio Excelência", r:"Escola particular", c:1, o:1, img:"maleta", t:"Oferecemos aulas extras pagas aos sábados.", e:["Sábado é descanso",[0,0,-4,10]], d:["Aceito",[0,0,14,-14]]},
+    {n:"Diretora Rita", r:"Direção da escola", c:2, img:"hamburguer", t:"A merenda acabou. Ajuda a organizar uma vaquinha?", e:["Não é minha função",[-8,-4,0,0]], d:["Ajudo",[10,6,-6,-4]]},
+    {n:"Wesley", r:"Aluno", c:6, img:"caminhao", t:"Vou desistir da escola. Preciso trabalhar.", e:["Respeito a decisão",[-10,-4,0,4]], d:["Converso com ele",[12,4,0,-8]]},
+    {n:"Prof. Ricardo", r:"Coordenador", c:5, img:"prancheta", t:"Preencha 40 páginas de diário até sexta.", e:["Atraso o diário",[0,-12,0,6],"diario"], d:["Viro a noite",[0,10,0,-14]]},
+    {n:"Joana Lins", r:"Aluna do EJA", c:3, img:"balao", t:"Fizeram piada de mim na sala por eu ser mais velha.", e:["Não vi nada",[-12,0,0,0]], d:["Converso com a turma",[12,4,0,-4]]},
+    {n:"Universidade", r:"Mestrado profissional", c:5, o:1, img:"capelo", t:"Inscrições abertas para o mestrado profissional.", e:["Agora não",[0,0,0,4]], d:["Me inscrevo",[4,4,6,-12]]},
+    {n:"Diretora Rita", r:"Direção da escola", c:2, img:"robo", t:"Leva os alunos ao laboratório de informática? Ninguém sabe ligar os computadores.", e:["Fica para depois",[-4,-2,0,0]], d:["Eu ensino",[10,6,0,-8]]},
+    {n:"@vidaverde", r:"Influenciadora", c:7, img:"camera", t:"Grava sua aula e posta? Pode viralizar.", e:["Aula não é palco",[0,4,0,0]], d:["Posto",[6,-6,6,-4]]},
+    {n:"Secretaria de Educação", r:"Governo do Estado", c:8, o:1, img:"predio", t:"A partir de agora, 50 alunos por sala.", e:["Protestar",[4,-10,0,0]], d:["Me adaptar",[-8,6,0,-10]]},
+    {req:"diario", n:"Diretora Rita", r:"Direção da escola", c:2, img:"martelo", t:"A Secretaria cobrou os diários atrasados. Você levou advertência.", e:["Reclamo",[0,-10,-4,0]], d:["Resolvo no fim de semana",[0,6,0,-12]]}
+  ],
+  riscos:[
+    {n:"Prof. Ricardo", r:"Coordenador", c:5, img:"distintivo", t:"Inscrever a turma na olimpíada estadual de empreendedorismo. Exige muito ensaio.", chance:.5, sim:"Inscrever a turma", bom:[[14,10,6,-6],"Seus alunos ganharam a olimpíada estadual!"], mau:[[-4,-4,0,-12],"Eliminados na primeira fase. Mas aprenderam."]},
+    {n:"Diretora Rita", r:"Direção da escola", c:2, img:"urna", t:"Concorrer na eleição para diretor(a) da escola.", chance:.4, sim:"Concorrer", bom:[[0,14,14,-6],"Você venceu a eleição da escola!"], mau:[[-4,-6,0,-10],"Perdeu por poucos votos. A diretora ficou desconfiada."]}
+  ],
+  finais:{
+    "p0-0":["Turma vazia","Os alunos pararam de vir. A turma foi fechada."],
+    "p0-100":["Inesquecível","Seus alunos te homenagearam na formatura. Você saiu da sala para formar novos professores."],
+    "p1-0":["Transferido(a)","A direção pediu sua transferência para outra escola."],
+    "p1-100":["Virou gestor(a)","A direção gostou tanto que te colocou na gestão. A sala de aula ficou para trás."],
+    "p2-0":["Contas no vermelho","O salário não fechou o mês. Você largou a escola por outro emprego."],
+    "p2-100":["Máquina de dar aula","Você pegou tantas aulas extras que largou o EJA pela escola particular."],
+    "p3-0":["Sem forças","O cansaço venceu. Você pediu licença e precisou parar."],
+    "p3-100":["Sem garra","Descansado(a) demais, perdeu a vontade de lutar pela turma e pediu exoneração."]
+  },
+  falta:["Paulo Freire","Paulo Freire dizia que ninguém educa ninguém e ninguém se educa sozinho: as pessoas se educam juntas, mediadas pelo mundo. Sem diálogo, a escola vira depósito.","O que um aluno do EJA pode ensinar ao professor?"],
+  excesso:["Hannah Arendt","Hannah Arendt via a educação como responsabilidade pelo mundo e pelos que chegam a ele. O professor representa o mundo para os alunos, e isso exige presença, não fuga.","Qual a diferença entre autoridade e autoritarismo na sala de aula?"]
+},
+
+consultor: {
+  cargo:"Consultor(a) de empresas", curto:"Consultor(a)",
+  pilares:[["Clientes","cl"],["Agenda","relogio"],["Dinheiro","cx"],["Fama","estrela"]],
+  mentor:{n:"Bia", r:"Sua sócia", c:3},
+  intro:'Sua empresa perdeu todos os clientes, mas você aprendeu muito com o fracasso. Agora você vende conselhos: é <b>consultor(a) de empresas</b>.',
+  cartas:[
+    {n:"Grupo Atlântico", r:"Conglomerado", c:5, o:1, img:"grafico", t:"Queremos cortar 30% dos custos. Você indica quem será demitido.", e:["Não faço isso",[-10,0,-6,4]], d:["Faço",[10,-6,14,-6]]},
+    {n:"Seu Tonho", r:"Padeiro", c:7, img:"hamburguer", t:"Minha padaria está quebrando. Pode me ajudar de graça?", e:["Consultoria é paga",[-4,0,4,-4]], d:["Ajudo de graça",[6,-8,-4,10]]},
+    {n:"Bia", r:"Sua sócia", c:3, img:"calendario", t:"Pegamos mais três clientes? A agenda já está cheia.", e:["Não",[-6,6,-4,0]], d:["Pegamos",[10,-14,10,0]]},
+    {n:"Revista Negócios", r:"Imprensa", c:4, o:1, img:"revista", t:"Escreva uma coluna semanal: Lições do fracasso.", e:["Não tenho tempo",[0,4,0,-6]], d:["Escrevo",[4,-8,0,12]]},
+    {n:"Helena Prado", r:"Empresária", c:3, img:"prancheta", t:"Quero um relatório dizendo que minha empresa está ótima. É para os investidores.", e:["Só escrevo a verdade",[-6,0,-6,8]], d:["Escrevo o que ela quer",[6,0,12,-10],"laudo"]},
+    {n:"Pedro", r:"Estudante", c:5, img:"capelo", t:"Me dá um estágio? Aprendo rápido.", e:["Sem vaga",[0,-4,4,0]], d:["Contrato",[4,10,-6,0]]},
+    {n:"Evento de Negócios", r:"Congresso", c:8, o:1, img:"microfone", t:"Palestra paga num congresso em São Paulo.", e:["Recuso",[0,6,-4,-6]], d:["Aceito",[4,-8,10,10]]},
+    {n:"Bia", r:"Sua sócia", c:3, img:"livro", t:"Vamos escrever um livro: Como eu quebrei minha empresa.", e:["Muito exposto",[0,4,0,-6]], d:["Escrevemos",[6,-12,4,14]]},
+    {n:"Otávio Rangel", r:"Cliente", c:6, img:"moedas", t:"Seu conselho estava errado e perdi dinheiro. Quero de volta.", e:["Não devolvo",[-12,0,6,-6]], d:["Devolvo",[8,0,-12,4]]},
+    {n:"Cris", r:"Seu par", c:3, img:"casa", t:"Você atende telefone até de madrugada. Desliga um pouco?", e:["É o trabalho",[4,-10,4,0]], d:["Desligo à noite",[-4,12,-4,0]]},
+    {n:"Rafael Tavares", r:"Dono de startup", c:5, img:"robo", t:"Me assessora em troca de 5% da minha startup?", e:["Só aceito dinheiro",[-4,0,4,0]], d:["Aceito ações",[6,-6,-4,0],"startup"]},
+    {n:"Prefeitura", r:"Governo municipal", c:8, o:1, img:"predio", t:"Consultoria para organizar as contas da prefeitura. Paga pouco.", e:["Não compensa",[0,4,4,-4]], d:["Aceito",[4,-10,-2,10]]},
+    {n:"Consultoria Global", r:"Concorrente", c:1, o:1, img:"maleta", t:"Queremos comprar sua carteira de clientes.", e:["Não vendo",[4,0,-4,4]], d:["Vendo",[-18,10,16,-6]]},
+    {n:"Bia", r:"Sua sócia", c:3, img:"celular", t:"Posta todo dia um conselho motivacional nas redes?", e:["Não sou guru",[0,4,0,-4]], d:["Posto",[4,-6,0,10]]},
+    {n:"Bia", r:"Sua sócia", c:3, img:"aviao", t:"Cliente em Manaus: três semanas fora de casa.", e:["Recuso",[-6,6,-6,0]], d:["Vou",[8,-12,12,0]]},
+    {n:"Professora Ana", r:"Escola pública", c:2, img:"quadro", t:"Ensina administração para os alunos do EJA? É voluntário.", e:["Sem tempo",[0,4,0,-4]], d:["Ensino",[4,-8,0,10]]},
+    {req:"laudo", n:"Ministério Público", r:"Fiscal da lei", c:8, o:1, img:"balanca", t:"O relatório que você assinou enganou investidores.", e:["Não sabia",[-8,0,-6,-16]], d:["Admito o erro",[-6,0,-12,-4]]},
+    {req:"startup", n:"Rafael Tavares", r:"Dono de startup", c:5, img:"lampada", t:"A startup decolou! Seus 5% valem uma fortuna.", e:["Vendo minha parte",[0,0,20,4]], d:["Continuo sócio(a)",[4,-6,8,8]]}
+  ],
+  riscos:[
+    {n:"Bia", r:"Sua sócia", c:3, img:"globo", t:"Uma multinacional quer contratar a gente. Se der errado, nossa fama vai junto.", chance:.45, sim:"Aceitar o desafio", bom:[[14,-6,16,8],"O projeto foi um sucesso mundial!"], mau:[[-6,-10,-8,-10],"O projeto fracassou e todos ficaram sabendo."]},
+    {n:"Revista Negócios", r:"Imprensa", c:4, o:1, img:"camera", t:"Convite para apresentar um programa de TV sobre negócios.", chance:.5, sim:"Apresentar", bom:[[6,-6,8,18],"Audiência recorde! Todo mundo quer seus conselhos."], mau:[[-4,-6,-4,-14],"O programa foi cancelado no segundo episódio."]}
+  ],
+  finais:{
+    "p0-0":["Sem clientes","Ninguém mais quis seus conselhos. A consultoria fechou."],
+    "p0-100":["Afogado(a) em clientes","Clientes demais e qualidade de menos. Você vendeu a consultoria para uma gigante."],
+    "p1-0":["Agenda explodiu","Sem tempo para nada, você travou e cancelou todos os contratos."],
+    "p1-100":["Esquecido(a)","Você protegeu tanto seu tempo que o mercado te esqueceu. Aposentou cedo."],
+    "p2-0":["Quebrou de novo","O dinheiro acabou. Ironia: o consultor quebrou."],
+    "p2-100":["Rico(a) e parado(a)","Você ganhou o suficiente para nunca mais trabalhar. E parou."],
+    "p3-0":["Anônimo(a)","Ninguém sabe quem você é. Sem fama, sem convites."],
+    "p3-100":["Guru","Você virou guru dos negócios e largou a consultoria para dar palestras pelo mundo."]
+  },
+  falta:["Sócrates","Sócrates criticava os sofistas, que cobravam para ensinar a vencer discussões. Ele preferia perguntar, sem vender respostas prontas. Um bom conselho começa por saber o que não se sabe.","Dá para vender sabedoria?"],
+  excesso:["Blaise Pascal","Pascal escreveu que a infelicidade humana vem de não saber ficar quieto num quarto. Enchemos a agenda para não pensar em nós mesmos.","Por que é tão difícil não fazer nada?"]
+}
+};
+
+/* ===================== MONTAGEM DOS MUNDOS ===================== */
+const COR_SLOT = ["eq","cl","cx","rp"];
+const INST = new Set(["Conselho","Revista Negócios","Defesa Civil","Procon","Grupo Atlântico"]);
+const PONTES = {
+  "eq-0":  {vai:"professor",  ponte:"Mas você aprendeu muito. Uma escola estadual precisa de professor(a) de Administração para o EJA."},
+  "eq-100":{vai:"sindicato",  ponte:"E os trabalhadores te chamaram para presidir o sindicato."},
+  "cl-0":  {vai:"consultor",  ponte:"Você decidiu vender o que aprendeu com o fracasso: virou consultor(a)."},
+  "cl-100":{vai:"cade",       ponte:"Ironia: o governo te convidou para o CADE, para impedir outros monopólios."},
+  "cx-0":  {vai:"lanchonete", ponte:"Com o pouco que sobrou, você abriu uma lanchonete na praça."},
+  "cx-100":{vai:"filial",     ponte:"E o investidor quer você no comando da nova filial em Lisboa."},
+  "rp-0":  {vai:"influencer", ponte:"Mas fama é fama: um empresário quer transformar você em influenciador(a)."},
+  "rp-100":{vai:"deputado",   ponte:"A Maré Alta precisa de outra pessoa. Brasília espera por você."}
+};
+FINAIS["cx-100"].titulo = "Cofre transbordando";
+FINAIS["cx-100"].texto = "Com tanto dinheiro parado, um investidor decidiu abrir uma filial da Maré Alta na Europa.";
+FINAIS["rp-100"].titulo = "Eleito(a)!";
+FINAIS["rp-100"].texto = "Você ficou tão famoso(a) que se candidatou e foi eleito(a) deputado(a) federal.";
+FINAIS["cl-100"].texto = "Você engoliu o mercado inteiro. O CADE abriu processo e o conselho afastou você para salvar a empresa.";
+
+const MUNDOS = {
+  ceo: {id:"ceo", cargo:"CEO da Maré Alta", curto:"CEO", pilares:PILARES_CEO, cartas:CARTAS, riscos:RISCOS,
+        desafios:DESAFIOS, intro:INTRO, mentor:{n:"Conselho", r:"Conselho de administração", c:8, o:1}}
+};
+Object.entries(MUNDOS_NOVOS).forEach(([id, m]) => {
+  const pilares = m.pilares.map(([nome, ic], i) => ({k:"p"+i, nome, ic, cor:COR_SLOT[i]}));
+  const ef = arr => { const o = {}; arr.forEach((v,i) => { if(v) o["p"+i] = v; }); return o; };
+  const op = x => [x[0], ef(x[1]), x[2], x[3]];
+  const cartas = m.cartas.map((c,i) => ({...c, id:`${id}-${i}`, e:op(c.e), d:op(c.d)}));
+  const riscos = m.riscos.map((r,i) => ({...r, id:`${id}-r${i}`, risco:true, bom:[ef(r.bom[0]), r.bom[1]], mau:[ef(r.mau[0]), r.mau[1]],
+    e:["Deixar passar", {}], d:[`${r.sim} (${Math.round(r.chance*100)}% de chance)`, {}]}));
+  const P = pilares;
+  const desafios = [
+    {id:"firme", titulo:`${P[0].nome} firme`, desc:`${P[0].nome} acima de 60 por 6 meses seguidos`, meta:6, prazo:18, passo:(S,d)=> S.v.p0 > 60 ? d.n+1 : 0},
+    {id:"forte1", titulo:`Força em ${P[1].nome}`, desc:`Leve ${P[1].nome} a 70 ou mais`, meta:1, prazo:12, passo:S=> S.v.p1 >= 70 ? 1 : 0},
+    {id:"cofre", titulo:`${P[2].nome} em alta`, desc:`${P[2].nome} acima de 65 por 3 meses seguidos`, meta:3, prazo:15, passo:(S,d)=> S.v.p2 > 65 ? d.n+1 : 0},
+    {id:"forte3", titulo:`Força em ${P[3].nome}`, desc:`Leve ${P[3].nome} a 70 ou mais`, meta:1, prazo:12, passo:S=> S.v.p3 >= 70 ? 1 : 0},
+    {id:"equilibrio", titulo:"Justa medida", desc:"Os 4 pilares entre 35 e 65 por 4 meses seguidos", meta:4, prazo:16,
+     passo:(S,d)=> P.every(p => S.v[p.k] >= 35 && S.v[p.k] <= 65) ? d.n+1 : 0},
+    {id:"ousadia", titulo:"Ousadia", desc:"Aceite 2 oportunidades arriscadas", meta:2, prazo:20, passo:(S,d,o,c,dir)=> c && c.risco && dir > 0 ? d.n+1 : d.n}
+  ];
+  const finais = {};
+  Object.entries(m.finais).forEach(([k,[titulo,texto]]) => {
+    const [nome, ideia, pergunta] = k.endsWith("-0") ? m.falta : m.excesso;
+    finais[k] = {titulo, texto, filosofo:nome, ideia, pergunta};
+  });
+  MUNDOS[id] = {id, cargo:m.cargo, curto:m.curto, pilares, cartas, riscos, desafios, finais, mentor:m.mentor,
+    intro:{id:"intro", n:m.mentor.n, r:m.mentor.r, c:m.mentor.c, o:m.mentor.o, img:"mesa", t:m.intro.replace(/<[^>]+>/g,""), html:m.intro,
+           e:["Vamos lá", {}], d:["Mãos à obra", {}]}};
+});
+
+/* ===================== DESAFIOS RELÂMPAGO =====================
+   Curtos (3 a 6 rodadas). Aceitar ou recusar. Prêmio: um escudo.
+   ============================================================== */
+function relampagosDe(M){
+  const P = M.pilares, ceo = M.id === "ceo", alvo = ceo ? 100 : 85;
+  const lista = P.map((p,i) => ({tipo:"max", i, rod:6,
+    desc: ceo ? `Em 6 rodadas, leve ${p.nome} ao máximo` : `Em 6 rodadas, leve ${p.nome} a ${alvo} ou mais`,
+    ok: S => S.v[p.k] >= alvo}));
+  lista.push({tipo:"medida", rod:6, desc:"Em 6 rodadas, deixe os 4 pilares entre 45 e 55", ok:S => P.every(p => S.v[p.k] >= 45 && S.v[p.k] <= 55)});
+  lista.push({tipo:"dupla", rod:5, desc:"Em 5 rodadas, deixe dois pilares acima de 75 ao mesmo tempo", ok:S => P.filter(p => S.v[p.k] > 75).length >= 2});
+  lista.push({tipo:"sim", rod:3, desc:"Diga sim nas próximas 3 decisões", ok:(S,r) => r.n >= 3});
+  if(P.some(p => S.v[p.k] <= 20 || S.v[p.k] >= 80))
+    lista.push({tipo:"fogo", rod:4, desc:"Em 4 rodadas, tire todos os pilares da zona de perigo", ok:S => P.every(p => S.v[p.k] > 20 && S.v[p.k] < 80)});
+  return lista;
+}
+function ofertaRelampago(){
+  const M = MUNDOS[S.mundo];
+  const r = sorteia(relampagosDe(M));
+  return {id:"oferta-relampago", relampago:r, n:M.mentor.n, r:M.mentor.r, c:M.mentor.c, o:M.mentor.o, img:"relogio",
+    t:`${r.desc}. Prêmio: um escudo, que salva você uma vez quando um pilar zerar. Topa?`,
+    e:["Recusar", {}], d:["Aceitar o desafio", {}]};
 }
 
 /* ===================== ESTADO ===================== */
 const NOMES = ["Ana","Bruno","Camila","Diego","Elisa","Fábio","Gabriela","Heitor","Isabela","João","Larissa","Mateus","Natália","Otávio","Priscila","Rodrigo","Sofia","Tiago","Vanessa","Wesley","Yasmin","Lucas","Marina","Caio"];
 const SOBRENOMES = ["Albuquerque","Bezerra","Cavalcanti","Dantas","Fernandes","Galvão","Medeiros","Nóbrega","Oliveira","Queiroz","Rocha","Saraiva","Teixeira","Vieira"];
 const CHAVE = "cadeira-do-ceo-historico";
-let S; let atual; let lado = 0;
+let S; let atual; let PILARES = PILARES_CEO;
 
 function carregaHist(){ try{ return JSON.parse(localStorage.getItem(CHAVE)) || []; }catch(e){ return []; } }
 function salvaHist(h){ try{ localStorage.setItem(CHAVE, JSON.stringify(h.slice(0,50))); }catch(e){} }
@@ -656,9 +1159,21 @@ const $ = id => document.getElementById(id);
 
 function novoCEO(){
   const n = carregaHist().length + 1;
-  S = { nome: sorteia(NOMES)+" "+sorteia(SOBRENOMES), numero:n, mes:0,
-        v:{eq:50, cl:50, cx:50, rp:50}, marcas:{}, recentes:[], favor:{eq:0,cl:0,cx:0,rp:0}, decisoes:0,
-        desafio:null, feitos:[], tentados:[], pausa:1, ultimoRisco:0, medalhas:0, pendente:null };
+  S = { nome: sorteia(NOMES)+" "+sorteia(SOBRENOMES), numero:n, total:0, trajetoria:[], escudos:0, medalhas:0, feitos:[] };
+  entraNoMundo("ceo", false);
+}
+function entraNoMundo(id, bonus){
+  const M = MUNDOS[id];
+  PILARES = M.pilares;
+  Object.assign(S, { mundo:id, mes:0, v:{}, favor:{}, marcas:{}, recentes:[], decisoes:0,
+    desafio:null, tentados:[], pausa:1, ultimoRisco:0, ultimoRelampago:2, relampago:null, pendente:null, introVista:false, bonusMax:false });
+  PILARES.forEach(p => { S.v[p.k] = 50; S.favor[p.k] = 0; });
+  S.bonusTxt = "";
+  if(bonus){
+    const p = sorteia(PILARES);
+    S.v[p.k] = 65; S.escudos++;
+    S.bonusTxt = `Bônus da missão relâmpago: ${p.nome} começa em 65 e você ganha um escudo.`;
+  }
 }
 
 /* ===================== TELAS ===================== */
@@ -676,19 +1191,21 @@ document.querySelectorAll("[data-voltar]").forEach(b => b.onclick = () => mostra
 $("bt-galeria").onclick = () => mostra("tela-galeria");
 $("bt-sobre").onclick = () => mostra("tela-sobre");
 
+function miniPilares(lista){
+  return lista.map(p => `<div style="--pc:var(--${p.cor||p.k})">${ICON[p.ic||p.k]}${p.nome}</div>`).join("");
+}
 function montaInicio(){
-  $("pilares-mini").innerHTML = PILARES.map(p => `<div style="--pc:var(--${p.k})">${ICON[p.k]}${p.nome}</div>`).join("");
+  $("pilares-mini").innerHTML = miniPilares(PILARES_CEO);
   const h = carregaHist();
   if(h.length){
     const melhor = h.reduce((a,b) => b.meses > a.meses ? b : a);
-    $("recorde").textContent = `${h.length} CEO${h.length>1?"s":""} já passaram por aqui. Recorde: ${duracao(melhor.meses)} (${melhor.nome}).`;
+    $("recorde").textContent = `${h.length} pessoa${h.length>1?"s":""} já sentaram na cadeira. Recorde: ${duracao(melhor.meses)} de carreira (${melhor.nome}).`;
   } else $("recorde").textContent = "";
 }
-
 function montaGaleria(){
   const h = carregaHist();
   $("lista-ceos").innerHTML = h.length ? h.map(c =>
-    `<li><div><b>${esc(c.nome)}</b><br><small>CEO nº ${c.numero} · ${esc(c.fim)}</small></div><div style="text-align:right">${duracao(c.meses)}${c.medalhas ? `<br><small>${c.medalhas} medalha${c.medalhas>1?"s":""}</small>` : ""}</div></li>`
+    `<li><div><b>${esc(c.nome)}</b><br><small>${esc(c.traj || "CEO")} · ${esc(c.fim)}</small></div><div style="text-align:right">${duracao(c.meses)}${c.medalhas ? `<br><small>${c.medalhas} medalha${c.medalhas>1?"s":""}</small>` : ""}</div></li>`
   ).join("") : "<li>Ninguém sentou na cadeira ainda.</li>";
 }
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -702,7 +1219,7 @@ function duracao(m){
 /* ===================== JOGO ===================== */
 function montaPilares(){
   $("pilares").innerHTML = PILARES.map(p =>
-    `<div class="pilar" id="p-${p.k}" title="${p.nome}" style="--pc:var(--${p.k})"><span class="ponto" id="pt-${p.k}"></span>${ICON[p.k]}<div class="barra"><span id="b-${p.k}"></span></div>${p.nome}</div>`
+    `<div class="pilar" id="p-${p.k}" title="${p.nome}" style="--pc:var(--${p.cor||p.k})"><span class="ponto" id="pt-${p.k}"></span>${ICON[p.ic||p.k]}<div class="barra"><span id="b-${p.k}"></span></div>${p.nome}</div>`
   ).join("");
 }
 function atualizaPilares(antes){
@@ -717,18 +1234,22 @@ function atualizaPilares(antes){
       setTimeout(() => el.classList.remove("sobe","desce"), 700);
     }
   });
-  $("tempo").innerHTML = `<b>${esc(S.nome)}</b> · CEO nº ${S.numero} · ${duracao(S.mes)} no cargo`;
+  const M = MUNDOS[S.mundo];
+  const escudos = S.escudos ? ` · <span class="escudos" title="Escudos">${ICON.escudo}${S.escudos}</span>` : "";
+  $("tempo").innerHTML = `<b>${esc(S.nome)}</b> · ${esc(M.curto)} · ${duracao(S.mes)} no cargo${escudos}`;
 }
 
 function proximaCarta(){
-  if(!S.introVista){ S.introVista = true; return INTRO; }
+  const M = MUNDOS[S.mundo];
+  if(!S.introVista){ S.introVista = true; return M.intro; }
   if(S.pendente){ const r = S.pendente; S.pendente = null; return r; }
-  const livres = RISCOS.filter(r => !S.recentes.includes(r.id));
+  if(!S.relampago && S.mes - S.ultimoRelampago >= 6 && Math.random() < 0.35){ S.ultimoRelampago = S.mes; return ofertaRelampago(); }
+  const livres = M.riscos.filter(r => !S.recentes.includes(r.id));
   if(livres.length && S.mes - S.ultimoRisco >= 5 && Math.random() < 0.4){ S.ultimoRisco = S.mes; return sorteia(livres); }
-  const prontas = CARTAS.filter(c => c.req && S.marcas[c.req] !== undefined && S.mes - S.marcas[c.req] >= 3);
+  const prontas = M.cartas.filter(c => c.req && S.marcas[c.req] !== undefined && S.mes - S.marcas[c.req] >= 3);
   if(prontas.length && Math.random() < 0.65) return sorteia(prontas);
-  let pool = CARTAS.filter(c => !c.req && !S.recentes.includes(c.id));
-  if(!pool.length){ S.recentes = []; pool = CARTAS.filter(c => !c.req); }
+  let pool = M.cartas.filter(c => !c.req && !S.recentes.includes(c.id));
+  if(!pool.length){ S.recentes = S.recentes.filter(id => !M.cartas.some(c => c.id === id)); pool = M.cartas.filter(c => !c.req); }
   return sorteia(pool);
 }
 
@@ -741,7 +1262,7 @@ function mostraCarta(c){
   carta.classList.toggle("consequencia", !!c.req);
   void carta.offsetWidth;
   carta.classList.add("entra");
-  const ini = c.n.replace(/^(Dr\.|Dep\.|Eng\.|Seu|Fiscal|Secretário|Professora|Delegada|Conselheira|Auditora|@)\s*/,"").split(/\s+/).map(w => w[0]).join("").slice(0,2).toUpperCase();
+  const ini = c.n.replace(/^(Dr\.|Dra\.|Dep\.|Eng\.|Seu|Dona|Sr\.|Prof\.|Fiscal|Secretário|Professora|Diretora|Delegada|Conselheira|Auditora|@)\s*/,"").split(/\s+/).map(w => w[0]).join("").slice(0,2).toUpperCase();
   $("avatar").textContent = ini;
   $("avatar").style.background = `var(--c${c.c||8})`;
   document.querySelector("#tela-jogo").style.setProperty("--cor", `var(--c${c.c||8})`);
@@ -750,11 +1271,17 @@ function mostraCarta(c){
   $("cargo").textContent = c.r;
   carta.classList.toggle("boasvindas", c.id === "intro");
   carta.classList.toggle("risco", !!c.risco);
+  carta.classList.toggle("ofertarel", !!c.relampago);
   carta.classList.toggle("resultado", !!c.resultado);
   carta.classList.toggle("bom", c.resultado === "bom");
   carta.classList.toggle("mau", c.resultado === "mau");
-  $("selo-risco").textContent = c.risco ? `Oportunidade arriscada · ${Math.round(c.chance*100)}%` : c.resultado === "bom" ? "Deu certo!" : c.resultado === "mau" ? "Deu errado" : "";
-  if(c.html) $("fala").innerHTML = c.html; else $("fala").textContent = c.t;
+  $("selo-risco").textContent = c.risco ? `Oportunidade arriscada · ${Math.round(c.chance*100)}%`
+    : c.relampago ? `Desafio relâmpago · ${c.relampago.rod} rodadas`
+    : c.resultado === "bom" ? "Deu certo!" : c.resultado === "mau" ? "Deu errado" : "";
+  let html = c.html || esc(c.t);
+  if(c.id === "intro" && S.mundo === "ceo") html += `<span class="alerta">Arraste a carta para a esquerda ou para a direita para decidir.</span>`;
+  if(c.id === "intro" && S.bonusTxt) html += `<span class="alerta" style="color:var(--ok)">${esc(S.bonusTxt)}</span>`;
+  $("fala").innerHTML = html;
   $("bt-esq").textContent = "← " + c.e[0];
   $("bt-dir").textContent = c.d[0] + " →";
   $("escolha").style.opacity = 0;
@@ -781,33 +1308,46 @@ function decide(dir){
   previa(0);
 
   const antes = {...S.v};
-  let efeitos = op[1], aviso = op[3] || "", classe = "";
+  let efeitos = op[1], avisos = [], classe = "";
+  if(op[3]) avisos.push(op[3]);
+  if(c.relampago){
+    if(dir > 0){ S.relampago = {...c.relampago, inicio:S.mes, n:0}; avisos.push("Desafio relâmpago aceito! O relógio está correndo."); classe = "ok"; }
+    else avisos.push("Você recusou o desafio relâmpago.");
+  }
   if(c.risco){
     S.recentes.push(c.id);
     if(dir > 0){
       const deu = Math.random() < c.chance;
       const res = deu ? c.bom : c.mau;
       efeitos = res[0];
-      S.pendente = {id:"res-"+c.id, img:c.img, n:c.n, r:c.r, c:c.c, t:res[1], resultado: deu ? "bom" : "mau",
+      S.pendente = {id:"res-"+c.id, img:c.img, n:c.n, r:c.r, c:c.c, o:c.o, t:res[1], resultado: deu ? "bom" : "mau",
                     e:["Seguir em frente", {}], d:["Seguir em frente", {}]};
-      aviso = deu ? "A aposta deu certo!" : "A aposta não deu certo."; classe = deu ? "sorte" : "azar";
-    } else aviso = "Você deixou a oportunidade passar.";
+      avisos.push(deu ? "A aposta deu certo!" : "A aposta não deu certo."); classe = deu ? "sorte" : "azar";
+    } else avisos.push("Você deixou a oportunidade passar.");
   }
   Object.entries(efeitos).forEach(([k,d]) => {
     S.v[k] = Math.max(0, Math.min(100, S.v[k] + d));
     if(d > 0) S.favor[k] += d;
   });
-  const conta = c.id !== "intro" && !c.resultado;
-  if(conta){ S.mes++; S.decisoes++; }
+  const conta = c.id !== "intro" && !c.resultado && !c.relampago;
+  if(conta){ S.mes++; S.total++; S.decisoes++; }
   if(op[2] && S.marcas[op[2]] === undefined) S.marcas[op[2]] = S.mes;
   if(c.req) delete S.marcas[c.req];
   if(!c.req && conta && !c.risco) S.recentes.push(c.id);
   while(S.recentes.length > 16) S.recentes.shift();
   if(conta){
     const r = avancaDesafio(c, op, dir);
-    if(r){ aviso = r.txt; classe = r.classe; }
+    if(r){ avisos.push(r.txt); classe = r.classe; }
+    const q = avancaRelampago(dir);
+    if(q){ avisos.push(q.txt); classe = q.classe; }
   }
-  $("noticia").textContent = aviso;
+  /* escudo: salva quando um pilar zera */
+  const zerou = PILARES.find(p => S.v[p.k] <= 0);
+  if(zerou && S.escudos > 0){
+    S.escudos--; S.v[zerou.k] = 30;
+    avisos.push(`Escudo usado! ${zerou.nome} voltou para 30.`); classe = "ok";
+  }
+  $("noticia").textContent = avisos.join(" ");
   $("noticia").className = "noticia " + classe;
   atualizaPilares(antes);
   mostraDesafio();
@@ -817,24 +1357,38 @@ function decide(dir){
     carta.style.opacity = 1;
     if(queda) fim(queda);
     else mostraCarta(proximaCarta());
-  }, queda ? 900 : 360);
+  }, queda ? 1000 : 360);
 }
 
+function avancaRelampago(dir){
+  const r = S.relampago;
+  if(!r) return null;
+  if(r.tipo === "sim"){ if(dir < 0){ S.relampago = null; return {txt:"Desafio relâmpago perdido: você disse não.", classe:"perdeu"}; } r.n++; }
+  if(r.ok(S, r)){
+    S.relampago = null; S.escudos++; S.medalhas++; S.feitos.push("Relâmpago");
+    if(r.tipo === "max") S.bonusMax = true;
+    return {txt:"Desafio relâmpago cumprido! Você ganhou um escudo.", classe:"ok"};
+  }
+  if(S.mes - r.inicio >= r.rod){ S.relampago = null; return {txt:"O tempo do desafio relâmpago acabou. Sem prêmio desta vez.", classe:"perdeu"}; }
+  return null;
+}
 
 function novoDesafio(){
-  const opcoes = DESAFIOS.filter(d => !S.tentados.includes(d.id));
+  const lista = MUNDOS[S.mundo].desafios;
+  const opcoes = lista.filter(d => !S.tentados.includes(d.id));
   if(!opcoes.length) return null;
   const d = sorteia(opcoes);
   S.tentados.push(d.id);
   return {id:d.id, n:0, inicio:S.mes};
 }
 function avancaDesafio(c, op, dir){
+  const lista = MUNDOS[S.mundo].desafios;
   if(!S.desafio){
     S.pausa--;
     if(S.pausa <= 0) S.desafio = novoDesafio();
-    return S.desafio ? {txt:"Novo desafio: " + DESAFIOS.find(x => x.id === S.desafio.id).titulo, classe:"ok"} : null;
+    return S.desafio ? {txt:"Novo desafio: " + lista.find(x => x.id === S.desafio.id).titulo + ".", classe:"ok"} : null;
   }
-  const d = S.desafio, def = DESAFIOS.find(x => x.id === d.id);
+  const d = S.desafio, def = lista.find(x => x.id === d.id);
   d.n = def.passo(S, d, op, c, dir);
   if(d.n >= def.meta){
     S.desafio = null; S.pausa = 2; S.medalhas++; S.feitos.push(def.titulo);
@@ -850,19 +1404,28 @@ function avancaDesafio(c, op, dir){
   return null;
 }
 function mostraDesafio(){
+  const lista = MUNDOS[S.mundo].desafios;
   const el = $("desafio");
+  let html = "";
   if(!S.desafio){
     el.className = "desafio vazio";
-    el.innerHTML = `<div class="alvo" style="background:var(--line)">${ICON.alvo}</div><div>Nenhum desafio agora. ${S.medalhas ? `Medalhas: <b style="display:inline">${S.medalhas}</b>` : "Um novo desafio vem em breve."}</div>`;
-    return;
+    html = `<div class="alvo" style="background:var(--line)">${ICON.alvo}</div><div style="flex:1">Nenhum desafio agora. ${S.medalhas ? `Medalhas: <b style="display:inline">${S.medalhas}</b>` : "Um novo desafio vem em breve."}</div>`;
+  } else {
+    const d = S.desafio, def = lista.find(x => x.id === d.id);
+    const resta = def.prazo - (S.mes - d.inicio);
+    const pct = Math.max(0, Math.min(100, d.n / def.meta * 100));
+    el.className = "desafio";
+    html = `<div class="alvo">${ICON.alvo}</div>
+      <div style="flex:1"><b>Desafio: ${def.titulo}</b>${def.desc}<div class="prog"><span style="width:${pct}%"></span></div></div>
+      <div class="meta">${Math.max(0,d.n)}/${def.meta}<br><span style="font-weight:600;color:var(--muted)">${resta} ${resta === 1 ? "mês" : "meses"}</span></div>`;
   }
-  const d = S.desafio, def = DESAFIOS.find(x => x.id === d.id);
-  const resta = def.prazo - (S.mes - d.inicio);
-  const pct = Math.max(0, Math.min(100, d.n / def.meta * 100));
-  el.className = "desafio";
-  el.innerHTML = `<div class="alvo">${ICON.alvo}</div>
-    <div style="flex:1"><b>Desafio: ${def.titulo}</b>${def.desc}<div class="prog"><span style="width:${pct}%"></span></div></div>
-    <div class="meta">${Math.max(0,d.n)}/${def.meta}<br><span style="font-weight:600;color:var(--muted)">${resta} ${resta === 1 ? "mês" : "meses"}</span></div>`;
+  el.innerHTML = html;
+  const rl = $("relampago");
+  if(S.relampago){
+    const r = S.relampago, resta = r.rod - (S.mes - r.inicio);
+    rl.hidden = false;
+    rl.innerHTML = `<div class="alvo">${ICON.raio}</div><div style="flex:1"><b>Relâmpago</b>${esc(r.desc)}</div><div class="meta">${resta}<br><span>rodada${resta === 1 ? "" : "s"}</span></div>`;
+  } else rl.hidden = true;
 }
 
 function verificaQueda(){
@@ -874,21 +1437,38 @@ function verificaQueda(){
 }
 
 function fim(chave){
-  const f = FINAIS[chave];
+  const M = MUNDOS[S.mundo];
+  const f = (M.id === "ceo" ? FINAIS : M.finais)[chave];
   const fav = PILARES.reduce((a,b) => S.favor[b.k] > S.favor[a.k] ? b : a);
-  const h = carregaHist();
-  h.unshift({nome:S.nome, numero:S.numero, meses:S.mes, fim:f.titulo, medalhas:S.medalhas});
-  salvaHist(h);
-  $("tela-fim").style.setProperty("--pc", `var(--${chave.split("-")[0]})`);
-  $("tela-fim").style.setProperty("--fav", `var(--${fav.k})`);
+  const pc = PILARES.find(p => chave.startsWith(p.k + "-"));
+  S.trajetoria.push({cargo:M.curto, meses:S.mes, fim:f.titulo});
+  const ponte = M.id === "ceo" ? PONTES[chave] : null;
+  const prox = ponte ? MUNDOS[ponte.vai] : null;
+  const bonus = !!(ponte && S.bonusMax);
+  const traj = S.trajetoria.map(t => `${t.cargo} (${duracao(t.meses)})`).join(" → ");
+
+  if(!ponte){
+    const h = carregaHist();
+    h.unshift({nome:S.nome, numero:S.numero, meses:S.total, fim:f.titulo, medalhas:S.medalhas, traj});
+    salvaHist(h);
+  }
+  $("tela-fim").style.setProperty("--pc", `var(--${pc.cor||pc.k})`);
+  $("tela-fim").style.setProperty("--fav", `var(--${fav.cor||fav.k})`);
   $("tela-fim").innerHTML = `
     <div class="selo">${ICON.fim}</div>
     <h2>${f.titulo}</h2>
     <p>${f.texto}</p>
+    ${ponte ? `<div class="ponte">
+        <small>Sua vida continua</small>
+        <p>${ponte.ponte}</p>
+        <h3>Nova carreira: ${prox.cargo}</h3>
+        <div class="pilares-mini">${miniPilares(prox.pilares)}</div>
+        ${bonus ? `<p class="bonus">Você chegou aqui cumprindo a missão relâmpago: começa com vantagem!</p>` : ""}
+      </div>` : `<div class="trajetoria"><small>Sua trajetória</small><b>${esc(traj)}</b></div>`}
     <div class="relatorio">
       <div><small>Tempo no cargo</small><b>${duracao(S.mes)}</b></div>
       <div><small>Pilar que você mais favoreceu</small><b>${fav.nome}</b></div>
-      <div class="largo"><small>Desafios cumpridos</small><b>${S.medalhas ? S.feitos.join(", ") : "Nenhum"}</b></div>
+      <div class="largo"><small>Medalhas na carreira</small><b>${S.medalhas ? S.feitos.join(", ") : "Nenhuma"}</b></div>
     </div>
     <div class="consultor">
       <small>O consultor filosófico comenta</small>
@@ -897,17 +1477,17 @@ function fim(chave){
     </div>
     <p class="pergunta"><b>Para pensar:</b> ${f.pergunta}</p>
     <div class="acoes">
-      <button class="btn primario" type="button" id="bt-proximo">Próximo CEO</button>
-      <button class="btn" type="button" id="bt-ver-galeria">Ver ex-CEOs</button>
+      ${ponte ? `<button class="btn primario" type="button" id="bt-proximo">Começar como ${esc(prox.curto)}</button>`
+              : `<button class="btn primario" type="button" id="bt-proximo">Nova partida</button>
+                 <button class="btn" type="button" id="bt-ver-galeria">Ver galeria</button>`}
     </div>`;
   mostra("tela-fim");
-  $("bt-proximo").onclick = comecar;
-  $("bt-ver-galeria").onclick = () => mostra("tela-galeria");
+  if(ponte) $("bt-proximo").onclick = () => { entraNoMundo(ponte.vai, bonus); iniciaMundo(); };
+  else { $("bt-proximo").onclick = comecar; $("bt-ver-galeria").onclick = () => mostra("tela-galeria"); }
   $("bt-proximo").focus();
 }
 
-function comecar(){
-  novoCEO();
+function iniciaMundo(){
   mostra("tela-jogo");
   montaPilares();
   atualizaPilares();
@@ -916,6 +1496,7 @@ function comecar(){
   mostraDesafio();
   mostraCarta(proximaCarta());
 }
+function comecar(){ novoCEO(); iniciaMundo(); }
 $("bt-comecar").onclick = comecar;
 $("bt-esq").onclick = () => decide(-1);
 $("bt-dir").onclick = () => decide(1);
